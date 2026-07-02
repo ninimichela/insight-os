@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Optional
 from uuid import UUID
 
 from sqlalchemy import or_
@@ -36,10 +36,10 @@ class ContentRepository(BaseRepository):
         self,
         page: int = 1,
         page_size: int = 20,
-        q: str | None = None,
-        platform: str | None = None,
-        source_name: str | None = None,
-        content_status: str | None = None,
+        q: Optional[str] = None,
+        platform: Optional[str] = None,
+        source_name: Optional[str] = None,
+        content_status: Optional[str] = None,
         sort: str = "collected_at",
         order: str = "desc",
     ) -> tuple[list[Content], int]:
@@ -67,11 +67,11 @@ class ContentRepository(BaseRepository):
         offset = (page - 1) * page_size
         return query.offset(offset).limit(page_size).all(), total
 
-    def get_content_by_id(self, content_id: UUID) -> Content | None:
+    def get_content_by_id(self, content_id: UUID) -> Optional[Content]:
         return self.get_by_id(content_id)
 
-    def get_content_by_url(self, url: str) -> Content | None:
+    def get_content_by_url(self, url: str) -> Optional[Content]:
         return self.session.query(Content).filter(Content.url == url).first()
 
-    def update_analysis_result(self, content_id: UUID, result: dict[str, Any]) -> Content | None:
+    def update_analysis_result(self, content_id: UUID, result: dict[str, Any]) -> Optional[Content]:
         return self.update(content_id, result)

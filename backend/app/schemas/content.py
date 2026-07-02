@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
+from typing import Any, List, Optional
 from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
@@ -8,33 +9,33 @@ from pydantic import BaseModel, ConfigDict, Field
 
 class ContentImportItem(BaseModel):
     title: str
-    platform: str | None = None
-    source_name: str | None = None
-    source_type: str | None = None
+    platform: Optional[str] = None
+    source_name: Optional[str] = None
+    source_type: Optional[str] = None
     content_source: str = "article"
-    url: str | None = None
-    author: str | None = None
-    published_at: datetime | None = None
-    raw_text: str | None = None
+    url: Optional[str] = None
+    author: Optional[str] = None
+    published_at: Optional[datetime] = None
+    raw_text: Optional[str] = None
 
 
 class ContentImportRequest(BaseModel):
-    items: list[ContentImportItem] = Field(min_length=1)
+    items: List[ContentImportItem] = Field(min_length=1)
 
 
 class ContentImportResultItem(BaseModel):
-    id: UUID | None = None
+    id: Optional[UUID] = None
     title: str
-    url: str | None = None
-    content_status: str | None = None
+    url: Optional[str] = None
+    content_status: Optional[str] = None
     result: str
-    reason: str | None = None
+    reason: Optional[str] = None
 
 
 class ContentImportResponse(BaseModel):
     imported: int
     skipped: int
-    items: list[ContentImportResultItem]
+    items: List[ContentImportResultItem]
 
 
 class ContentResponse(BaseModel):
@@ -43,31 +44,31 @@ class ContentResponse(BaseModel):
     id: UUID
     title: str
     content_source: str
-    platform: str | None
-    source_name: str | None
-    source_type: str | None
-    url: str | None
-    author: str | None
-    published_at: datetime | None
-    collected_at: datetime | None
-    summary: str | None
-    raw_text: str | None
-    tags: list[str] | None
-    keywords: list[str] | None
-    category: str | None
-    suitable_for: list[str] | None
+    platform: Optional[str]
+    source_name: Optional[str]
+    source_type: Optional[str]
+    url: Optional[str]
+    author: Optional[str]
+    published_at: Optional[datetime]
+    collected_at: Optional[datetime]
+    summary: Optional[str]
+    raw_text: Optional[str]
+    tags: Optional[List[str]]
+    keywords: Optional[List[str]]
+    category: Optional[str]
+    suitable_for: Optional[List[str]]
     heat_score: int
     brand_fit_in77: int
     brand_fit_in88: int
     innovation_score: int
     execution_score: int
-    ai_reason: str | None
-    analysis_version: str | None
-    prompt_version: str | None
-    brand_brain_version: str | None
-    score_version: str | None
-    workflow_version: str | None
-    analysis_trace: dict | None
+    ai_reason: Optional[str]
+    analysis_version: Optional[str]
+    prompt_version: Optional[str]
+    brand_brain_version: Optional[str]
+    score_version: Optional[str]
+    workflow_version: Optional[str]
+    analysis_trace: Optional[dict[str, Any]]
     content_status: str
     analysis_status: str
 
@@ -76,33 +77,33 @@ class ContentListResponse(BaseModel):
     page: int
     page_size: int
     total: int
-    items: list[ContentResponse]
+    items: List[ContentResponse]
 
 
 class ContentAnalyzeRequest(BaseModel):
-    content_ids: list[UUID] = Field(min_length=1)
+    content_ids: List[UUID] = Field(min_length=1)
     analysis_version: str = "gpt55-v1"
     force: bool = False
 
 
 class ContentAnalyzeResultItem(BaseModel):
     id: UUID
-    summary: str | None
-    tags: list[str]
-    keywords: list[str]
-    category: str | None
-    suitable_for: list[str]
+    summary: Optional[str]
+    tags: List[str]
+    keywords: List[str]
+    category: Optional[str]
+    suitable_for: List[str]
     heat_score: int
     brand_fit_in77: int
     brand_fit_in88: int
     innovation_score: int
     execution_score: int
     analysis_version: str
-    analysis_trace: dict
+    analysis_trace: dict[str, Any]
 
 
 class ContentAnalyzeResponse(BaseModel):
     analyzed: int
     failed: int
-    items: list[ContentAnalyzeResultItem]
-    errors: list[dict]
+    items: List[ContentAnalyzeResultItem]
+    errors: List[dict[str, Any]]

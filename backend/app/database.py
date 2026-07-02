@@ -7,10 +7,11 @@ from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
 
 DATABASE_URL = os.getenv(
     "DATABASE_URL",
-    "postgresql+psycopg://insight:insight@localhost:5432/insight_os",
+    "sqlite:///./alpha.db",
 )
 
-engine = create_engine(DATABASE_URL, pool_pre_ping=True)
+connect_args = {"check_same_thread": False} if DATABASE_URL.startswith("sqlite") else {}
+engine = create_engine(DATABASE_URL, pool_pre_ping=True, connect_args=connect_args)
 SessionLocal = sessionmaker(bind=engine, autocommit=False, autoflush=False)
 
 
@@ -24,4 +25,3 @@ def get_db() -> Generator[Session, None, None]:
         yield db
     finally:
         db.close()
-

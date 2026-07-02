@@ -1,6 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.database import Base, engine
+from app.models import Content
 from app.routers.content import router as content_router
 
 app = FastAPI(title="INSight OS API", version="0.1.0")
@@ -12,6 +14,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 app.include_router(content_router)
+Base.metadata.create_all(bind=engine)
 
 
 @app.get("/health")

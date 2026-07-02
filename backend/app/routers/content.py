@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from typing import Optional
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, Query
@@ -29,10 +30,10 @@ def list_content(
     db: Session = Depends(get_db),
     page: int = Query(default=1, ge=1),
     page_size: int = Query(default=20, ge=1, le=100),
-    q: str | None = None,
-    platform: str | None = None,
-    source_name: str | None = None,
-    content_status: str | None = None,
+    q: Optional[str] = None,
+    platform: Optional[str] = None,
+    source_name: Optional[str] = None,
+    content_status: Optional[str] = None,
     sort: str = "collected_at",
     order: str = "desc",
 ):

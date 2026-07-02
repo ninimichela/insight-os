@@ -20,7 +20,7 @@ class BaseRepository:
         return instance
 
     def get_by_id(self, item_id: UUID):
-        return self.session.get(self.model, item_id)
+        return self.session.get(self.model, str(item_id))
 
     def list(self, offset: int = 0, limit: int = 20):
         return self.session.query(self.model).offset(offset).limit(limit).all()

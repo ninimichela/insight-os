@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 import os
-from typing import Any
+from typing import Any, Optional
 
 
 def has_openai_key() -> bool:
@@ -10,7 +10,7 @@ def has_openai_key() -> bool:
     return bool(key and key != "sk-xxx")
 
 
-def generate_json(system_prompt: str, payload: dict[str, Any]) -> dict[str, Any] | None:
+def generate_json(system_prompt: str, payload: dict[str, Any]) -> Optional[dict[str, Any]]:
     """Call OpenAI and parse JSON.
 
     Returns None when no API key is configured or the response cannot be parsed.
