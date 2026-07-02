@@ -99,23 +99,21 @@ CREATE TABLE IF NOT EXISTS ideas (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   title TEXT NOT NULL,
   project TEXT,
-  angle TEXT,
-  outline TEXT,
-  suggested_platforms TEXT[],
-  visual_suggestion TEXT,
-  brand_suggestion TEXT,
-  publish_timing TEXT,
+  trend_id UUID REFERENCES trends(id) ON DELETE SET NULL,
   priority INTEGER DEFAULT 0,
-  reason TEXT,
-  decision TEXT DEFAULT 'discuss' CHECK (
-    decision IN ('recommend', 'discuss', 'hold', 'reject', 'rewrite', 'archive')
+  outline TEXT,
+  references UUID[],
+  recommendation_reason TEXT,
+  execution_cost TEXT DEFAULT 'medium' CHECK (
+    execution_cost IN ('low', 'medium', 'high')
   ),
-  confidence FLOAT DEFAULT 0,
-  explainability JSONB,
+  platforms TEXT[],
   status TEXT DEFAULT 'draft' CHECK (
-    status IN ('draft', 'discussed', 'selected', 'scheduled', 'published', 'archived')
+    status IN ('draft', 'review', 'approved', 'rejected')
   ),
-  brand_brain_id UUID REFERENCES brand_brains(id) ON DELETE SET NULL,
+  source_trends UUID[],
+  source_contents UUID[],
+  ai_trace JSONB,
   created_at TIMESTAMP DEFAULT NOW()
 );
 
@@ -225,9 +223,10 @@ CREATE INDEX IF NOT EXISTS idx_trends_trend_score ON trends(trend_score);
 CREATE INDEX IF NOT EXISTS idx_trends_generated_at ON trends(generated_at);
 
 CREATE INDEX IF NOT EXISTS idx_ideas_project ON ideas(project);
+CREATE INDEX IF NOT EXISTS idx_ideas_trend_id ON ideas(trend_id);
 CREATE INDEX IF NOT EXISTS idx_ideas_priority ON ideas(priority);
 CREATE INDEX IF NOT EXISTS idx_ideas_status ON ideas(status);
-CREATE INDEX IF NOT EXISTS idx_ideas_decision ON ideas(decision);
+CREATE INDEX IF NOT EXISTS idx_ideas_execution_cost ON ideas(execution_cost);
 CREATE INDEX IF NOT EXISTS idx_ideas_created_at ON ideas(created_at);
 
 CREATE INDEX IF NOT EXISTS idx_reports_type ON reports(report_type);

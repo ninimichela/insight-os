@@ -86,14 +86,16 @@
         grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
         gap: 12px;
       }
-      .trend-card {
+      .trend-card,
+      .idea-card {
         border: 1px solid #dde2e6;
         border-radius: 8px;
         padding: 12px;
         background: #fbfcfc;
         cursor: pointer;
       }
-      .trend-title {
+      .trend-title,
+      .idea-title {
         font-weight: 700;
         margin-bottom: 8px;
       }
@@ -127,6 +129,17 @@
         <div id="trendStatus" class="status"></div>
         <div id="trends" class="trend-grid"></div>
         <div id="trendDetail" class="detail" style="display: none"></div>
+      </section>
+
+      <section class="panel">
+        <h2>Today's Ideas</h2>
+        <div class="actions">
+          <button onclick="generateIdeas()">Generate Ideas</button>
+          <button class="secondary" onclick="loadIdeas()">Refresh Ideas</button>
+        </div>
+        <div id="ideaStatus" class="status"></div>
+        <div id="ideas" class="trend-grid"></div>
+        <div id="ideaDetail" class="detail" style="display: none"></div>
       </section>
 
       <section class="panel">
@@ -253,6 +266,47 @@
         `;
       }
 
+      async function generateIdeas() {
+        const res = await fetch(`${API}/ideas/generate`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ projects: ["in77", "in88"], ideas_per_project: 5 }),
+        });
+        document.getElementById("ideaStatus").textContent = JSON.stringify(await res.json());
+        await loadIdeas();
+      }
+
+      async function loadIdeas() {
+        const res = await fetch(`${API}/ideas?page=1&page_size=10`);
+        const data = await res.json();
+        document.getElementById("ideas").innerHTML = data.items
+          .map(
+            (item) => `
+              <div class="idea-card" onclick="loadIdeaDetail('${item.id}')">
+                <div class="idea-title">★★★★★ ${item.title}</div>
+                <div class="metric">Project: ${item.project}</div>
+                <div class="metric">Priority: ${item.priority}</div>
+                <div class="metric">Cost: ${item.execution_cost}</div>
+                <div class="metric">Status: ${item.status}</div>
+              </div>
+            `
+          )
+          .join("");
+      }
+
+      async function loadIdeaDetail(id) {
+        const res = await fetch(`${API}/ideas/${id}`);
+        const item = await res.json();
+        const detail = document.getElementById("ideaDetail");
+        detail.style.display = "block";
+        detail.innerHTML = `
+          <strong>${item.title}</strong><br />
+          Project: ${item.project} · Priority: ${item.priority} · Trend: ${item.trend ? item.trend.topic : ""}<br />
+          Reason: ${item.recommendation_reason || ""}<br />
+          Outline:<br />${(item.outline || "").replaceAll("\n", "<br />")}
+        `;
+      }
+
       function formatGrowth(value) {
         const number = Number(value || 0);
         const prefix = number > 0 ? "+" : "";
@@ -264,6 +318,9 @@
       });
       loadTrends().catch(() => {
         document.getElementById("trendStatus").textContent = "Trend API not available yet.";
+      });
+      loadIdeas().catch(() => {
+        document.getElementById("ideaStatus").textContent = "Idea API not available yet.";
       });
     </script>
   </body>

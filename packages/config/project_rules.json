@@ -1,0 +1,10 @@
+{
+  "in77": {
+    "keywords": ["CBD", "公园", "艺术", "城市", "Citywalk", "自然", "松弛", "国贸"],
+    "platforms": ["wechat", "xiaohongshu", "moments"]
+  },
+  "in88": {
+    "keywords": ["科技", "动漫", "王府井", "年轻", "LEGO", "高达", "室内", "游戏"],
+    "platforms": ["wechat", "xiaohongshu", "moments", "video"]
+  }
+}

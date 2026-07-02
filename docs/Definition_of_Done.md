@@ -113,3 +113,24 @@ Done means:
 - Dashboard shows Top 5 Trends.
 - Tests cover generation, listing, detail, alias clustering, score, and lifecycle.
 - Beta Demo validates against at least 300 real content items.
+
+## 7. Beta Sprint 2: Idea Engine
+
+Done means:
+
+- `POST /ideas/generate` runs successfully.
+- `GET /ideas` lists generated ideas.
+- `GET /ideas/{id}` returns Idea Detail.
+- System automatically generates in77 ×5 and in88 ×5.
+- Every idea has `trend_id`, `source_trends`, and `source_contents`.
+- Every idea has `outline`, `recommendation_reason`, and `priority`.
+- Priority is calculated by code using:
+  - 40% Trend Score
+  - 30% Project Fit
+  - 20% Reference Count
+  - 10% Calendar Fit
+- `ai_trace.no_gpt_scoring = true`.
+- GPT is only used for title, recommendation reason, and outline.
+- Dashboard shows Today's Ideas.
+- Tests cover generation, listing, detail, scoring trace, and project count.
+- Beta Demo validates against at least 300 real content items.

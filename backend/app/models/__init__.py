@@ -1,4 +1,5 @@
 from app.models.content import Content
+from app.models.idea import Idea
 from app.models.trend import Trend
 
-__all__ = ["Content", "Trend"]
+__all__ = ["Content", "Idea", "Trend"]

@@ -143,30 +143,105 @@ DoD:
 
 ## Beta Sprint 2: Idea Engine
 
+Goal: turn Trends into content meeting topics that operators can discuss.
+
+Flow:
+
+```text
+Trend Engine
+  ↓
+Project Filter
+  ↓
+Idea Generator
+  ↓
+Idea Score
+  ↓
+Idea Repository
+  ↓
+Idea API
+  ↓
+Dashboard
+```
+
 Input:
 
 - Trend
 - Competitor
 - Project
 - Calendar
+- Project Rules
+
+Brand Brain is not used in Beta. `packages/config/project_rules.json` provides the temporary project keyword rules.
 
 Output:
 
 ```json
 {
   "title": "...",
-  "reason": "...",
+  "recommendation_reason": "...",
   "priority": 92,
   "project": "in77",
   "outline": "...",
-  "references": []
+  "references": [],
+  "source_trends": [],
+  "source_contents": []
 }
 ```
+
+Data model:
+
+| Field | Type | Notes |
+| --- | --- | --- |
+| id | UUID | Primary key |
+| title | TEXT | Idea title |
+| project | TEXT | in77 / in88 |
+| trend_id | UUID | Primary Trend reference |
+| priority | INT | 0-100 |
+| outline | TEXT | Content discussion outline |
+| references | UUID[] | Reference Content IDs |
+| recommendation_reason | TEXT | Why this idea is recommended |
+| execution_cost | ENUM | low / medium / high |
+| platforms | TEXT[] | Suggested platforms |
+| status | ENUM | draft / review / approved / rejected |
+| source_trends | UUID[] | Multiple source Trends, reserved for RC |
+| source_contents | UUID[] | Multiple source Contents |
+| ai_trace | JSONB | Generation trace |
+| created_at | TIMESTAMP | Creation time |
+
+Idea Score:
+
+```text
+40% Trend Score
+30% Project Fit
+20% Reference Count
+10% Calendar Fit
+```
+
+Rules:
+
+- GPT does not score ideas.
+- GPT does not sort ideas.
+- GPT does not judge priority.
+- Code calculates Project Fit through `packages/config/project_rules.json`.
+- GPT only generates title, recommendation reason, and outline.
 
 APIs:
 
 - `POST /ideas/generate`
 - `GET /ideas`
+- `GET /ideas/{id}`
+
+DoD:
+
+- `POST /ideas/generate` runs.
+- `GET /ideas` lists generated ideas.
+- `GET /ideas/{id}` returns Trend, Reference, Outline, and Recommendation.
+- System automatically generates in77 ×5 and in88 ×5.
+- Every idea has a Trend Reference.
+- Every idea has an Outline.
+- Every idea has a Priority.
+- Dashboard displays Today's Ideas.
+- Beta Demo validates against at least 300 real content records.
 
 ## Beta Sprint 3: Weekly Report
 

@@ -13,6 +13,9 @@ POST /content/analyze
 GET  /trends
 GET  /trends/{id}
 POST /trends/generate
+GET  /ideas
+GET  /ideas/{id}
+POST /ideas/generate
 ```
 
 ## 1. POST /content/import
@@ -295,3 +298,91 @@ Return one Trend Detail.
 
 - This is the only Trend Engine flow allowed to call GPT.
 - AI Insight explains the calculated result; it must not alter statistics.
+
+## 7. POST /ideas/generate
+
+Generate content meeting ideas from existing Trends.
+
+### Request
+
+```json
+{
+  "projects": ["in77", "in88"],
+  "ideas_per_project": 5
+}
+```
+
+### Response
+
+```json
+{
+  "generated": 10,
+  "items": [
+    {
+      "id": "uuid",
+      "title": "CBD今天最好坐的一张椅子",
+      "project": "in77",
+      "trend_id": "uuid",
+      "priority": 92,
+      "outline": "...",
+      "references": ["uuid"],
+      "recommendation_reason": "...",
+      "execution_cost": "low",
+      "platforms": ["wechat", "xiaohongshu"],
+      "status": "draft",
+      "source_trends": ["uuid"],
+      "source_contents": ["uuid"],
+      "ai_trace": {
+        "algorithm_version": "idea-rules-v1",
+        "no_gpt_scoring": true,
+        "score_weights": {
+          "trend_score": 0.4,
+          "project_fit": 0.3,
+          "reference_count": 0.2,
+          "calendar_fit": 0.1
+        },
+        "gpt_scope": ["title", "recommendation_reason", "outline"]
+      }
+    }
+  ]
+}
+```
+
+### Rules
+
+- GPT only generates title, recommendation reason, and outline.
+- Priority is calculated by code.
+- Project Fit comes from `packages/config/project_rules.json`.
+- Ideas must preserve `trend_id`, `source_trends`, and `source_contents`.
+
+## 8. GET /ideas
+
+List ideas ordered by `priority desc`.
+
+### Query Parameters
+
+```text
+page=1
+page_size=20
+project=in77
+status=draft
+```
+
+## 9. GET /ideas/{id}
+
+Return one Idea Detail.
+
+### Response
+
+```json
+{
+  "id": "uuid",
+  "title": "CBD今天最好坐的一张椅子",
+  "project": "in77",
+  "priority": 92,
+  "trend": {},
+  "reference_items": [],
+  "outline": "...",
+  "recommendation_reason": "..."
+}
+```
