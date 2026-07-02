@@ -18,6 +18,7 @@ from app.database import Base, get_db
 from app.main import app
 from app.models.content import Content
 from app.models.idea import Idea
+from app.models.report import Report
 from app.models.trend import Trend
 
 
@@ -44,6 +45,7 @@ app.dependency_overrides[get_db] = override_get_db
 @pytest.fixture(autouse=True)
 def clean_db():
     db = TestingSessionLocal()
+    db.query(Report).delete()
     db.query(Idea).delete()
     db.query(Trend).delete()
     db.query(Content).delete()

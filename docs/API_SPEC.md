@@ -16,6 +16,9 @@ POST /trends/generate
 GET  /ideas
 GET  /ideas/{id}
 POST /ideas/generate
+GET  /reports
+GET  /reports/{id}
+POST /reports/generate
 ```
 
 ## 1. POST /content/import
@@ -386,3 +389,62 @@ Return one Idea Detail.
   "recommendation_reason": "..."
 }
 ```
+
+## 10. POST /reports/generate
+
+Generate a weekly Markdown report from existing Contents, Trends, and Ideas.
+
+### Request
+
+```json
+{
+  "week_start": "2026-06-26",
+  "week_end": "2026-07-02"
+}
+```
+
+Both fields are optional. If omitted, the API uses the latest content date as week end and looks back 7 days.
+
+### Response
+
+```json
+{
+  "generated": 1,
+  "item": {
+    "id": "uuid",
+    "title": "北京商业内容观察｜Week 27",
+    "week_start": "2026-06-26",
+    "week_end": "2026-07-02",
+    "markdown_content": "# 北京商业内容观察｜Week 27\n...",
+    "trend_ids": ["uuid"],
+    "idea_ids": ["uuid"],
+    "content_ids": ["uuid"],
+    "status": "completed"
+  }
+}
+```
+
+### Rules
+
+- Report generation does not recalculate Trend Score.
+- Report generation does not recalculate Idea Priority.
+- Trend ranking reads `trends.trend_score`.
+- Idea ranking reads `ideas.priority`.
+- GPT only formats structured data into readable Markdown.
+- First version exports Markdown only.
+
+## 11. GET /reports
+
+List saved reports ordered by `created_at desc`.
+
+### Query Parameters
+
+```text
+page=1
+page_size=20
+status=completed
+```
+
+## 12. GET /reports/{id}
+
+Return one saved weekly report.

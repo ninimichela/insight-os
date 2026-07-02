@@ -7,7 +7,7 @@ from sqlalchemy import engine_from_config, pool
 
 from app.core.settings import settings
 from app.database import Base
-from app.models import Content, Idea, Trend
+from app.models import Content, Idea, Report, Trend
 
 config = context.config
 config.set_main_option("sqlalchemy.url", settings.database_url)

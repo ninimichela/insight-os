@@ -112,6 +112,16 @@
         font-size: 14px;
         line-height: 1.7;
       }
+      pre.report {
+        white-space: pre-wrap;
+        word-break: break-word;
+        background: #fbfcfc;
+        border: 1px solid #dde2e6;
+        border-radius: 8px;
+        padding: 12px;
+        max-height: 520px;
+        overflow: auto;
+      }
     </style>
   </head>
   <body>
@@ -140,6 +150,16 @@
         <div id="ideaStatus" class="status"></div>
         <div id="ideas" class="trend-grid"></div>
         <div id="ideaDetail" class="detail" style="display: none"></div>
+      </section>
+
+      <section class="panel">
+        <h2>Weekly Report</h2>
+        <div class="actions">
+          <button onclick="generateReport()">Generate Report</button>
+          <button class="secondary" onclick="loadLatestReport()">View Latest</button>
+        </div>
+        <div id="reportStatus" class="status"></div>
+        <pre id="report" class="report"></pre>
       </section>
 
       <section class="panel">
@@ -307,6 +327,40 @@
         `;
       }
 
+      async function generateReport() {
+        const res = await fetch(`${API}/reports/generate`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({}),
+        });
+        const data = await res.json();
+        document.getElementById("reportStatus").textContent = JSON.stringify({
+          id: data.item.id,
+          status: data.item.status,
+          trends: (data.item.trend_ids || []).length,
+          ideas: (data.item.idea_ids || []).length,
+          contents: (data.item.content_ids || []).length,
+        });
+        document.getElementById("report").textContent = data.item.markdown_content || "";
+      }
+
+      async function loadLatestReport() {
+        const res = await fetch(`${API}/reports?page=1&page_size=1`);
+        const data = await res.json();
+        if (!data.items.length) {
+          document.getElementById("reportStatus").textContent = "No report yet.";
+          return;
+        }
+        const report = data.items[0];
+        document.getElementById("reportStatus").textContent = JSON.stringify({
+          id: report.id,
+          status: report.status,
+          week_start: report.week_start,
+          week_end: report.week_end,
+        });
+        document.getElementById("report").textContent = report.markdown_content || "";
+      }
+
       function formatGrowth(value) {
         const number = Number(value || 0);
         const prefix = number > 0 ? "+" : "";
@@ -321,6 +375,9 @@
       });
       loadIdeas().catch(() => {
         document.getElementById("ideaStatus").textContent = "Idea API not available yet.";
+      });
+      loadLatestReport().catch(() => {
+        document.getElementById("reportStatus").textContent = "Report API not available yet.";
       });
     </script>
   </body>

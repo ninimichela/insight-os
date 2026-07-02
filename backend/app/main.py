@@ -4,9 +4,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.core.logging import configure_logging
 from app.core.telemetry import telemetry
 from app.database import Base, engine
-from app.models import Content, Idea, Trend
+from app.models import Content, Idea, Report, Trend
 from app.routers.content import router as content_router
 from app.routers.idea import router as idea_router
+from app.routers.report import router as report_router
 from app.routers.trend import router as trend_router
 
 configure_logging()
@@ -27,6 +28,7 @@ app.add_middleware(
 app.include_router(content_router)
 app.include_router(trend_router)
 app.include_router(idea_router)
+app.include_router(report_router)
 Base.metadata.create_all(bind=engine)
 
 

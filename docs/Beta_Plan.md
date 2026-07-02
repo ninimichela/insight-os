@@ -245,27 +245,56 @@ DoD:
 
 ## Beta Sprint 3: Weekly Report
 
-Input: past 7 days of Contents, Trends, and Ideas.
+Goal: summarize existing Trends and Ideas into a Markdown weekly report.
+
+Input:
+
+- Past 7 days of Contents
+- Generated Trends
+- Generated Ideas
 
 Output:
 
-- TOP Trends
-- Competitors
-- Insights
-- in77 ×5
-- in88 ×5
+- `# 北京商业内容观察｜Week XX`
+- `## 1. 本周热点 TOP10`
+- `## 2. 竞品内容观察`
+- `## 3. 值得参考案例`
+- `## 4. in77 本周建议 ×5`
+- `## 5. in88 本周建议 ×5`
+- `## 6. 下周执行优先级`
+- `## 7. 数据说明`
 
 APIs:
 
 - `POST /reports/generate`
 - `GET /reports`
+- `GET /reports/{id}`
 
 Formats:
 
 - Markdown
-- JSON
 
 PDF is RC scope.
+
+Rules:
+
+- Report does not recalculate Trend Score.
+- Report does not recalculate Idea Priority.
+- Trend ranking reads `trends.trend_score`.
+- Idea ranking reads `ideas.priority`.
+- GPT only turns structured data into readable Markdown.
+- The first version exports Markdown only, not PDF or PPT.
+- Reports must preserve references through `trend_ids`, `idea_ids`, and `content_ids`.
+
+DoD:
+
+- `POST /reports/generate` creates a Markdown weekly report.
+- Report is saved to `reports`.
+- `GET /reports` lists historical reports.
+- `GET /reports/{id}` returns one report.
+- Report contains in77 ×5 and in88 ×5.
+- Suggestions can be traced to Idea and Trend IDs.
+- Tests pass.
 
 ## Beta Sprint 4: Dashboard
 

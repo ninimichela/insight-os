@@ -120,15 +120,13 @@ CREATE TABLE IF NOT EXISTS ideas (
 CREATE TABLE IF NOT EXISTS reports (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   title TEXT NOT NULL,
-  report_type TEXT DEFAULT 'weekly' CHECK (
-    report_type IN ('weekly', 'monthly', 'campaign')
-  ),
   week_start DATE,
   week_end DATE,
   markdown_content TEXT,
-  pdf_url TEXT,
-  ppt_url TEXT,
-  status TEXT DEFAULT 'draft' CHECK (
+  trend_ids UUID[],
+  idea_ids UUID[],
+  content_ids UUID[],
+  status TEXT DEFAULT 'completed' CHECK (
     status IN ('draft', 'completed', 'archived')
   ),
   created_at TIMESTAMP DEFAULT NOW()
@@ -229,7 +227,7 @@ CREATE INDEX IF NOT EXISTS idx_ideas_status ON ideas(status);
 CREATE INDEX IF NOT EXISTS idx_ideas_execution_cost ON ideas(execution_cost);
 CREATE INDEX IF NOT EXISTS idx_ideas_created_at ON ideas(created_at);
 
-CREATE INDEX IF NOT EXISTS idx_reports_type ON reports(report_type);
+CREATE INDEX IF NOT EXISTS idx_reports_status ON reports(status);
 CREATE INDEX IF NOT EXISTS idx_reports_week_start ON reports(week_start);
 CREATE INDEX IF NOT EXISTS idx_reports_week_end ON reports(week_end);
 CREATE INDEX IF NOT EXISTS idx_reports_created_at ON reports(created_at);

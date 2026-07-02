@@ -41,3 +41,4 @@ Tradeoffs and implications.
 - `0006-no-prompt-in-db.md`
 - `0007-trend-statistics-in-code.md`
 - `0008-idea-scoring-in-code.md`
+- `0009-weekly-report-no-recalculation.md`

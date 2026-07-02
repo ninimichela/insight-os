@@ -134,3 +134,26 @@ Done means:
 - Dashboard shows Today's Ideas.
 - Tests cover generation, listing, detail, scoring trace, and project count.
 - Beta Demo validates against at least 300 real content items.
+
+## 8. Beta Sprint 3: Weekly Report
+
+Done means:
+
+- `POST /reports/generate` runs successfully.
+- Markdown weekly report is generated.
+- Report is saved to `reports`.
+- `GET /reports` lists historical reports.
+- `GET /reports/{id}` returns one report.
+- Report includes:
+  - 本周热点 TOP10
+  - 竞品内容观察
+  - 值得参考案例
+  - in77 本周建议 ×5
+  - in88 本周建议 ×5
+  - 下周执行优先级
+  - 数据说明
+- Report preserves `trend_ids`, `idea_ids`, and `content_ids`.
+- Report does not recalculate Trend Score or Idea Priority.
+- GPT is only used to format structured data into readable Markdown.
+- Dashboard exposes Generate Report and View Latest.
+- Tests pass.
