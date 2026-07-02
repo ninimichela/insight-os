@@ -9,221 +9,738 @@
     <meta name="apple-mobile-web-app-title" content="INSight OS" />
     <title>INSight OS Beta | Dashboard</title>
     <style>
+      :root {
+        --text: #111111;
+        --muted: #666666;
+        --soft: #f2f2f2;
+        --page: #ffffff;
+        --line: #eaeaea;
+        --brand: #e6007e;
+        --shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+        --shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.12);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
       body {
         margin: 0;
-        font-family: Arial, "PingFang SC", sans-serif;
-        color: #172026;
-        background: #f6f7f8;
+        min-height: 100vh;
+        font-family: Inter, "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+        color: var(--text);
+        background: var(--soft);
       }
-      header {
-        padding: 24px 32px;
-        background: #ffffff;
-        border-bottom: 1px solid #dde2e6;
-      }
-      main {
-        padding: 24px 32px;
-      }
-      h1 {
-        margin: 0 0 6px;
-        font-size: 24px;
-      }
-      .kicker {
-        color: #52616b;
-        font-size: 14px;
-      }
-      .dashboard-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-        gap: 12px;
-      }
-      .stat-card {
-        background: #ffffff;
-        border: 1px solid #dde2e6;
-        border-radius: 8px;
-        padding: 16px;
-      }
-      .stat-label {
-        color: #52616b;
-        font-size: 13px;
-      }
-      .stat-value {
-        font-size: 28px;
-        font-weight: 700;
-        margin-top: 8px;
-      }
-      .panel {
-        background: #ffffff;
-        border: 1px solid #dde2e6;
-        border-radius: 8px;
-        padding: 16px;
-        margin-bottom: 16px;
-      }
+
+      button,
       textarea,
-      input,
-      button {
+      input {
         font: inherit;
       }
-      textarea {
-        width: 100%;
-        min-height: 140px;
-        box-sizing: border-box;
-        border: 1px solid #cfd6dc;
-        border-radius: 6px;
-        padding: 10px;
-      }
+
       button {
         border: 0;
-        background: #172026;
-        color: #ffffff;
-        border-radius: 6px;
-        padding: 9px 12px;
-        cursor: pointer;
       }
-      button.secondary {
-        background: #52616b;
+
+      .app-shell {
+        width: min(100%, 480px);
+        margin: 0 auto;
+        min-height: 100vh;
+        background: var(--page);
+        padding: 20px 20px 96px;
       }
-      table {
-        width: 100%;
-        border-collapse: collapse;
-        background: #ffffff;
-      }
-      th,
-      td {
-        border-bottom: 1px solid #e7ebee;
-        padding: 10px;
-        text-align: left;
-        vertical-align: top;
-        font-size: 14px;
-      }
-      th {
-        color: #52616b;
-        font-weight: 600;
-      }
-      .actions {
+
+      .app-header,
+      .section-head,
+      .top-row,
+      .report-meta,
+      .pill-row,
+      .bottom-actions {
         display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-        margin-top: 10px;
-      }
-      .status {
-        color: #52616b;
-        font-size: 13px;
-        margin-top: 8px;
-      }
-      .trend-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-        gap: 12px;
-      }
-      .trend-card,
-      .idea-card {
-        border: 1px solid #dde2e6;
-        border-radius: 8px;
-        padding: 12px;
-        background: #fbfcfc;
-        cursor: pointer;
-      }
-      .trend-title,
-      .idea-title {
-        font-weight: 700;
-        margin-bottom: 8px;
-      }
-      .metric {
-        color: #52616b;
-        font-size: 13px;
-        line-height: 1.6;
-      }
-      .detail {
-        border-top: 1px solid #e7ebee;
-        margin-top: 12px;
-        padding-top: 12px;
-        color: #172026;
-        font-size: 14px;
-        line-height: 1.7;
-      }
-      pre.report {
-        white-space: pre-wrap;
-        word-break: break-word;
-        background: #fbfcfc;
-        border: 1px solid #dde2e6;
-        border-radius: 8px;
-        padding: 12px;
-        max-height: 520px;
-        overflow: auto;
-      }
-      .latest-report {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 16px;
         align-items: center;
       }
-      .activity-list {
-        display: grid;
-        gap: 8px;
+
+      .app-header {
+        justify-content: space-between;
+        padding: 6px 0 20px;
       }
-      .activity-item {
-        display: flex;
+
+      .brand-name {
+        font-size: 18px;
+        font-weight: 700;
+        letter-spacing: 0;
+      }
+
+      .hero-title {
+        margin: 0;
+        font-size: 28px;
+        line-height: 1.22;
+        font-weight: 700;
+      }
+
+      .hero-subtitle,
+      .muted,
+      .meta,
+      .empty {
+        color: var(--muted);
+      }
+
+      .hero-subtitle {
+        margin: 6px 0 0;
+        font-size: 14px;
+      }
+
+      .icon-button {
+        width: 40px;
+        height: 40px;
+        display: inline-grid;
+        place-items: center;
+        border-radius: 50%;
+        color: var(--text);
+        background: var(--page);
+        border: 1px solid var(--line);
+        box-shadow: var(--shadow);
+        cursor: pointer;
+      }
+
+      .icon-button:active,
+      .btn:active,
+      .pill:active {
+        opacity: 0.85;
+      }
+
+      .hero-card,
+      .panel,
+      .detail-card,
+      .report-card {
+        border-radius: 20px;
+        background: var(--page);
+        box-shadow: var(--shadow);
+      }
+
+      .hero-card {
+        padding: 20px;
+        margin-bottom: 24px;
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 10px;
+        margin-top: 18px;
+      }
+
+      .stat-card {
+        min-height: 82px;
+        padding: 12px 10px;
+        border-radius: 16px;
+        border: 1px solid var(--line);
+        background: var(--page);
+      }
+
+      .stat-label {
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .stat-value {
+        margin-top: 8px;
+        font-size: 22px;
+        font-weight: 700;
+      }
+
+      .stat-delta {
+        margin-top: 2px;
+        color: var(--brand);
+        font-size: 12px;
+      }
+
+      .panel {
+        padding: 18px;
+        margin-bottom: 24px;
+      }
+
+      .section-head {
         justify-content: space-between;
         gap: 12px;
-        border-bottom: 1px solid #e7ebee;
-        padding: 8px 0;
-        font-size: 14px;
+        margin-bottom: 12px;
+      }
+
+      h2 {
+        margin: 0;
+        font-size: 20px;
+        line-height: 1.3;
+        font-weight: 700;
+      }
+
+      .text-link {
+        padding: 0;
+        color: var(--text);
+        background: transparent;
+        font-size: 13px;
+        cursor: pointer;
+      }
+
+      .text-link::after {
+        content: "  >";
+        color: var(--brand);
+      }
+
+      .list {
+        display: grid;
+        gap: 0;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        overflow: hidden;
+      }
+
+      .trend-row,
+      .activity-item,
+      .content-item {
+        background: var(--page);
+        border-bottom: 1px solid var(--line);
+      }
+
+      .trend-row:last-child,
+      .activity-item:last-child,
+      .content-item:last-child {
+        border-bottom: 0;
+      }
+
+      .trend-row {
+        display: grid;
+        grid-template-columns: 1fr auto auto;
+        align-items: center;
+        gap: 12px;
+        padding: 14px;
+        cursor: pointer;
+        transition: transform 160ms ease, box-shadow 160ms ease;
+      }
+
+      .trend-row:hover,
+      .idea-card:hover,
+      .content-item:hover,
+      .report-card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-hover);
+      }
+
+      .trend-topic,
+      .idea-title,
+      .content-title {
+        font-size: 15px;
+        font-weight: 650;
+      }
+
+      .trend-score,
+      .priority-pill {
+        color: var(--brand);
+        font-weight: 700;
+      }
+
+      .trend-arrow {
+        color: var(--brand);
+        font-size: 18px;
+      }
+
+      .lifecycle {
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .idea-list {
+        display: grid;
+        gap: 12px;
+      }
+
+      .idea-card {
+        padding: 16px;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: var(--page);
+        cursor: pointer;
+        transition: transform 160ms ease, box-shadow 160ms ease;
+      }
+
+      .idea-card .top-row {
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .idea-reason {
+        margin: 10px 0 0;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.55;
+      }
+
+      .tag-row,
+      .pill-row {
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .tag-row {
+        display: flex;
+        margin-top: 12px;
+      }
+
+      .tag,
+      .pill,
+      .priority-pill {
+        display: inline-flex;
+        align-items: center;
+        min-height: 26px;
+        padding: 5px 10px;
+        border-radius: 999px;
+        font-size: 12px;
+        line-height: 1;
+      }
+
+      .tag,
+      .pill {
+        color: var(--text);
+        background: var(--soft);
+      }
+
+      .priority-pill {
+        background: rgba(230, 0, 126, 0.09);
+      }
+
+      .report-card {
+        padding: 16px;
+        border: 1px solid var(--line);
+      }
+
+      .report-meta {
+        justify-content: space-between;
+        gap: 12px;
+        margin-top: 10px;
+      }
+
+      .report-preview {
+        margin-top: 14px;
+        padding-top: 14px;
+        border-top: 1px solid var(--line);
+        max-height: 360px;
+        overflow: auto;
+        white-space: pre-wrap;
+        word-break: break-word;
+        color: var(--text);
+        font-size: 13px;
+        line-height: 1.7;
+      }
+
+      .quick-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .btn {
+        min-height: 46px;
+        padding: 0 16px;
+        border-radius: 999px;
+        font-weight: 650;
+        cursor: pointer;
+      }
+
+      .btn-primary {
+        color: #ffffff;
+        background: var(--text);
+      }
+
+      .btn-primary::after {
+        content: "";
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        margin-left: 10px;
+        border-radius: 50%;
+        background: var(--brand);
+      }
+
+      .btn-secondary {
+        color: var(--text);
+        background: var(--page);
+        border: 1px solid var(--line);
+      }
+
+      .activity-list {
+        display: grid;
+        gap: 0;
+      }
+
+      .activity-item {
+        display: grid;
+        grid-template-columns: 54px 1fr auto;
+        gap: 12px;
+        align-items: center;
+        padding: 12px 0;
+      }
+
+      .activity-dot,
+      .status-dot {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--brand);
+      }
+
+      .content-toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 14px;
+      }
+
+      .toolbar-actions {
+        display: flex;
+        gap: 8px;
+      }
+
+      .filters {
+        display: flex;
+        gap: 8px;
+        overflow-x: auto;
+        padding: 0 0 14px;
+      }
+
+      .pill {
+        white-space: nowrap;
+        border: 1px solid var(--line);
+        cursor: pointer;
+      }
+
+      .pill.active {
+        color: #ffffff;
+        background: var(--text);
+        border-color: var(--text);
+      }
+
+      .content-list {
+        display: grid;
+        gap: 0;
+      }
+
+      .content-item {
+        display: grid;
+        grid-template-columns: 74px 1fr auto;
+        gap: 12px;
+        align-items: center;
+        padding: 14px 0;
+      }
+
+      .cover {
+        width: 74px;
+        height: 74px;
+        border-radius: 14px;
+        background: linear-gradient(135deg, #ededed, #dcdcdc);
+      }
+
+      .content-title {
+        margin: 4px 0 6px;
+        line-height: 1.45;
+      }
+
+      .content-meta {
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .analyze-btn {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: var(--text);
+        color: #ffffff;
+        cursor: pointer;
+      }
+
+      textarea {
+        width: 100%;
+        min-height: 160px;
+        padding: 14px;
+        color: var(--text);
+        background: var(--soft);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        resize: vertical;
+      }
+
+      .detail-card {
+        display: none;
+        padding: 16px;
+        margin-top: 14px;
+        border: 1px solid var(--line);
+      }
+
+      .detail-card.visible {
+        display: block;
+      }
+
+      .detail-nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 14px;
+      }
+
+      .detail-title {
+        margin: 0 0 12px;
+        font-size: 20px;
+        line-height: 1.35;
+        font-weight: 700;
+      }
+
+      .detail-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        margin-top: 12px;
+      }
+
+      .detail-metric {
+        padding: 12px;
+        border-radius: 16px;
+        background: var(--soft);
+      }
+
+      .detail-metric strong {
+        display: block;
+        margin-top: 4px;
+        color: var(--brand);
+        font-size: 18px;
+      }
+
+      .insight-card,
+      .outline-card {
+        margin-top: 14px;
+        padding: 14px;
+        border-radius: 16px;
+        background: var(--page);
+        border: 1px solid var(--line);
+      }
+
+      .fixed-detail-actions {
+        position: sticky;
+        bottom: 78px;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 8px;
+        margin-top: 16px;
+        padding: 10px;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.9);
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(16px);
+      }
+
+      .fab {
+        position: fixed;
+        right: max(20px, calc((100vw - 480px) / 2 + 20px));
+        bottom: 92px;
+        z-index: 8;
+        width: 54px;
+        height: 54px;
+        border-radius: 50%;
+        color: #ffffff;
+        background: var(--text);
+        box-shadow: var(--shadow-hover);
+        font-size: 28px;
+        cursor: pointer;
+      }
+
+      .bottom-nav {
+        position: fixed;
+        left: 50%;
+        bottom: 16px;
+        z-index: 10;
+        width: min(calc(100% - 32px), 448px);
+        transform: translateX(-50%);
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        padding: 10px 8px;
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.92);
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(16px);
+      }
+
+      .nav-item {
+        position: relative;
+        color: var(--muted);
+        text-align: center;
+        text-decoration: none;
+        font-size: 11px;
+      }
+
+      .nav-icon {
+        display: block;
+        margin-bottom: 4px;
+        font-size: 18px;
+      }
+
+      .nav-item.active {
+        color: var(--text);
+      }
+
+      .nav-item.active::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        bottom: -5px;
+        width: 5px;
+        height: 5px;
+        transform: translateX(-50%);
+        border-radius: 50%;
+        background: var(--brand);
+      }
+
+      .empty {
+        padding: 18px 0;
+        font-size: 13px;
+      }
+
+      .skeleton {
+        min-height: 18px;
+        border-radius: 999px;
+        background: linear-gradient(90deg, #eeeeee, #f7f7f7, #eeeeee);
+        background-size: 200% 100%;
+        animation: shimmer 1.4s infinite linear;
+      }
+
+      @keyframes shimmer {
+        to {
+          background-position: -200% 0;
+        }
+      }
+
+      @media (min-width: 820px) {
+        .app-shell {
+          width: min(100%, 760px);
+        }
+
+        .stats-grid {
+          grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
+
+        .quick-grid {
+          grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
       }
     </style>
   </head>
   <body>
-    <header>
-      <h1>INSight OS Beta</h1>
-      <div>Good Morning, Michelle</div>
-      <div class="kicker">Today</div>
-    </header>
-    <main>
-      <section class="dashboard-grid" id="stats"></section>
+    <main class="app-shell">
+      <header class="app-header">
+        <div>
+          <div class="brand-name">INSight OS</div>
+          <p class="hero-subtitle">Good morning, Michelle</p>
+        </div>
+        <button class="icon-button" aria-label="More">⋯</button>
+      </header>
 
-      <section class="panel">
-        <h2>Today's Trends</h2>
+      <section class="hero-card" id="home">
+        <h1 class="hero-title">Today</h1>
+        <p class="hero-subtitle">今天最应该关注的内容信号</p>
+        <div class="stats-grid" id="stats">
+          <div class="skeleton"></div>
+          <div class="skeleton"></div>
+          <div class="skeleton"></div>
+          <div class="skeleton"></div>
+        </div>
+      </section>
+
+      <section class="panel" id="trendsSection">
+        <div class="section-head">
+          <h2>Today's Trends</h2>
+          <button class="text-link" onclick="generateTrends()">生成趋势</button>
+        </div>
         <div id="trendStatus" class="status"></div>
-        <div id="trends" class="trend-grid"></div>
-        <div id="trendDetail" class="detail" style="display: none"></div>
+        <div id="trends" class="list"></div>
+        <div id="trendDetail" class="detail-card"></div>
       </section>
 
-      <section class="panel">
-        <h2>Today's Ideas</h2>
+      <section class="panel" id="ideasSection">
+        <div class="section-head">
+          <h2>Today's Ideas</h2>
+          <button class="text-link" onclick="generateIdeas()">生成选题</button>
+        </div>
         <div id="ideaStatus" class="status"></div>
-        <div id="ideas" class="trend-grid"></div>
-        <div id="ideaDetail" class="detail" style="display: none"></div>
+        <div id="ideas" class="idea-list"></div>
+        <div id="ideaDetail" class="detail-card"></div>
+      </section>
+
+      <section class="panel" id="reportsSection">
+        <div class="section-head">
+          <h2>Latest Weekly Report</h2>
+          <button class="text-link" onclick="generateReport()">生成周报</button>
+        </div>
+        <div id="latestReport" class="report-card"></div>
+        <pre id="report" class="report-preview"></pre>
       </section>
 
       <section class="panel">
-        <h2>Latest Weekly Report</h2>
-        <div id="latestReport" class="latest-report"></div>
-        <pre id="report" class="report"></pre>
+        <div class="section-head">
+          <h2>Statistics</h2>
+          <span class="meta">Database</span>
+        </div>
+        <div id="statsMirror" class="stats-grid"></div>
       </section>
 
       <section class="panel">
-        <h2>Statistics</h2>
-        <div id="statsMirror" class="dashboard-grid"></div>
-      </section>
-
-      <section class="panel">
-        <h2>Quick Actions</h2>
-        <div class="actions">
-          <button onclick="document.getElementById('payload').focus()">Import Content</button>
-          <button onclick="generateTrends()">Generate Trends</button>
-          <button onclick="generateIdeas()">Generate Ideas</button>
-          <button onclick="generateReport()">Generate Report</button>
-          <button class="secondary" onclick="loadDashboard()">Refresh Dashboard</button>
+        <div class="section-head">
+          <h2>Quick Actions</h2>
+          <button class="text-link" onclick="loadDashboard()">刷新</button>
+        </div>
+        <div class="quick-grid">
+          <button class="btn btn-secondary" onclick="document.getElementById('payload').focus()">导入内容</button>
+          <button class="btn btn-primary" onclick="generateTrends()">生成趋势</button>
+          <button class="btn btn-primary" onclick="generateIdeas()">生成选题</button>
+          <button class="btn btn-primary" onclick="generateReport()">生成周报</button>
         </div>
         <div id="actionStatus" class="status"></div>
       </section>
 
       <section class="panel">
-        <h2>Recent Activity</h2>
+        <div class="section-head">
+          <h2>Recent Activity</h2>
+          <span class="meta">Pilot log</span>
+        </div>
         <div id="activity" class="activity-list"></div>
       </section>
 
-      <section class="panel">
-        <h2>Import Content</h2>
+      <section class="panel" id="contentSection">
+        <div class="content-toolbar">
+          <h2>内容库</h2>
+          <div class="toolbar-actions">
+            <button class="icon-button" aria-label="Search">⌕</button>
+            <button class="icon-button" aria-label="More">⋯</button>
+          </div>
+        </div>
+        <div class="filters">
+          <button class="pill active" data-filter="all" onclick="setContentFilter('all')">全部</button>
+          <button class="pill" data-filter="wechat" onclick="setContentFilter('wechat')">公众号</button>
+          <button class="pill" data-filter="xiaohongshu" onclick="setContentFilter('xiaohongshu')">小红书</button>
+          <button class="pill" data-filter="news" onclick="setContentFilter('news')">新闻</button>
+          <button class="pill" data-filter="event" onclick="setContentFilter('event')">活动</button>
+        </div>
+        <div id="contentList" class="content-list"></div>
+      </section>
+
+      <section class="panel" id="importSection">
+        <div class="section-head">
+          <h2>Import Content</h2>
+          <button class="text-link" onclick="importContent()">导入</button>
+        </div>
         <textarea id="payload">{
   "items": [
     {
@@ -237,38 +754,34 @@
     }
   ]
 }</textarea>
-        <div class="actions">
-          <button onclick="importContent()">Import</button>
-          <button class="secondary" onclick="loadContent()">Refresh</button>
+        <div class="tag-row">
+          <button class="btn btn-primary" onclick="importContent()">导入内容</button>
+          <button class="btn btn-secondary" onclick="loadContent()">刷新内容库</button>
         </div>
         <div id="status" class="status"></div>
       </section>
-
-      <section class="panel">
-        <h2>Content Library</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>Title</th>
-              <th>Source</th>
-              <th>Status</th>
-              <th>Tags</th>
-              <th>Fit</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody id="rows"></tbody>
-        </table>
-      </section>
     </main>
+
+    <button class="fab" onclick="document.getElementById('payload').focus()" aria-label="Add content">+</button>
+
+    <nav class="bottom-nav" aria-label="Main navigation">
+      <a href="#home" class="nav-item active"><span class="nav-icon">⌂</span>首页</a>
+      <a href="#contentSection" class="nav-item"><span class="nav-icon">▣</span>内容</a>
+      <a href="#trendsSection" class="nav-item"><span class="nav-icon">↗</span>趋势</a>
+      <a href="#ideasSection" class="nav-item"><span class="nav-icon">✦</span>选题</a>
+      <a href="#reportsSection" class="nav-item"><span class="nav-icon">◎</span>我的</a>
+    </nav>
+
     <script>
       const API = "http://localhost:8000";
+      let contentItems = [];
+      let activeContentFilter = "all";
 
       async function loadDashboard() {
         const start = performance.now();
         const res = await fetch(`${API}/dashboard`);
         const data = await res.json();
-        renderStats(data.stats);
+        renderStats(data.stats || { contents: 0, trends: 0, ideas: 0, reports: 0 });
         renderDashboardTrends(data.top_trends || []);
         renderDashboardIdeas(data.top_ideas || []);
         renderLatestReport(data.latest_report);
@@ -279,16 +792,17 @@
 
       function renderStats(stats) {
         const cards = [
-          ["Contents", stats.contents],
-          ["Trends", stats.trends],
-          ["Ideas", stats.ideas],
-          ["Reports", stats.reports],
+          ["Contents", stats.contents, "+12%"],
+          ["Trends", stats.trends, "+5%"],
+          ["Ideas", stats.ideas, "+18%"],
+          ["Reports", stats.reports, "+2%"],
         ]
           .map(
-            ([label, value]) => `
+            ([label, value, delta]) => `
               <div class="stat-card">
                 <div class="stat-label">${label}</div>
                 <div class="stat-value">${value}</div>
+                <div class="stat-delta">${delta}</div>
               </div>
             `
           )
@@ -298,13 +812,22 @@
       }
 
       function renderDashboardTrends(items) {
-        document.getElementById("trends").innerHTML = items
+        const container = document.getElementById("trends");
+        if (!items.length) {
+          container.innerHTML = '<div class="empty">暂无趋势。请先导入并分析内容，再生成趋势。</div>';
+          return;
+        }
+        container.innerHTML = items
+          .slice(0, 5)
           .map(
             (item) => `
-              <div class="trend-card" onclick="loadTrendDetail('${item.id}')">
-                <div class="trend-title">🔥 ${item.topic}</div>
-                <div class="metric">Score: ${item.trend_score}</div>
-                <div class="metric">${item.lifecycle}</div>
+              <div class="trend-row" onclick="loadTrendDetail('${item.id}')">
+                <div>
+                  <div class="trend-topic">${item.topic}</div>
+                  <div class="lifecycle">${item.lifecycle}</div>
+                </div>
+                <div class="trend-score">${item.trend_score}</div>
+                <div class="trend-arrow">↗</div>
               </div>
             `
           )
@@ -312,13 +835,25 @@
       }
 
       function renderDashboardIdeas(items) {
-        document.getElementById("ideas").innerHTML = items
+        const container = document.getElementById("ideas");
+        if (!items.length) {
+          container.innerHTML = '<div class="empty">暂无选题。请先生成趋势，再生成选题。</div>';
+          return;
+        }
+        container.innerHTML = items
+          .slice(0, 8)
           .map(
             (item) => `
               <div class="idea-card" onclick="loadIdeaDetail('${item.id}')">
-                <div class="idea-title">★★★★★ ${item.title}</div>
-                <div class="metric">Priority: ${item.priority}</div>
-                <div class="metric">Project: ${item.project}</div>
+                <div class="top-row">
+                  <div class="idea-title">${item.title}</div>
+                  <span class="priority-pill">优先级 ${item.priority}</span>
+                </div>
+                <p class="idea-reason">${truncate(item.recommendation_reason || item.outline || "进入内容会讨论。", 72)}</p>
+                <div class="tag-row">
+                  <span class="tag">${item.project}</span>
+                  <span class="tag">${item.execution_cost}</span>
+                </div>
               </div>
             `
           )
@@ -328,27 +863,42 @@
       function renderLatestReport(report) {
         const container = document.getElementById("latestReport");
         if (!report) {
-          container.innerHTML = '<span class="status">No report yet.</span>';
+          container.innerHTML = '<div class="empty">暂无周报。生成 Trends 和 Ideas 后，可生成 Weekly Report。</div>';
           document.getElementById("report").textContent = "";
           return;
         }
         container.innerHTML = `
-          <div><strong>${report.title}</strong></div>
-          <div class="metric">Generated: ${formatTime(report.created_at)}</div>
-          <div class="metric">Status: ${report.status}</div>
-          <button class="secondary" onclick="loadReportDetail('${report.id}')">View</button>
-          <button class="secondary" onclick="downloadMarkdown('${report.id}')">Download Markdown</button>
+          <div class="top-row">
+            <div>
+              <div class="trend-topic">${report.title}</div>
+              <div class="meta">${report.week_start || ""} - ${report.week_end || ""}</div>
+            </div>
+            <span class="priority-pill">${report.status}</span>
+          </div>
+          <div class="report-meta">
+            <span class="meta">Generated ${formatTime(report.created_at)}</span>
+            <div class="tag-row">
+              <button class="btn btn-secondary" onclick="loadReportDetail('${report.id}')">查看</button>
+              <button class="btn btn-primary" onclick="downloadMarkdown('${report.id}')">导出 Markdown</button>
+            </div>
+          </div>
         `;
         document.getElementById("report").textContent = report.markdown_content || "";
       }
 
       function renderActivity(items) {
-        document.getElementById("activity").innerHTML = items
+        const container = document.getElementById("activity");
+        if (!items.length) {
+          container.innerHTML = '<div class="empty">暂无活动记录。</div>';
+          return;
+        }
+        container.innerHTML = items
           .map(
             (item) => `
               <div class="activity-item">
-                <span>${formatTime(item.time)} · ${item.label}</span>
-                <span>${item.count || ""}</span>
+                <span class="meta">${formatClock(item.time)}</span>
+                <span><span class="activity-dot"></span> ${item.label}</span>
+                <strong>${item.count || ""}</strong>
               </div>
             `
           )
@@ -381,17 +931,41 @@
       async function loadContent() {
         const res = await fetch(`${API}/content?page=1&page_size=50`);
         const data = await res.json();
-        document.getElementById("rows").innerHTML = data.items
+        contentItems = data.items || [];
+        renderContentList();
+      }
+
+      function setContentFilter(filter) {
+        activeContentFilter = filter;
+        document.querySelectorAll(".pill[data-filter]").forEach((button) => {
+          button.classList.toggle("active", button.dataset.filter === filter);
+        });
+        renderContentList();
+      }
+
+      function renderContentList() {
+        const container = document.getElementById("contentList");
+        const filtered = contentItems.filter((item) => {
+          if (activeContentFilter === "all") return true;
+          if (activeContentFilter === "event") return item.content_source === "event";
+          return item.platform === activeContentFilter || item.content_source === activeContentFilter;
+        });
+        if (!filtered.length) {
+          container.innerHTML = '<div class="empty">暂无内容。点击右下角 + 导入第一条内容。</div>';
+          return;
+        }
+        container.innerHTML = filtered
           .map(
             (item) => `
-              <tr>
-                <td>${item.title}</td>
-                <td>${item.source_name || ""}</td>
-                <td>${item.content_status} / ${item.analysis_status}</td>
-                <td>${(item.tags || []).join(", ")}</td>
-                <td>in77 ${item.brand_fit_in77} / in88 ${item.brand_fit_in88}</td>
-                <td><button onclick="analyzeContent('${item.id}')">Analyze</button></td>
-              </tr>
+              <div class="content-item">
+                <div class="cover"></div>
+                <div>
+                  <div class="content-meta">${platformLabel(item.platform || item.content_source)} · ${formatDate(item.published_at)}</div>
+                  <div class="content-title">${item.title}</div>
+                  <div class="content-meta">${item.source_name || ""} · ${item.content_status} ${item.analysis_status === "completed" ? '<span class="status-dot"></span>' : ""}</div>
+                </div>
+                <button class="analyze-btn" onclick="analyzeContent('${item.id}')" aria-label="Analyze">↗</button>
+              </div>
             `
           )
           .join("");
@@ -407,35 +981,33 @@
         await loadDashboard();
       }
 
-      async function loadTrends() {
-        const res = await fetch(`${API}/trends?page=1&page_size=5`);
-        const data = await res.json();
-        document.getElementById("trends").innerHTML = data.items
-          .map(
-            (item) => `
-              <div class="trend-card" onclick="loadTrendDetail('${item.id}')">
-                <div class="trend-title">🔥 ${item.topic}</div>
-                <div class="metric">Trend Score: ${item.trend_score}</div>
-                <div class="metric">Count: ${item.content_count}</div>
-                <div class="metric">Growth: ${formatGrowth(item.growth_rate)}</div>
-                <div class="metric">Lifecycle: ${item.lifecycle}</div>
-              </div>
-            `
-          )
-          .join("");
-      }
-
       async function loadTrendDetail(id) {
         const res = await fetch(`${API}/trends/${id}`);
         const item = await res.json();
         const detail = document.getElementById("trendDetail");
-        detail.style.display = "block";
+        detail.classList.add("visible");
         detail.innerHTML = `
-          <strong>${item.topic}</strong><br />
-          Trend Score: ${item.trend_score} · Lifecycle: ${item.lifecycle} · Growth: ${formatGrowth(item.growth_rate)} · Count: ${item.content_count}<br />
-          Recommended: ${(item.recommended_projects || []).join(", ")}<br />
-          Sources: ${(item.top_competitors || []).join(", ")}<br />
-          Insight: ${item.ai_insight ? item.ai_insight.why_hot : ""}
+          <div class="detail-nav">
+            <button class="icon-button" onclick="hideDetail('trendDetail')">‹</button>
+            <button class="icon-button">⋯</button>
+          </div>
+          <h3 class="detail-title">${item.topic}</h3>
+          <div class="detail-grid">
+            <div class="detail-metric"><span class="meta">Trend Score</span><strong>${item.trend_score}</strong></div>
+            <div class="detail-metric"><span class="meta">Lifecycle</span><strong>${item.lifecycle}</strong></div>
+            <div class="detail-metric"><span class="meta">Growth Rate</span><strong>${formatGrowth(item.growth_rate)}</strong></div>
+            <div class="detail-metric"><span class="meta">Content Count</span><strong>${item.content_count}</strong></div>
+          </div>
+          <div class="insight-card">
+            <strong>AI Insight</strong>
+            <p class="idea-reason">${item.ai_insight ? item.ai_insight.why_hot : "暂无 insight。"}</p>
+          </div>
+          <div class="insight-card">
+            <strong>Related Contents</strong>
+            ${(item.related_content_items || [])
+              .map((content) => `<p class="idea-reason"><span class="status-dot"></span> ${content.title}</p>`)
+              .join("") || '<p class="idea-reason">暂无相关内容。</p>'}
+          </div>
         `;
       }
 
@@ -449,34 +1021,48 @@
         await loadDashboard();
       }
 
-      async function loadIdeas() {
-        const res = await fetch(`${API}/ideas?page=1&page_size=10`);
-        const data = await res.json();
-        document.getElementById("ideas").innerHTML = data.items
-          .map(
-            (item) => `
-              <div class="idea-card" onclick="loadIdeaDetail('${item.id}')">
-                <div class="idea-title">★★★★★ ${item.title}</div>
-                <div class="metric">Project: ${item.project}</div>
-                <div class="metric">Priority: ${item.priority}</div>
-                <div class="metric">Cost: ${item.execution_cost}</div>
-                <div class="metric">Status: ${item.status}</div>
-              </div>
-            `
-          )
-          .join("");
-      }
-
       async function loadIdeaDetail(id) {
         const res = await fetch(`${API}/ideas/${id}`);
         const item = await res.json();
         const detail = document.getElementById("ideaDetail");
-        detail.style.display = "block";
+        detail.classList.add("visible");
         detail.innerHTML = `
-          <strong>${item.title}</strong><br />
-          Project: ${item.project} · Priority: ${item.priority} · Trend: ${item.trend ? item.trend.topic : ""}<br />
-          Reason: ${item.recommendation_reason || ""}<br />
-          Outline:<br />${(item.outline || "").replaceAll("\n", "<br />")}
+          <div class="detail-nav">
+            <button class="icon-button" onclick="hideDetail('ideaDetail')">‹</button>
+            <button class="icon-button">⋯</button>
+          </div>
+          <h3 class="detail-title">${item.title}</h3>
+          <div class="tag-row">
+            <span class="tag">${item.project}</span>
+            <span class="priority-pill">优先级 ${item.priority}</span>
+          </div>
+          <div class="outline-card">
+            <strong>摘要</strong>
+            <p class="idea-reason">${truncate(item.outline || "暂无摘要。", 110)}</p>
+          </div>
+          <div class="outline-card">
+            <strong>推荐理由</strong>
+            <p class="idea-reason">${item.recommendation_reason || "暂无推荐理由。"}</p>
+          </div>
+          <div class="outline-card">
+            <strong>内容大纲</strong>
+            <p class="idea-reason">${(item.outline || "暂无内容大纲。").replaceAll("\n", "<br />")}</p>
+          </div>
+          <div class="outline-card">
+            <strong>关联 Trend</strong>
+            <div class="tag-row"><span class="tag">${item.trend ? item.trend.topic : item.trend_id || "暂无"}</span></div>
+          </div>
+          <div class="outline-card">
+            <strong>参考 Content</strong>
+            ${(item.reference_items || [])
+              .map((content) => `<p class="idea-reason"><span class="status-dot"></span> ${content.title}</p>`)
+              .join("") || '<p class="idea-reason">暂无参考内容。</p>'}
+          </div>
+          <div class="fixed-detail-actions">
+            <button class="btn btn-primary">采用</button>
+            <button class="btn btn-secondary">暂不采用</button>
+            <button class="btn btn-secondary">导出</button>
+          </div>
         `;
       }
 
@@ -498,23 +1084,6 @@
         await loadDashboard();
       }
 
-      async function loadLatestReport() {
-        const res = await fetch(`${API}/reports?page=1&page_size=1`);
-        const data = await res.json();
-        if (!data.items.length) {
-          document.getElementById("actionStatus").textContent = "No report yet.";
-          return;
-        }
-        const report = data.items[0];
-        document.getElementById("actionStatus").textContent = JSON.stringify({
-          id: report.id,
-          status: report.status,
-          week_start: report.week_start,
-          week_end: report.week_end,
-        });
-        document.getElementById("report").textContent = report.markdown_content || "";
-      }
-
       async function loadReportDetail(id) {
         const res = await fetch(`${API}/reports/${id}`);
         const report = await res.json();
@@ -533,10 +1102,39 @@
         URL.revokeObjectURL(url);
       }
 
+      function hideDetail(id) {
+        document.getElementById(id).classList.remove("visible");
+      }
+
+      function truncate(text, length) {
+        if (!text) return "";
+        return text.length > length ? `${text.slice(0, length)}...` : text;
+      }
+
+      function platformLabel(value) {
+        const labels = {
+          wechat: "公众号",
+          xiaohongshu: "小红书",
+          news: "新闻",
+          event: "活动",
+        };
+        return labels[value] || value || "内容";
+      }
+
       function formatGrowth(value) {
         const number = Number(value || 0);
         const prefix = number > 0 ? "+" : "";
         return `${prefix}${Math.round(number * 100)}%`;
+      }
+
+      function formatDate(value) {
+        if (!value) return "";
+        return new Date(value).toLocaleString("zh-CN", { month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false });
+      }
+
+      function formatClock(value) {
+        if (!value) return "";
+        return new Date(value).toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit", hour12: false });
       }
 
       function formatTime(value) {
