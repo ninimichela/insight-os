@@ -7,7 +7,7 @@
     <meta name="theme-color" content="#111111" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-title" content="INSight OS" />
-    <title>INSight OS Beta | Dashboard</title>
+    <title>INSight OS Beta | Home</title>
     <style>
       :root {
         --text: #111111;
@@ -25,7 +25,7 @@
       }
 
       html {
-        scroll-behavior: smooth;
+        scroll-behavior: auto;
       }
 
       body {
@@ -62,6 +62,26 @@
       .bottom-actions {
         display: flex;
         align-items: center;
+      }
+
+      .view {
+        display: none;
+        animation: page-in 180ms ease;
+      }
+
+      .view.active {
+        display: block;
+      }
+
+      @keyframes page-in {
+        from {
+          opacity: 0;
+          transform: translateX(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
       }
 
       .app-header {
@@ -117,6 +137,41 @@
         border: 1px solid var(--line);
         box-shadow: var(--shadow);
         cursor: pointer;
+      }
+
+      .back-button {
+        width: 40px;
+        height: 40px;
+        display: inline-grid;
+        place-items: center;
+        border-radius: 50%;
+        color: var(--text);
+        background: var(--page);
+        border: 1px solid var(--line);
+        box-shadow: var(--shadow);
+        cursor: pointer;
+        font-size: 22px;
+      }
+
+      .page-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 0 0 20px;
+      }
+
+      .page-title {
+        margin: 0;
+        font-size: 24px;
+        line-height: 1.25;
+        font-weight: 700;
+      }
+
+      .page-kicker {
+        margin: 4px 0 0;
+        color: var(--muted);
+        font-size: 13px;
       }
 
       .icon-button:active,
@@ -486,6 +541,58 @@
         resize: vertical;
       }
 
+      .form-grid {
+        display: grid;
+        gap: 14px;
+      }
+
+      .field-label {
+        display: block;
+        margin-bottom: 8px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      input {
+        width: 100%;
+        min-height: 46px;
+        padding: 0 14px;
+        color: var(--text);
+        background: var(--soft);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+      }
+
+      .source-options {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .source-option input {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .source-option span {
+        display: inline-flex;
+        align-items: center;
+        min-height: 34px;
+        padding: 8px 12px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        color: var(--text);
+        background: var(--page);
+        font-size: 13px;
+      }
+
+      .source-option input:checked + span {
+        color: #ffffff;
+        background: var(--text);
+        border-color: var(--text);
+      }
+
       .detail-card {
         display: none;
         padding: 16px;
@@ -588,10 +695,13 @@
 
       .nav-item {
         position: relative;
+        padding: 0;
         color: var(--muted);
         text-align: center;
         text-decoration: none;
         font-size: 11px;
+        background: transparent;
+        cursor: pointer;
       }
 
       .nav-icon {
@@ -661,154 +771,336 @@
   </head>
   <body>
     <main class="app-shell">
-      <header class="app-header">
-        <div class="brand-lockup">
-          <img class="brand-logo" src="assets/insight-logo-horizontal.png" alt="INSight OS" />
-          <p class="hero-subtitle">Good morning, nini</p>
-        </div>
-        <button class="icon-button" aria-label="More">⋯</button>
-      </header>
-
-      <section class="hero-card" id="home">
-        <h1 class="hero-title">Today</h1>
-        <p class="hero-subtitle">今天最应该关注的内容信号</p>
-        <div class="stats-grid" id="stats">
-          <div class="skeleton"></div>
-          <div class="skeleton"></div>
-          <div class="skeleton"></div>
-          <div class="skeleton"></div>
-        </div>
-      </section>
-
-      <section class="panel" id="trendsSection">
-        <div class="section-head">
-          <h2>Today's Trends</h2>
-          <button class="text-link" onclick="generateTrends()">生成趋势</button>
-        </div>
-        <div id="trendStatus" class="status"></div>
-        <div id="trends" class="list"></div>
-        <div id="trendDetail" class="detail-card"></div>
-      </section>
-
-      <section class="panel" id="ideasSection">
-        <div class="section-head">
-          <h2>Today's Ideas</h2>
-          <button class="text-link" onclick="generateIdeas()">生成选题</button>
-        </div>
-        <div id="ideaStatus" class="status"></div>
-        <div id="ideas" class="idea-list"></div>
-        <div id="ideaDetail" class="detail-card"></div>
-      </section>
-
-      <section class="panel" id="reportsSection">
-        <div class="section-head">
-          <h2>Latest Weekly Report</h2>
-          <button class="text-link" onclick="generateReport()">生成周报</button>
-        </div>
-        <div id="latestReport" class="report-card"></div>
-        <pre id="report" class="report-preview"></pre>
-      </section>
-
-      <section class="panel">
-        <div class="section-head">
-          <h2>Statistics</h2>
-          <span class="meta">Database</span>
-        </div>
-        <div id="statsMirror" class="stats-grid"></div>
-      </section>
-
-      <section class="panel">
-        <div class="section-head">
-          <h2>Quick Actions</h2>
-          <button class="text-link" onclick="loadDashboard()">刷新</button>
-        </div>
-        <div class="quick-grid">
-          <button class="btn btn-secondary" onclick="document.getElementById('payload').focus()">导入内容</button>
-          <button class="btn btn-primary" onclick="generateTrends()">生成趋势</button>
-          <button class="btn btn-primary" onclick="generateIdeas()">生成选题</button>
-          <button class="btn btn-primary" onclick="generateReport()">生成周报</button>
-        </div>
-        <div id="actionStatus" class="status"></div>
-      </section>
-
-      <section class="panel">
-        <div class="section-head">
-          <h2>Recent Activity</h2>
-          <span class="meta">Pilot log</span>
-        </div>
-        <div id="activity" class="activity-list"></div>
-      </section>
-
-      <section class="panel" id="contentSection">
-        <div class="content-toolbar">
-          <h2>内容库</h2>
-          <div class="toolbar-actions">
-            <button class="icon-button" aria-label="Search">⌕</button>
-            <button class="icon-button" aria-label="More">⋯</button>
+      <section class="view active" id="view-home">
+        <header class="app-header">
+          <div class="brand-lockup">
+            <img class="brand-logo" src="assets/insight-logo-horizontal.png" alt="INSight OS" />
+            <p class="hero-subtitle">Good morning, nini</p>
           </div>
-        </div>
-        <div class="filters">
-          <button class="pill active" data-filter="all" onclick="setContentFilter('all')">全部</button>
-          <button class="pill" data-filter="wechat" onclick="setContentFilter('wechat')">公众号</button>
-          <button class="pill" data-filter="xiaohongshu" onclick="setContentFilter('xiaohongshu')">小红书</button>
-          <button class="pill" data-filter="news" onclick="setContentFilter('news')">新闻</button>
-          <button class="pill" data-filter="event" onclick="setContentFilter('event')">活动</button>
-        </div>
-        <div id="contentList" class="content-list"></div>
+          <button class="icon-button" aria-label="More" onclick="navigate('profile')">⋯</button>
+        </header>
+
+        <section class="hero-card">
+          <h1 class="hero-title">Home</h1>
+          <p class="hero-subtitle">今天最应该关注的内容信号</p>
+          <div class="stats-grid" id="homeStats">
+            <div class="skeleton"></div>
+            <div class="skeleton"></div>
+            <div class="skeleton"></div>
+            <div class="skeleton"></div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="section-head">
+            <h2>Today's Trends</h2>
+            <button class="text-link" onclick="navigate('trends')">查看全部</button>
+          </div>
+          <div id="homeTrends" class="list"></div>
+        </section>
+
+        <section class="panel">
+          <div class="section-head">
+            <h2>Today's Ideas</h2>
+            <button class="text-link" onclick="navigate('ideas')">查看全部</button>
+          </div>
+          <div id="homeIdeas" class="idea-list"></div>
+        </section>
+
+        <section class="panel">
+          <div class="section-head">
+            <h2>Latest Weekly Report</h2>
+            <button class="text-link" onclick="navigate('reports')">查看全部</button>
+          </div>
+          <div id="latestReport" class="report-card"></div>
+        </section>
+
+        <section class="panel">
+          <div class="section-head">
+            <h2>Quick Actions</h2>
+            <button class="text-link" onclick="refreshAll()">刷新</button>
+          </div>
+          <div class="quick-grid">
+            <button class="btn btn-secondary" onclick="navigate('import')">Import Content</button>
+            <button class="btn btn-primary" onclick="openGenerateTrends()">Generate Trends</button>
+            <button class="btn btn-primary" onclick="openGenerateIdeas()">Generate Ideas</button>
+            <button class="btn btn-primary" onclick="openGenerateReport()">Generate Report</button>
+          </div>
+          <div id="actionStatus" class="status"></div>
+        </section>
+
+        <section class="panel">
+          <div class="section-head">
+            <h2>Recent Activity</h2>
+            <span class="meta">Pilot log</span>
+          </div>
+          <div id="activity" class="activity-list"></div>
+        </section>
       </section>
 
-      <section class="panel" id="importSection">
-        <div class="section-head">
-          <h2>Import Content</h2>
-          <button class="text-link" onclick="importContent()">导入</button>
+      <section class="view" id="view-import">
+        <div class="page-header">
+          <button class="back-button" onclick="goBack()" aria-label="Back">‹</button>
+          <div>
+            <h1 class="page-title">Import Content</h1>
+            <p class="page-kicker">导入一条内容后返回 Home</p>
+          </div>
+          <button class="icon-button" aria-label="More">⋯</button>
         </div>
-        <textarea id="payload">{
-  "items": [
-    {
-      "title": "北京夏日室内漫游指南",
-      "platform": "wechat",
-      "source_name": "北京LOOK",
-      "content_source": "article",
-      "url": "https://example.com/article-alpha",
-      "published_at": "2026-07-02T10:00:00",
-      "raw_text": "王府井 科技 动漫 高达 室内路线 商场 周末"
-    }
-  ]
-}</textarea>
-        <div class="tag-row">
-          <button class="btn btn-primary" onclick="importContent()">导入内容</button>
-          <button class="btn btn-secondary" onclick="loadContent()">刷新内容库</button>
+        <section class="panel">
+          <div class="form-grid">
+            <div>
+              <span class="field-label">来源</span>
+              <div class="source-options">
+                <label class="source-option"><input type="radio" name="sourceType" value="wechat" checked /><span>微信公众号</span></label>
+                <label class="source-option"><input type="radio" name="sourceType" value="xiaohongshu" /><span>小红书</span></label>
+                <label class="source-option"><input type="radio" name="sourceType" value="news" /><span>新闻</span></label>
+                <label class="source-option"><input type="radio" name="sourceType" value="webpage" /><span>网页</span></label>
+                <label class="source-option"><input type="radio" name="sourceType" value="manual" /><span>手动输入</span></label>
+              </div>
+            </div>
+            <label>
+              <span class="field-label">标题</span>
+              <input id="importTitle" placeholder="例如：北京夏日室内漫游指南" />
+            </label>
+            <label>
+              <span class="field-label">来源名称</span>
+              <input id="importSourceName" placeholder="例如：北京LOOK" />
+            </label>
+            <label>
+              <span class="field-label">URL</span>
+              <input id="importUrl" placeholder="https://example.com/article" />
+            </label>
+            <label>
+              <span class="field-label">正文</span>
+              <textarea id="importRawText" placeholder="粘贴正文、笔记内容或要分析的内容摘要"></textarea>
+            </label>
+            <button class="btn btn-primary" onclick="importContent()">Submit</button>
+            <div id="importStatus" class="status"></div>
+          </div>
+        </section>
+      </section>
+
+      <section class="view" id="view-content">
+        <div class="page-header">
+          <button class="back-button" onclick="goBack()" aria-label="Back">‹</button>
+          <div>
+            <h1 class="page-title">内容库</h1>
+            <p class="page-kicker">导入、分析和筛选内容</p>
+          </div>
+          <button class="icon-button" onclick="navigate('import')" aria-label="Add">+</button>
         </div>
-        <div id="status" class="status"></div>
+        <section class="panel">
+          <div class="content-toolbar">
+            <h2>Content Library</h2>
+            <div class="toolbar-actions">
+              <button class="icon-button" aria-label="Search">⌕</button>
+              <button class="icon-button" aria-label="More">⋯</button>
+            </div>
+          </div>
+          <div class="filters">
+            <button class="pill active" data-filter="all" onclick="setContentFilter('all')">全部</button>
+            <button class="pill" data-filter="wechat" onclick="setContentFilter('wechat')">公众号</button>
+            <button class="pill" data-filter="xiaohongshu" onclick="setContentFilter('xiaohongshu')">小红书</button>
+            <button class="pill" data-filter="news" onclick="setContentFilter('news')">新闻</button>
+            <button class="pill" data-filter="event" onclick="setContentFilter('event')">活动</button>
+          </div>
+          <div id="contentList" class="content-list"></div>
+        </section>
+      </section>
+
+      <section class="view" id="view-trends">
+        <div class="page-header">
+          <button class="back-button" onclick="goBack()" aria-label="Back">‹</button>
+          <div>
+            <h1 class="page-title">Trends</h1>
+            <p class="page-kicker">从已分析内容生成热点</p>
+          </div>
+          <button class="icon-button" aria-label="More">⋯</button>
+        </div>
+        <section class="panel">
+          <div class="section-head">
+            <h2>Trend Engine</h2>
+            <button class="text-link" onclick="generateTrends()">Generate</button>
+          </div>
+          <div id="trendStatus" class="status"></div>
+          <div id="trendsList" class="list"></div>
+        </section>
+      </section>
+
+      <section class="view" id="view-trend-detail">
+        <div class="page-header">
+          <button class="back-button" onclick="navigate('trends')" aria-label="Back">‹</button>
+          <div>
+            <h1 class="page-title">Trend Detail</h1>
+            <p class="page-kicker">热点来源与解释</p>
+          </div>
+          <button class="icon-button" aria-label="More">⋯</button>
+        </div>
+        <section class="detail-card visible" id="trendDetailContent"></section>
+      </section>
+
+      <section class="view" id="view-ideas">
+        <div class="page-header">
+          <button class="back-button" onclick="goBack()" aria-label="Back">‹</button>
+          <div>
+            <h1 class="page-title">Ideas</h1>
+            <p class="page-kicker">为 in77 / in88 生成可讨论选题</p>
+          </div>
+          <button class="icon-button" aria-label="More">⋯</button>
+        </div>
+        <section class="panel">
+          <div class="section-head">
+            <h2>Idea Engine</h2>
+            <button class="text-link" onclick="generateIdeas()">Generate</button>
+          </div>
+          <div id="ideaStatus" class="status"></div>
+          <div id="ideasList" class="idea-list"></div>
+        </section>
+      </section>
+
+      <section class="view" id="view-idea-detail">
+        <div class="page-header">
+          <button class="back-button" onclick="navigate('ideas')" aria-label="Back">‹</button>
+          <div>
+            <h1 class="page-title">Idea Detail</h1>
+            <p class="page-kicker">选题依据、趋势和参考内容</p>
+          </div>
+          <button class="icon-button" aria-label="More">⋯</button>
+        </div>
+        <section class="detail-card visible" id="ideaDetailContent"></section>
+      </section>
+
+      <section class="view" id="view-reports">
+        <div class="page-header">
+          <button class="back-button" onclick="goBack()" aria-label="Back">‹</button>
+          <div>
+            <h1 class="page-title">Weekly Report</h1>
+            <p class="page-kicker">生成并查看 Markdown 周报</p>
+          </div>
+          <button class="icon-button" aria-label="More">⋯</button>
+        </div>
+        <section class="panel">
+          <div class="section-head">
+            <h2>Reports</h2>
+            <button class="text-link" onclick="generateReport()">Generate</button>
+          </div>
+          <div id="reportStatus" class="status"></div>
+          <div id="reportsList" class="idea-list"></div>
+        </section>
+      </section>
+
+      <section class="view" id="view-report-detail">
+        <div class="page-header">
+          <button class="back-button" onclick="navigate('reports')" aria-label="Back">‹</button>
+          <div>
+            <h1 class="page-title">Report Detail</h1>
+            <p class="page-kicker">Markdown 周报</p>
+          </div>
+          <button class="icon-button" id="reportExportButton" aria-label="Export">↓</button>
+        </div>
+        <section class="report-card">
+          <pre id="reportDetailContent" class="report-preview"></pre>
+        </section>
+      </section>
+
+      <section class="view" id="view-profile">
+        <div class="page-header">
+          <button class="back-button" onclick="goBack()" aria-label="Back">‹</button>
+          <div>
+            <h1 class="page-title">Profile</h1>
+            <p class="page-kicker">Pilot workspace</p>
+          </div>
+          <button class="icon-button" aria-label="More">⋯</button>
+        </div>
+        <section class="panel">
+          <h2>INSight OS</h2>
+          <p class="idea-reason">AI Content Operating System for Commercial Real Estate.</p>
+        </section>
       </section>
     </main>
 
-    <button class="fab" onclick="document.getElementById('payload').focus()" aria-label="Add content">+</button>
+    <button class="fab" id="fab" onclick="navigate('import')" aria-label="Add content">+</button>
 
     <nav class="bottom-nav" aria-label="Main navigation">
-      <a href="#home" class="nav-item active"><span class="nav-icon">⌂</span>首页</a>
-      <a href="#contentSection" class="nav-item"><span class="nav-icon">▣</span>内容</a>
-      <a href="#trendsSection" class="nav-item"><span class="nav-icon">↗</span>趋势</a>
-      <a href="#ideasSection" class="nav-item"><span class="nav-icon">✦</span>选题</a>
-      <a href="#reportsSection" class="nav-item"><span class="nav-icon">◎</span>我的</a>
+      <button class="nav-item active" data-nav="home" onclick="navigate('home')"><span class="nav-icon">⌂</span>首页</button>
+      <button class="nav-item" data-nav="content" onclick="navigate('content')"><span class="nav-icon">▣</span>内容</button>
+      <button class="nav-item" data-nav="trends" onclick="navigate('trends')"><span class="nav-icon">↗</span>趋势</button>
+      <button class="nav-item" data-nav="ideas" onclick="navigate('ideas')"><span class="nav-icon">✦</span>选题</button>
+      <button class="nav-item" data-nav="profile" onclick="navigate('profile')"><span class="nav-icon">◎</span>我的</button>
     </nav>
 
     <script>
       const API = "http://localhost:8000";
       let contentItems = [];
+      let trendItems = [];
+      let ideaItems = [];
+      let reportItems = [];
       let activeContentFilter = "all";
+      let currentView = "home";
+      let previousView = "home";
+
+      function navigate(view, options = {}) {
+        const target = document.getElementById(`view-${view}`);
+        if (!target) return;
+        previousView = options.from || currentView;
+        currentView = view;
+        document.querySelectorAll(".view").forEach((item) => item.classList.toggle("active", item.id === `view-${view}`));
+        document.querySelectorAll(".nav-item").forEach((item) => item.classList.toggle("active", item.dataset.nav === navKey(view)));
+        const fab = document.getElementById("fab");
+        if (fab) fab.style.display = ["home", "content"].includes(view) ? "block" : "none";
+        window.scrollTo({ top: 0, behavior: "auto" });
+
+        if (view === "home") loadDashboard().catch(showDashboardError);
+        if (view === "content") loadContent().catch(showContentError);
+        if (view === "trends") loadTrends().catch(() => setText("trendStatus", "Trends API not available."));
+        if (view === "ideas") loadIdeas().catch(() => setText("ideaStatus", "Ideas API not available."));
+        if (view === "reports") loadReports().catch(() => setText("reportStatus", "Reports API not available."));
+      }
+
+      function navKey(view) {
+        if (view.startsWith("trend")) return "trends";
+        if (view.startsWith("idea")) return "ideas";
+        if (view.startsWith("report")) return "profile";
+        return view;
+      }
+
+      function goBack() {
+        navigate(previousView && previousView !== currentView ? previousView : "home");
+      }
+
+      function setText(id, value) {
+        const node = document.getElementById(id);
+        if (node) node.textContent = value || "";
+      }
+
+      function showDashboardError() {
+        setText("actionStatus", "Home API not available yet.");
+      }
+
+      function showContentError() {
+        const container = document.getElementById("contentList");
+        if (container) container.innerHTML = '<div class="empty">API not available. Start backend first.</div>';
+      }
+
+      async function refreshAll() {
+        await Promise.allSettled([loadDashboard(), loadContent(), loadTrends(), loadIdeas(), loadReports()]);
+        setText("actionStatus", "Home refreshed.");
+      }
 
       async function loadDashboard() {
         const start = performance.now();
         const res = await fetch(`${API}/dashboard`);
         const data = await res.json();
         renderStats(data.stats || { contents: 0, trends: 0, ideas: 0, reports: 0 });
+        trendItems = data.top_trends || trendItems;
+        ideaItems = data.top_ideas || ideaItems;
         renderDashboardTrends(data.top_trends || []);
         renderDashboardIdeas(data.top_ideas || []);
         renderLatestReport(data.latest_report);
         renderActivity(data.recent_activity || []);
         const elapsed = Math.round(performance.now() - start);
-        document.getElementById("actionStatus").textContent = `Dashboard loaded in ${elapsed} ms`;
+        setText("actionStatus", `Home loaded in ${elapsed} ms`);
       }
 
       function renderStats(stats) {
@@ -828,21 +1120,24 @@
             `
           )
           .join("");
-        document.getElementById("stats").innerHTML = cards;
-        document.getElementById("statsMirror").innerHTML = cards;
+        document.getElementById("homeStats").innerHTML = cards;
       }
 
       function renderDashboardTrends(items) {
-        const container = document.getElementById("trends");
+        renderTrendRows("homeTrends", items, 5, "list");
+      }
+
+      function renderTrendRows(containerId, items, limit = 50, mode = "detail") {
+        const container = document.getElementById(containerId);
         if (!items.length) {
           container.innerHTML = '<div class="empty">暂无趋势。请先导入并分析内容，再生成趋势。</div>';
           return;
         }
         container.innerHTML = items
-          .slice(0, 5)
+          .slice(0, limit)
           .map(
             (item) => `
-              <div class="trend-row" onclick="loadTrendDetail('${item.id}')">
+              <div class="trend-row" onclick="${mode === "list" ? "navigate('trends')" : `openTrendDetail('${item.id}')`}">
                 <div>
                   <div class="trend-topic">${item.topic}</div>
                   <div class="lifecycle">${item.lifecycle}</div>
@@ -856,16 +1151,20 @@
       }
 
       function renderDashboardIdeas(items) {
-        const container = document.getElementById("ideas");
+        renderIdeaCards("homeIdeas", items, 4, "list");
+      }
+
+      function renderIdeaCards(containerId, items, limit = 50, mode = "detail") {
+        const container = document.getElementById(containerId);
         if (!items.length) {
           container.innerHTML = '<div class="empty">暂无选题。请先生成趋势，再生成选题。</div>';
           return;
         }
         container.innerHTML = items
-          .slice(0, 8)
+          .slice(0, limit)
           .map(
             (item) => `
-              <div class="idea-card" onclick="loadIdeaDetail('${item.id}')">
+              <div class="idea-card" onclick="${mode === "list" ? "navigate('ideas')" : `openIdeaDetail('${item.id}')`}">
                 <div class="top-row">
                   <div class="idea-title">${item.title}</div>
                   <span class="priority-pill">优先级 ${item.priority}</span>
@@ -885,11 +1184,10 @@
         const container = document.getElementById("latestReport");
         if (!report) {
           container.innerHTML = '<div class="empty">暂无周报。生成 Trends 和 Ideas 后，可生成 Weekly Report。</div>';
-          document.getElementById("report").textContent = "";
           return;
         }
         container.innerHTML = `
-          <div class="top-row">
+          <div class="top-row" onclick="navigate('reports')">
             <div>
               <div class="trend-topic">${report.title}</div>
               <div class="meta">${report.week_start || ""} - ${report.week_end || ""}</div>
@@ -899,12 +1197,11 @@
           <div class="report-meta">
             <span class="meta">Generated ${formatTime(report.created_at)}</span>
             <div class="tag-row">
-              <button class="btn btn-secondary" onclick="loadReportDetail('${report.id}')">查看</button>
+              <button class="btn btn-secondary" onclick="openReportDetail('${report.id}')">查看</button>
               <button class="btn btn-primary" onclick="downloadMarkdown('${report.id}')">导出 Markdown</button>
             </div>
           </div>
         `;
-        document.getElementById("report").textContent = report.markdown_content || "";
       }
 
       function renderActivity(items) {
@@ -927,15 +1224,33 @@
       }
 
       async function importContent() {
-        const payload = JSON.parse(document.getElementById("payload").value);
+        const sourceType = document.querySelector('input[name="sourceType"]:checked')?.value || "manual";
+        const url = document.getElementById("importUrl").value.trim();
+        const rawText = document.getElementById("importRawText").value.trim();
+        const title = document.getElementById("importTitle").value.trim() || url || "手动导入内容";
+        const payload = {
+          items: [
+            {
+              title,
+              platform: sourceType,
+              source_name: document.getElementById("importSourceName").value.trim() || platformLabel(sourceType),
+              content_source: sourceType === "news" || sourceType === "webpage" ? "article" : sourceType,
+              url: url || `manual://${Date.now()}`,
+              published_at: new Date().toISOString(),
+              raw_text: rawText || title,
+            },
+          ],
+        };
         const res = await fetch(`${API}/content/import`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
         });
-        document.getElementById("status").textContent = JSON.stringify(await res.json());
+        const data = await res.json();
+        setText("importStatus", JSON.stringify(data));
         await loadContent();
         await loadDashboard();
+        if (res.ok) navigate("home");
       }
 
       async function analyzeContent(id) {
@@ -944,7 +1259,7 @@
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ content_ids: [id], analysis_version: "gpt55-v1", force: true }),
         });
-        document.getElementById("status").textContent = JSON.stringify(await res.json());
+        setText("actionStatus", JSON.stringify(await res.json()));
         await loadContent();
         await loadDashboard();
       }
@@ -972,7 +1287,7 @@
           return item.platform === activeContentFilter || item.content_source === activeContentFilter;
         });
         if (!filtered.length) {
-          container.innerHTML = '<div class="empty">暂无内容。点击右下角 + 导入第一条内容。</div>';
+          container.innerHTML = '<div class="empty">暂无内容。点击右上角 + 导入第一条内容。</div>';
           return;
         }
         container.innerHTML = filtered
@@ -992,26 +1307,88 @@
           .join("");
       }
 
+      async function loadTrends() {
+        const res = await fetch(`${API}/trends?page=1&page_size=50`);
+        const data = await res.json();
+        trendItems = data.items || [];
+        renderTrendRows("trendsList", trendItems, 50);
+      }
+
+      async function loadIdeas() {
+        const res = await fetch(`${API}/ideas?page=1&page_size=50`);
+        const data = await res.json();
+        ideaItems = data.items || [];
+        renderIdeaCards("ideasList", ideaItems, 50);
+      }
+
+      async function loadReports() {
+        const res = await fetch(`${API}/reports?page=1&page_size=20`);
+        const data = await res.json();
+        reportItems = data.items || [];
+        renderReportList(reportItems);
+      }
+
+      function renderReportList(items) {
+        const container = document.getElementById("reportsList");
+        if (!items.length) {
+          container.innerHTML = '<div class="empty">暂无周报。生成 Trends 和 Ideas 后，可生成 Weekly Report。</div>';
+          return;
+        }
+        container.innerHTML = items
+          .map(
+            (report) => `
+              <div class="report-card" onclick="openReportDetail('${report.id}')">
+                <div class="top-row">
+                  <div>
+                    <div class="trend-topic">${report.title}</div>
+                    <div class="meta">${report.week_start || ""} - ${report.week_end || ""}</div>
+                  </div>
+                  <span class="priority-pill">${report.status}</span>
+                </div>
+                <div class="report-meta">
+                  <span class="meta">${formatTime(report.created_at)}</span>
+                  <button class="btn btn-secondary" onclick="event.stopPropagation(); downloadMarkdown('${report.id}')">导出 Markdown</button>
+                </div>
+              </div>
+            `
+          )
+          .join("");
+      }
+
+      function openGenerateTrends() {
+        navigate("trends");
+      }
+
+      function openGenerateIdeas() {
+        navigate("ideas");
+      }
+
+      function openGenerateReport() {
+        navigate("reports");
+      }
+
       async function generateTrends() {
+        navigate("trends");
+        setText("trendStatus", "Generating trends...");
         const res = await fetch(`${API}/trends/generate`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ lookback_days: 7, min_content_count: 1 }),
         });
-        document.getElementById("trendStatus").textContent = JSON.stringify(await res.json());
+        const data = await res.json();
+        trendItems = data.items || [];
+        setText("trendStatus", `Generated ${data.generated || trendItems.length} trends.`);
+        renderTrendRows("trendsList", trendItems, 50);
         await loadDashboard();
       }
 
-      async function loadTrendDetail(id) {
+      async function openTrendDetail(id) {
+        previousView = currentView;
+        navigate("trend-detail", { from: "trends" });
         const res = await fetch(`${API}/trends/${id}`);
         const item = await res.json();
-        const detail = document.getElementById("trendDetail");
-        detail.classList.add("visible");
+        const detail = document.getElementById("trendDetailContent");
         detail.innerHTML = `
-          <div class="detail-nav">
-            <button class="icon-button" onclick="hideDetail('trendDetail')">‹</button>
-            <button class="icon-button">⋯</button>
-          </div>
           <h3 class="detail-title">${item.topic}</h3>
           <div class="detail-grid">
             <div class="detail-metric"><span class="meta">Trend Score</span><strong>${item.trend_score}</strong></div>
@@ -1033,25 +1410,27 @@
       }
 
       async function generateIdeas() {
+        navigate("ideas");
+        setText("ideaStatus", "Generating ideas...");
         const res = await fetch(`${API}/ideas/generate`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ projects: ["in77", "in88"], ideas_per_project: 5 }),
         });
-        document.getElementById("ideaStatus").textContent = JSON.stringify(await res.json());
+        const data = await res.json();
+        ideaItems = data.items || [];
+        setText("ideaStatus", `Generated ${data.generated || ideaItems.length} ideas.`);
+        renderIdeaCards("ideasList", ideaItems, 50);
         await loadDashboard();
       }
 
-      async function loadIdeaDetail(id) {
+      async function openIdeaDetail(id) {
+        previousView = currentView;
+        navigate("idea-detail", { from: "ideas" });
         const res = await fetch(`${API}/ideas/${id}`);
         const item = await res.json();
-        const detail = document.getElementById("ideaDetail");
-        detail.classList.add("visible");
+        const detail = document.getElementById("ideaDetailContent");
         detail.innerHTML = `
-          <div class="detail-nav">
-            <button class="icon-button" onclick="hideDetail('ideaDetail')">‹</button>
-            <button class="icon-button">⋯</button>
-          </div>
           <h3 class="detail-title">${item.title}</h3>
           <div class="tag-row">
             <span class="tag">${item.project}</span>
@@ -1088,27 +1467,33 @@
       }
 
       async function generateReport() {
+        navigate("reports");
+        setText("reportStatus", "Generating weekly report...");
         const res = await fetch(`${API}/reports/generate`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({}),
         });
         const data = await res.json();
-        document.getElementById("actionStatus").textContent = JSON.stringify({
+        setText("reportStatus", JSON.stringify({
           id: data.item.id,
           status: data.item.status,
           trends: (data.item.trend_ids || []).length,
           ideas: (data.item.idea_ids || []).length,
           contents: (data.item.content_ids || []).length,
-        });
-        document.getElementById("report").textContent = data.item.markdown_content || "";
+        }));
+        await loadReports();
         await loadDashboard();
+        openReportDetail(data.item.id);
       }
 
-      async function loadReportDetail(id) {
+      async function openReportDetail(id) {
+        previousView = currentView;
+        navigate("report-detail", { from: "reports" });
         const res = await fetch(`${API}/reports/${id}`);
         const report = await res.json();
-        document.getElementById("report").textContent = report.markdown_content || "";
+        document.getElementById("reportDetailContent").textContent = report.markdown_content || "";
+        document.getElementById("reportExportButton").onclick = () => downloadMarkdown(id);
       }
 
       async function downloadMarkdown(id) {
@@ -1121,10 +1506,6 @@
         a.download = `${report.title || "weekly-report"}.md`;
         a.click();
         URL.revokeObjectURL(url);
-      }
-
-      function hideDetail(id) {
-        document.getElementById(id).classList.remove("visible");
       }
 
       function truncate(text, length) {
@@ -1164,11 +1545,14 @@
       }
 
       loadDashboard().catch(() => {
-        document.getElementById("actionStatus").textContent = "Dashboard API not available yet.";
+        setText("actionStatus", "Home API not available yet.");
       });
       loadContent().catch(() => {
-        document.getElementById("status").textContent = "API not available. Start backend first.";
+        showContentError();
       });
+      loadTrends().catch(() => {});
+      loadIdeas().catch(() => {});
+      loadReports().catch(() => {});
       if ("serviceWorker" in navigator) {
         navigator.serviceWorker.register("/service-worker.js").catch(() => {});
       }
