@@ -66,6 +66,11 @@ NO
 进入 RC 的前置条件：
 
 - Beta Dataset 建立并导入
+- Pilot 完成
+- Idea adoption rate 记录完成
+- Human edit rate 记录完成
+- Trend accuracy 记录完成
+- Weekly Report direct-use rate 记录完成
 - Benchmark 更新
 - AI Quality Review 完成
 - Critical Bug = 0

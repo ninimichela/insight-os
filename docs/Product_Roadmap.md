@@ -54,6 +54,46 @@ Success criteria:
 - Generate `Weekly Report` automatically.
 - At least 80% of ideas are manually evaluated as useful references.
 
+## Pilot: Real Operation ⭐
+
+Goal:
+
+Use INSight OS in the real content workflow before entering RC.
+
+Duration:
+
+- 2 weeks
+
+Scope:
+
+- Daily import
+- Analyze
+- Trend
+- Idea
+- Weekly Report
+- Team review
+- Human evaluation
+
+Pilot metrics:
+
+- Idea adoption rate
+- Human edit rate
+- Time saved
+- Trend accuracy
+- Weekly Report direct-use rate
+
+Success metric:
+
+> The success of INSight OS is measured by content adoption, not content generation.
+
+Exit criteria:
+
+- 2 weeks of real operation completed.
+- Beta Dataset used.
+- Evaluation results recorded.
+- Benchmark updated.
+- Critical workflow blockers = 0.
+
 ## 2027 Q1: Release Candidate
 
 Goal:
@@ -62,12 +102,20 @@ Make AI recommendations more brand-specific and explainable.
 
 Scope:
 
+- Evaluation
 - Brand Brain
 - Decision Engine
 - Memory Layer
 - Explainability Framework
-- Prompt Composer
-- Duplicate idea detection
+
+Development order:
+
+1. Evaluation
+2. Brand Brain
+3. Decision Engine
+4. Memory
+5. Explainability
+6. RC Demo
 
 ## 2027 Q2: 1.0 Commercial Release
 

@@ -5,6 +5,10 @@
 > INSight OS helps commercial real estate teams make better content decisions, not just generate more content.
 >
 > INSight OS 的目标不是帮助商业地产团队生成更多内容，而是帮助他们做出更好的内容决策。
+>
+> The success of INSight OS is measured by content adoption, not content generation.
+>
+> INSight OS 的成功，不是生成了多少内容，而是有多少 AI 建议真正被团队采用。
 
 INSight OS is an AI content operating system for commercial real estate teams. It helps teams collect market content, analyze competitors, detect trends, generate content ideas, and produce weekly reports.
 
@@ -82,6 +86,8 @@ Beta is not yet accepted. The project is at **Beta Gate**:
 - Run full Beta Demo
 - Complete `docs/Beta_Review.md`
 
+Do not enter RC directly after Beta. The next stage is **Pilot**: two weeks of real daily operation and evaluation.
+
 ## API Documentation
 
 When the backend is running:
@@ -93,10 +99,12 @@ When the backend is running:
 
 - Alpha: Content Library, import, AI analysis ✅
 - Beta: Trend, idea, weekly report, dashboard ✅ Feature Complete
+- Pilot: real operation, real feedback, adoption evaluation
 - RC: Brand Brain, Decision, Memory, Explainability
 - 1.0: Commercial release
 
 Beta plan is frozen in `docs/Beta_Plan.md`.
+Pilot plan is frozen in `docs/Pilot_Plan.md`.
 
 ## RC Feature Freeze
 
@@ -104,17 +112,19 @@ Do not enter RC until `docs/RC_Checklist.md` is complete.
 
 RC scope is frozen:
 
-1. Brand Brain
-2. Decision Engine
-3. Memory
-4. Explainability
+1. Evaluation
+2. Brand Brain
+3. Decision Engine
+4. Memory
+5. Explainability
 
 No additional engines, databases, workflows, or prompt categories may be added during RC.
 
 RC sprint order:
 
-1. RC Sprint 1: Brand Brain
-2. RC Sprint 2: Decision Engine
-3. RC Sprint 3: Memory
-4. RC Sprint 4: Explainability
-5. RC Demo
+1. RC Sprint 1: Evaluation
+2. RC Sprint 2: Brand Brain
+3. RC Sprint 3: Decision Engine
+4. RC Sprint 4: Memory
+5. RC Sprint 5: Explainability
+6. RC Demo

@@ -2,6 +2,8 @@
 
 Do not enter RC until this checklist is complete.
 
+RC must not start immediately after Beta. Pilot must be completed first.
+
 ## Functional Readiness
 
 - [x] Content Library
@@ -20,6 +22,12 @@ Do not enter RC until this checklist is complete.
 
 ## Quality
 
+- [ ] Pilot completed
+- [ ] Idea adoption rate recorded
+- [ ] Human edit rate recorded
+- [ ] Time saved recorded
+- [ ] Trend accuracy recorded
+- [ ] Weekly Report direct-use rate recorded
 - [ ] AI Quality Review completed
 - [ ] Idea usefulness score >= 80%
 - [ ] Weekly Report judged usable for internal reporting
@@ -36,9 +44,10 @@ Do not enter RC until this checklist is complete.
 
 Only the following features are allowed in RC:
 
-1. Brand Brain
-2. Decision Engine
-3. Memory
-4. Explainability
+1. Evaluation
+2. Brand Brain
+3. Decision Engine
+4. Memory
+5. Explainability
 
 No additional engines, databases, workflows, or prompt categories may be added before RC Demo.
