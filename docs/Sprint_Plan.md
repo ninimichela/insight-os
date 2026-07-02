@@ -23,7 +23,25 @@ Definition of done:
 - Docker Compose has placeholder services.
 - CI runs basic checks.
 
-## Sprint 2: Content Library
+## Sprint 2.1: Data Model Freeze
+
+Deliverables:
+
+- Freeze system data model before feature development.
+- Define tables, fields, relations, indexes, and API boundaries.
+- Create `docs/Database_Architecture.md`.
+- Confirm UUIDs for all primary keys.
+- Confirm prompts remain file-based under `packages/prompts/`.
+- Confirm Brand Brain is database-backed in V2.
+
+Definition of done:
+
+- Database architecture is reviewed and accepted.
+- Schema includes Content, Competitor, Trend, Idea, Report, BrandBrain, Memory, and Performance.
+- Minimal Content Library API is frozen.
+- Future schema changes require explicit migration notes.
+
+## Sprint 2.2: Content Library MVP
 
 Deliverables:
 
@@ -33,40 +51,55 @@ Deliverables:
 - Idea model
 - Trend model
 - CSV import design
+- Minimal Content Library API:
+  - `POST /content/import`
+  - `GET /content`
+  - `POST /content/analyze`
 
 Definition of done:
 
 - Content can be inserted, listed, and retrieved.
 - Competitors can be configured.
 - Basic database migrations are ready.
+- Dashboard can show imported content.
 
-## Sprint 3: AI Service
-
-Deliverables:
-
-- OpenAI API service
-- `POST /analyze`
-- Summary, tags, scores, recommendations
-- Structured JSON output
-
-Definition of done:
-
-- One content item can be analyzed.
-- Analysis result can be saved to database.
-
-## Sprint 4: Dashboard
+## v0.2 Demo
 
 Deliverables:
 
-- Web dashboard
-- Today page
-- Trend page
-- Idea page
-- Reports page
+- Open webpage.
+- Import 20 content items.
+- Run AI analysis.
+- View Today, Content, Trend, and Idea placeholders.
 
 Definition of done:
 
-- User can view imported content, trends, ideas, and reports in browser.
+- First usable vertical demo exists.
+
+## Sprint 3: Trend and Idea
+
+Deliverables:
+
+- Trend generation
+- Idea generation
+- 5 ideas for in77
+- 5 ideas for in88
+
+Definition of done:
+
+- Imported and analyzed content can produce trends and ideas.
+
+## Sprint 4: Weekly Report
+
+Deliverables:
+
+- Markdown weekly report
+- Report list
+- Report detail view
+
+Definition of done:
+
+- User can generate and view a complete weekly report.
 
 ## MVP Release
 
@@ -88,4 +121,4 @@ Deliverables:
 - Memory Layer
 - Decision Engine
 - Explainability Framework
-
+- Strategy Engine

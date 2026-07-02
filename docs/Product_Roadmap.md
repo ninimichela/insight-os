@@ -26,10 +26,14 @@ Scope:
 Release targets:
 
 - `v0.1`: Repo scaffold, CI, Docker, docs
-- `v0.2`: Database and content import
-- `v0.3`: AI analysis service
-- `v0.4`: Dashboard
-- `v0.5`: End-to-end MVP
+- `v0.2`: Database, content import, AI analysis
+- `v0.3`: Trend and idea
+- `v0.4`: Weekly report
+- `v0.5`: Brand Brain
+- `v0.6`: Decision Engine
+- `v0.7`: Explainability
+- `v0.8`: Strategy Engine
+- `v1.0`: Commercial release
 
 ## 2026 Q4: Intelligence Layer
 
@@ -76,4 +80,3 @@ Scope:
 - Role permissions
 - Integrations
 - Deployment templates
-
