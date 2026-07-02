@@ -66,17 +66,19 @@
 
       .app-header {
         justify-content: space-between;
-        padding: 6px 0 20px;
+        gap: 18px;
+        padding: 0 0 28px;
+      }
+
+      .brand-lockup {
+        flex: 1;
+        min-width: 0;
       }
 
       .brand-logo {
         display: block;
-        width: 188px;
-        height: 58px;
-        border-radius: 14px;
-        object-fit: cover;
-        object-position: center 82%;
-        background: var(--page);
+        width: min(76vw, 342px);
+        height: auto;
       }
 
       .hero-title {
@@ -96,6 +98,12 @@
       .hero-subtitle {
         margin: 6px 0 0;
         font-size: 14px;
+      }
+
+      .app-header .hero-subtitle {
+        margin-top: 18px;
+        font-size: 18px;
+        line-height: 1.3;
       }
 
       .icon-button {
@@ -632,6 +640,15 @@
           width: min(100%, 760px);
         }
 
+        .brand-logo {
+          width: 430px;
+        }
+
+        .app-header .hero-subtitle {
+          margin-top: 22px;
+          font-size: 20px;
+        }
+
         .stats-grid {
           grid-template-columns: repeat(4, minmax(0, 1fr));
         }
@@ -645,8 +662,8 @@
   <body>
     <main class="app-shell">
       <header class="app-header">
-        <div>
-          <img class="brand-logo" src="assets/insight-logo.png" alt="INSight OS" />
+        <div class="brand-lockup">
+          <img class="brand-logo" src="assets/insight-logo-horizontal.png" alt="INSight OS" />
           <p class="hero-subtitle">Good morning, nini</p>
         </div>
         <button class="icon-button" aria-label="More">⋯</button>

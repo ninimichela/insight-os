@@ -1,10 +1,25 @@
+const CACHE_NAME = "insight-os-v2";
+
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open("insight-os-v1").then((cache) => {
+    caches.open(CACHE_NAME).then((cache) => {
       return cache.addAll([
         "/content-library.html",
-        "/manifest.json"
+        "/manifest.json",
+        "/assets/insight-logo-horizontal.png"
       ]);
     })
+  );
+});
+
+self.addEventListener("activate", (event) => {
+  event.waitUntil(
+    caches.keys().then((keys) =>
+      Promise.all(
+        keys
+          .filter((key) => key !== CACHE_NAME)
+          .map((key) => caches.delete(key))
+      )
+    )
   );
 });
