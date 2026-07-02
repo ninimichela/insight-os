@@ -1,5 +1,19 @@
 # INSight OS Sprint Plan
 
+## Scope Rule
+
+No New Engine Before MVP.
+
+Before `v1.0`, do not add new engines, databases, workflows, or prompt categories.
+
+Allowed work:
+
+- Improve existing modules
+- Fix bugs
+- Improve user experience
+- Improve accuracy
+- Improve speed
+
 ## Sprint 1: Repo Foundation
 
 Deliverables:
@@ -55,6 +69,16 @@ Deliverables:
   - `POST /content/import`
   - `GET /content`
   - `POST /content/analyze`
+- Repository Pattern:
+  - Router
+  - Service
+  - Repository
+  - Database
+- AI Service split:
+  - summarizer
+  - tagger
+  - scorer
+  - classifier
 
 Definition of done:
 
@@ -62,6 +86,8 @@ Definition of done:
 - Competitors can be configured.
 - Basic database migrations are ready.
 - Dashboard can show imported content.
+- DoD in `docs/Definition_of_Done.md` is satisfied.
+- API behavior in `docs/API_SPEC.md` is satisfied.
 
 ## v0.2 Demo
 
@@ -75,6 +101,10 @@ Deliverables:
 Definition of done:
 
 - First usable vertical demo exists.
+- The team answers yes to:
+  - If I were an in77 operator, would I open this every day?
+  - Is it faster than Notion + ChatGPT?
+  - If we removed half the features, would it still help users make better content decisions?
 
 ## Sprint 3: Trend and Idea
 

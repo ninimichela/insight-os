@@ -97,6 +97,8 @@ Key fields:
 - `execution_score`
 - `ai_reason`
 - `evidence`
+- `analysis_version`: e.g. `gpt55-v1`; enables re-analysis after prompt/model updates
+- `analysis_trace`: structured trace of prompt, brand brain, trend, and scoring versions
 - `content_status`: new / parsed / analyzed / selected / published / archived
 
 Indexes:
@@ -108,6 +110,7 @@ Indexes:
 - `city`
 - `category`
 - `competitor_id`
+- `analysis_version`
 
 ### 4.2 competitors
 
@@ -397,8 +400,10 @@ Prompts must not be stored in database.
 Prompts are product logic and must be version controlled in Git:
 
 ```text
-packages/prompts/
+packages/prompts/v1/
 ```
+
+Future versions should use `packages/prompts/v2/`, not overwrite `v1`.
 
 Brand Brain is different. Brand Brain is business knowledge and should be database-backed so operators can update it later.
 
@@ -411,4 +416,3 @@ After this freeze:
 - Relation changes require architecture review.
 - Prompt changes go through Git.
 - Brand Brain changes can happen through database or admin UI.
-

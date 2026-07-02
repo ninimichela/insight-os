@@ -18,6 +18,22 @@ for 北京 in77 & 北京 in88
 
 将 PRD 转化为一个可开发、可运行、可迭代的 MVP 系统。
 
+开发原则：
+
+```text
+Every feature must improve a content decision.
+If it only generates more content but does not improve a decision,
+it does not belong in INSight OS.
+```
+
+MVP 前冻结规则：
+
+```text
+No New Engine Before MVP.
+```
+
+在 `v1.0` 之前，不新增 Engine、Database、Workflow 或 Prompt 分类，只完善已有模块。
+
 第一版核心链路：
 
 ```text
@@ -129,10 +145,22 @@ insight-os/
 │       │   └── ai.py
 │       ├── services/
 │       │   ├── collector_service.py
-│       │   ├── ai_service.py
+│       │   ├── ai/
+│       │   │   ├── summarizer.py
+│       │   │   ├── tagger.py
+│       │   │   ├── scorer.py
+│       │   │   ├── classifier.py
+│       │   │   ├── idea_generator.py
+│       │   │   └── report_generator.py
 │       │   ├── trend_service.py
 │       │   ├── idea_service.py
 │       │   └── report_service.py
+│       ├── repositories/
+│       │   ├── content_repository.py
+│       │   ├── competitor_repository.py
+│       │   ├── trend_repository.py
+│       │   ├── idea_repository.py
+│       │   └── report_repository.py
 │       ├── models/
 │       │   ├── content.py
 │       │   ├── competitor.py
@@ -153,6 +181,10 @@ insight-os/
 │
 ├── packages/
 │   ├── prompts/
+│   │   ├── v1/
+│   │   │   ├── analysis/
+│   │   │   ├── idea/
+│   │   │   └── report/
 │   │   ├── summarize_content.md
 │   │   ├── tag_content.md
 │   │   ├── score_content.md
@@ -736,9 +768,9 @@ Also create Pydantic schemas and CRUD endpoints for each model.
 ### 第三步：创建 AI Service
 
 ```text
-Create an ai_service.py file.
+Create split AI service files under apps/api/services/ai.
 
-It should include:
+They should include:
 - summarize_content(content)
 - tag_content(content)
 - score_content(content)
@@ -750,6 +782,8 @@ Use OpenAI API.
 Read prompt templates from packages/prompts.
 Return structured JSON.
 ```
+
+Do not create one large ai_service.py.
 
 ### 第四步：创建前端页面
 

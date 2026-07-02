@@ -6,6 +6,19 @@ The INSight OS MVP is successful when one content operator can import competitor
 
 The first MVP does not need full automatic scraping, SaaS permissions, PPT export, or advanced Brand Brain. It must prove the weekly planning workflow.
 
+## 1.1 Scope Freeze
+
+Before MVP, no new Engine, Database, Workflow, or Prompt category may be added.
+
+Allowed:
+
+- Complete existing modules.
+- Fix bugs.
+- Improve experience.
+- Improve accuracy.
+- Improve speed.
+- Improve explainability inside existing modules.
+
 ## 2. MVP Core Workflow
 
 ```text
@@ -79,4 +92,3 @@ Secondary KPIs:
 - 80% of generated ideas are usable for discussion.
 - Weekly report includes traceable evidence for each recommendation.
 - Content team can complete a planning meeting using the generated report.
-

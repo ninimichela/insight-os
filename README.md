@@ -8,6 +8,16 @@
 
 INSight OS is an AI content operating system for commercial real estate teams. It helps teams collect market content, analyze competitors, detect trends, generate content ideas, and produce weekly reports.
 
+## Product Principle
+
+Every feature must improve a content decision. If it only generates more content but does not improve a decision, it does not belong in INSight OS.
+
+## Scope Control
+
+**No New Engine Before MVP.**
+
+Before `v1.0`, do not add new engines, databases, workflows, or prompt categories. Only improve existing modules, fix bugs, improve experience, and improve accuracy.
+
 Initial projects:
 
 - Beijing in77
