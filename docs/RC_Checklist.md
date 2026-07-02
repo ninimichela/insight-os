@@ -1,0 +1,44 @@
+# RC Entrance Checklist
+
+Do not enter RC until this checklist is complete.
+
+## Functional Readiness
+
+- [x] Content Library
+- [x] Trend Engine
+- [x] Idea Engine
+- [x] Weekly Report
+- [x] Dashboard
+
+## Dataset
+
+- [ ] WeChat content 300+
+- [ ] Xiaohongshu content 300+
+- [ ] Competitors 30+
+- [ ] Brands 30+
+- [ ] Full-year calendar nodes
+
+## Quality
+
+- [ ] AI Quality Review completed
+- [ ] Idea usefulness score >= 80%
+- [ ] Weekly Report judged usable for internal reporting
+- [ ] Critical bugs = 0
+
+## Engineering
+
+- [x] All API tests pass
+- [x] Alembic migrates from empty database
+- [ ] Benchmark updated with real data
+- [ ] Beta Demo full flow succeeds once without manual DB edits
+
+## RC Scope
+
+Only the following features are allowed in RC:
+
+1. Brand Brain
+2. Decision Engine
+3. Memory
+4. Explainability
+
+No additional engines, databases, workflows, or prompt categories may be added before RC Demo.

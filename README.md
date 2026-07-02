@@ -61,7 +61,26 @@ insight-os/
 
 ## Current Status
 
-This repository is at `v0.1` scaffold stage.
+This repository is **Beta Feature Complete**.
+
+Implemented Beta chain:
+
+```text
+Content Library
+  -> Analyze
+  -> Trend Engine
+  -> Idea Engine
+  -> Weekly Report
+  -> Dashboard
+```
+
+Beta is not yet accepted. The project is at **Beta Gate**:
+
+- Validate real dataset
+- Run benchmark
+- Complete AI quality review
+- Run full Beta Demo
+- Complete `docs/Beta_Review.md`
 
 ## API Documentation
 
@@ -73,8 +92,29 @@ When the backend is running:
 ## Release Milestones
 
 - Alpha: Content Library, import, AI analysis ✅
-- Beta: Trend, idea, weekly report
+- Beta: Trend, idea, weekly report, dashboard ✅ Feature Complete
 - RC: Brand Brain, Decision, Memory, Explainability
 - 1.0: Commercial release
 
 Beta plan is frozen in `docs/Beta_Plan.md`.
+
+## RC Feature Freeze
+
+Do not enter RC until `docs/RC_Checklist.md` is complete.
+
+RC scope is frozen:
+
+1. Brand Brain
+2. Decision Engine
+3. Memory
+4. Explainability
+
+No additional engines, databases, workflows, or prompt categories may be added during RC.
+
+RC sprint order:
+
+1. RC Sprint 1: Brand Brain
+2. RC Sprint 2: Decision Engine
+3. RC Sprint 3: Memory
+4. RC Sprint 4: Explainability
+5. RC Demo
