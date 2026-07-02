@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>INSight OS Alpha | Content Library</title>
+    <style>
+      body {
+        margin: 0;
+        font-family: Arial, "PingFang SC", sans-serif;
+        color: #172026;
+        background: #f6f7f8;
+      }
+      header {
+        padding: 24px 32px;
+        background: #ffffff;
+        border-bottom: 1px solid #dde2e6;
+      }
+      main {
+        padding: 24px 32px;
+      }
+      h1 {
+        margin: 0 0 6px;
+        font-size: 24px;
+      }
+      .panel {
+        background: #ffffff;
+        border: 1px solid #dde2e6;
+        border-radius: 8px;
+        padding: 16px;
+        margin-bottom: 16px;
+      }
+      textarea,
+      input,
+      button {
+        font: inherit;
+      }
+      textarea {
+        width: 100%;
+        min-height: 140px;
+        box-sizing: border-box;
+        border: 1px solid #cfd6dc;
+        border-radius: 6px;
+        padding: 10px;
+      }
+      button {
+        border: 0;
+        background: #172026;
+        color: #ffffff;
+        border-radius: 6px;
+        padding: 9px 12px;
+        cursor: pointer;
+      }
+      button.secondary {
+        background: #52616b;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #ffffff;
+      }
+      th,
+      td {
+        border-bottom: 1px solid #e7ebee;
+        padding: 10px;
+        text-align: left;
+        vertical-align: top;
+        font-size: 14px;
+      }
+      th {
+        color: #52616b;
+        font-weight: 600;
+      }
+      .actions {
+        display: flex;
+        gap: 8px;
+        margin-top: 10px;
+      }
+      .status {
+        color: #52616b;
+        font-size: 13px;
+        margin-top: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>INSight OS Alpha</h1>
+      <div>Content Library Demo</div>
+    </header>
+    <main>
+      <section class="panel">
+        <h2>Import Content</h2>
+        <textarea id="payload">{
+  "items": [
+    {
+      "title": "北京夏日室内漫游指南",
+      "platform": "wechat",
+      "source_name": "北京LOOK",
+      "content_source": "article",
+      "url": "https://example.com/article-alpha",
+      "published_at": "2026-07-02T10:00:00",
+      "raw_text": "王府井 科技 动漫 高达 室内路线 商场 周末"
+    }
+  ]
+}</textarea>
+        <div class="actions">
+          <button onclick="importContent()">Import</button>
+          <button class="secondary" onclick="loadContent()">Refresh</button>
+        </div>
+        <div id="status" class="status"></div>
+      </section>
+
+      <section class="panel">
+        <h2>Content Library</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Source</th>
+              <th>Status</th>
+              <th>Tags</th>
+              <th>Fit</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </section>
+    </main>
+    <script>
+      const API = "http://localhost:8000";
+
+      async function importContent() {
+        const payload = JSON.parse(document.getElementById("payload").value);
+        const res = await fetch(`${API}/content/import`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        document.getElementById("status").textContent = JSON.stringify(await res.json());
+        await loadContent();
+      }
+
+      async function analyzeContent(id) {
+        const res = await fetch(`${API}/content/analyze`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ content_ids: [id], analysis_version: "gpt55-v1", force: true }),
+        });
+        document.getElementById("status").textContent = JSON.stringify(await res.json());
+        await loadContent();
+      }
+
+      async function loadContent() {
+        const res = await fetch(`${API}/content?page=1&page_size=50`);
+        const data = await res.json();
+        document.getElementById("rows").innerHTML = data.items
+          .map(
+            (item) => `
+              <tr>
+                <td>${item.title}</td>
+                <td>${item.source_name || ""}</td>
+                <td>${item.content_status} / ${item.analysis_status}</td>
+                <td>${(item.tags || []).join(", ")}</td>
+                <td>in77 ${item.brand_fit_in77} / in88 ${item.brand_fit_in88}</td>
+                <td><button onclick="analyzeContent('${item.id}')">Analyze</button></td>
+              </tr>
+            `
+          )
+          .join("");
+      }
+
+      loadContent().catch(() => {
+        document.getElementById("status").textContent = "API not available. Start backend first.";
+      });
+    </script>
+  </body>
+</html>

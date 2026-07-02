@@ -70,6 +70,9 @@ CREATE TABLE IF NOT EXISTS contents (
   analysis_trace JSONB,
   content_status TEXT DEFAULT 'new' CHECK (
     content_status IN ('new', 'parsed', 'analyzed', 'selected', 'published', 'archived')
+  ),
+  analysis_status TEXT DEFAULT 'pending' CHECK (
+    analysis_status IN ('pending', 'running', 'completed', 'failed')
   )
 );
 
@@ -198,6 +201,7 @@ CREATE TABLE IF NOT EXISTS report_ideas (
 CREATE INDEX IF NOT EXISTS idx_contents_url ON contents(url);
 CREATE INDEX IF NOT EXISTS idx_contents_published_at ON contents(published_at);
 CREATE INDEX IF NOT EXISTS idx_contents_status ON contents(content_status);
+CREATE INDEX IF NOT EXISTS idx_contents_analysis_status ON contents(analysis_status);
 CREATE INDEX IF NOT EXISTS idx_contents_platform ON contents(platform);
 CREATE INDEX IF NOT EXISTS idx_contents_city ON contents(city);
 CREATE INDEX IF NOT EXISTS idx_contents_category ON contents(category);

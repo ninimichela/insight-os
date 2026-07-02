@@ -104,6 +104,7 @@ Key fields:
 - `workflow_version`: workflow version used for AI output
 - `analysis_trace`: structured trace of prompt, brand brain, trend, and scoring versions
 - `content_status`: new / parsed / analyzed / selected / published / archived
+- `analysis_status`: pending / running / completed / failed
 
 Indexes:
 

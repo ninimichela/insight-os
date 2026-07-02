@@ -100,6 +100,7 @@ order=desc
       "summary": "100字摘要",
       "tags": ["首店经济", "国际消费"],
       "content_status": "analyzed",
+      "analysis_status": "completed",
       "analysis_version": "gpt55-v1"
     }
   ]
@@ -161,6 +162,7 @@ Analyze one or more content records.
 ### Rules
 
 - AI output must be parsed into structured fields.
+- `analysis_status` must move from `pending` to `completed`, or `failed` on error.
 - `analysis_version` must be saved.
 - `prompt_version` must be saved.
 - `brand_brain_version` must be saved.
