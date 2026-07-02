@@ -6,6 +6,7 @@ from app.core.telemetry import telemetry
 from app.database import Base, engine
 from app.models import Content, Idea, Report, Trend
 from app.routers.content import router as content_router
+from app.routers.dashboard import router as dashboard_router
 from app.routers.idea import router as idea_router
 from app.routers.report import router as report_router
 from app.routers.trend import router as trend_router
@@ -25,6 +26,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+app.include_router(dashboard_router)
 app.include_router(content_router)
 app.include_router(trend_router)
 app.include_router(idea_router)

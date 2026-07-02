@@ -157,3 +157,28 @@ Done means:
 - GPT is only used to format structured data into readable Markdown.
 - Dashboard exposes Generate Report and View Latest.
 - Tests pass.
+
+## 9. Beta Sprint 4: Dashboard
+
+Done means:
+
+- `GET /dashboard` exists.
+- Dashboard returns:
+  - stats
+  - top_trends
+  - top_ideas
+  - latest_report
+  - recent_activity
+- Frontend displays four statistic cards.
+- Frontend displays Top 5 Trends.
+- Frontend displays Top Ideas.
+- Frontend displays Latest Weekly Report.
+- Frontend provides Quick Actions:
+  - Import Content
+  - Generate Trends
+  - Generate Ideas
+  - Generate Weekly Report
+- Frontend displays Recent Activity.
+- Dashboard does not recalculate data.
+- First load target is under 2 seconds.
+- Tests pass.

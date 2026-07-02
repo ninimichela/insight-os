@@ -19,6 +19,7 @@ POST /ideas/generate
 GET  /reports
 GET  /reports/{id}
 POST /reports/generate
+GET  /dashboard
 ```
 
 ## 1. POST /content/import
@@ -448,3 +449,32 @@ status=completed
 ## 12. GET /reports/{id}
 
 Return one saved weekly report.
+
+## 13. GET /dashboard
+
+Return the Beta Dashboard overview in one request.
+
+### Response
+
+```json
+{
+  "stats": {
+    "contents": 1248,
+    "trends": 38,
+    "ideas": 112,
+    "reports": 8
+  },
+  "top_trends": [],
+  "top_ideas": [],
+  "latest_report": {},
+  "recent_activity": []
+}
+```
+
+### Rules
+
+- Dashboard only reads existing database records.
+- Dashboard must not trigger Analyze, Trend, Idea, or Report generation.
+- Top Trends read `trends.trend_score`.
+- Top Ideas read `ideas.priority`.
+- Frontend should call this once on first load.

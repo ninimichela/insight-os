@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>INSight OS Beta | Content Library</title>
+    <title>INSight OS Beta | Dashboard</title>
     <style>
       body {
         margin: 0;
@@ -22,6 +22,30 @@
       h1 {
         margin: 0 0 6px;
         font-size: 24px;
+      }
+      .kicker {
+        color: #52616b;
+        font-size: 14px;
+      }
+      .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 12px;
+      }
+      .stat-card {
+        background: #ffffff;
+        border: 1px solid #dde2e6;
+        border-radius: 8px;
+        padding: 16px;
+      }
+      .stat-label {
+        color: #52616b;
+        font-size: 13px;
+      }
+      .stat-value {
+        font-size: 28px;
+        font-weight: 700;
+        margin-top: 8px;
       }
       .panel {
         background: #ffffff;
@@ -73,6 +97,7 @@
       }
       .actions {
         display: flex;
+        flex-wrap: wrap;
         gap: 8px;
         margin-top: 10px;
       }
@@ -122,20 +147,37 @@
         max-height: 520px;
         overflow: auto;
       }
+      .latest-report {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        align-items: center;
+      }
+      .activity-list {
+        display: grid;
+        gap: 8px;
+      }
+      .activity-item {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        border-bottom: 1px solid #e7ebee;
+        padding: 8px 0;
+        font-size: 14px;
+      }
     </style>
   </head>
   <body>
     <header>
       <h1>INSight OS Beta</h1>
-      <div>Content Library + Trend Engine Demo</div>
+      <div>Good Morning, Michelle</div>
+      <div class="kicker">Today</div>
     </header>
     <main>
+      <section class="dashboard-grid" id="stats"></section>
+
       <section class="panel">
         <h2>Today's Trends</h2>
-        <div class="actions">
-          <button onclick="generateTrends()">Generate Trends</button>
-          <button class="secondary" onclick="loadTrends()">Refresh Trends</button>
-        </div>
         <div id="trendStatus" class="status"></div>
         <div id="trends" class="trend-grid"></div>
         <div id="trendDetail" class="detail" style="display: none"></div>
@@ -143,23 +185,37 @@
 
       <section class="panel">
         <h2>Today's Ideas</h2>
-        <div class="actions">
-          <button onclick="generateIdeas()">Generate Ideas</button>
-          <button class="secondary" onclick="loadIdeas()">Refresh Ideas</button>
-        </div>
         <div id="ideaStatus" class="status"></div>
         <div id="ideas" class="trend-grid"></div>
         <div id="ideaDetail" class="detail" style="display: none"></div>
       </section>
 
       <section class="panel">
-        <h2>Weekly Report</h2>
-        <div class="actions">
-          <button onclick="generateReport()">Generate Report</button>
-          <button class="secondary" onclick="loadLatestReport()">View Latest</button>
-        </div>
-        <div id="reportStatus" class="status"></div>
+        <h2>Latest Weekly Report</h2>
+        <div id="latestReport" class="latest-report"></div>
         <pre id="report" class="report"></pre>
+      </section>
+
+      <section class="panel">
+        <h2>Statistics</h2>
+        <div id="statsMirror" class="dashboard-grid"></div>
+      </section>
+
+      <section class="panel">
+        <h2>Quick Actions</h2>
+        <div class="actions">
+          <button onclick="document.getElementById('payload').focus()">Import Content</button>
+          <button onclick="generateTrends()">Generate Trends</button>
+          <button onclick="generateIdeas()">Generate Ideas</button>
+          <button onclick="generateReport()">Generate Report</button>
+          <button class="secondary" onclick="loadDashboard()">Refresh Dashboard</button>
+        </div>
+        <div id="actionStatus" class="status"></div>
+      </section>
+
+      <section class="panel">
+        <h2>Recent Activity</h2>
+        <div id="activity" class="activity-list"></div>
       </section>
 
       <section class="panel">
@@ -204,6 +260,97 @@
     <script>
       const API = "http://localhost:8000";
 
+      async function loadDashboard() {
+        const start = performance.now();
+        const res = await fetch(`${API}/dashboard`);
+        const data = await res.json();
+        renderStats(data.stats);
+        renderDashboardTrends(data.top_trends || []);
+        renderDashboardIdeas(data.top_ideas || []);
+        renderLatestReport(data.latest_report);
+        renderActivity(data.recent_activity || []);
+        const elapsed = Math.round(performance.now() - start);
+        document.getElementById("actionStatus").textContent = `Dashboard loaded in ${elapsed} ms`;
+      }
+
+      function renderStats(stats) {
+        const cards = [
+          ["Contents", stats.contents],
+          ["Trends", stats.trends],
+          ["Ideas", stats.ideas],
+          ["Reports", stats.reports],
+        ]
+          .map(
+            ([label, value]) => `
+              <div class="stat-card">
+                <div class="stat-label">${label}</div>
+                <div class="stat-value">${value}</div>
+              </div>
+            `
+          )
+          .join("");
+        document.getElementById("stats").innerHTML = cards;
+        document.getElementById("statsMirror").innerHTML = cards;
+      }
+
+      function renderDashboardTrends(items) {
+        document.getElementById("trends").innerHTML = items
+          .map(
+            (item) => `
+              <div class="trend-card" onclick="loadTrendDetail('${item.id}')">
+                <div class="trend-title">🔥 ${item.topic}</div>
+                <div class="metric">Score: ${item.trend_score}</div>
+                <div class="metric">${item.lifecycle}</div>
+              </div>
+            `
+          )
+          .join("");
+      }
+
+      function renderDashboardIdeas(items) {
+        document.getElementById("ideas").innerHTML = items
+          .map(
+            (item) => `
+              <div class="idea-card" onclick="loadIdeaDetail('${item.id}')">
+                <div class="idea-title">★★★★★ ${item.title}</div>
+                <div class="metric">Priority: ${item.priority}</div>
+                <div class="metric">Project: ${item.project}</div>
+              </div>
+            `
+          )
+          .join("");
+      }
+
+      function renderLatestReport(report) {
+        const container = document.getElementById("latestReport");
+        if (!report) {
+          container.innerHTML = '<span class="status">No report yet.</span>';
+          document.getElementById("report").textContent = "";
+          return;
+        }
+        container.innerHTML = `
+          <div><strong>${report.title}</strong></div>
+          <div class="metric">Generated: ${formatTime(report.created_at)}</div>
+          <div class="metric">Status: ${report.status}</div>
+          <button class="secondary" onclick="loadReportDetail('${report.id}')">View</button>
+          <button class="secondary" onclick="downloadMarkdown('${report.id}')">Download Markdown</button>
+        `;
+        document.getElementById("report").textContent = report.markdown_content || "";
+      }
+
+      function renderActivity(items) {
+        document.getElementById("activity").innerHTML = items
+          .map(
+            (item) => `
+              <div class="activity-item">
+                <span>${formatTime(item.time)} · ${item.label}</span>
+                <span>${item.count || ""}</span>
+              </div>
+            `
+          )
+          .join("");
+      }
+
       async function importContent() {
         const payload = JSON.parse(document.getElementById("payload").value);
         const res = await fetch(`${API}/content/import`, {
@@ -213,6 +360,7 @@
         });
         document.getElementById("status").textContent = JSON.stringify(await res.json());
         await loadContent();
+        await loadDashboard();
       }
 
       async function analyzeContent(id) {
@@ -223,6 +371,7 @@
         });
         document.getElementById("status").textContent = JSON.stringify(await res.json());
         await loadContent();
+        await loadDashboard();
       }
 
       async function loadContent() {
@@ -251,7 +400,7 @@
           body: JSON.stringify({ lookback_days: 7, min_content_count: 1 }),
         });
         document.getElementById("trendStatus").textContent = JSON.stringify(await res.json());
-        await loadTrends();
+        await loadDashboard();
       }
 
       async function loadTrends() {
@@ -293,7 +442,7 @@
           body: JSON.stringify({ projects: ["in77", "in88"], ideas_per_project: 5 }),
         });
         document.getElementById("ideaStatus").textContent = JSON.stringify(await res.json());
-        await loadIdeas();
+        await loadDashboard();
       }
 
       async function loadIdeas() {
@@ -334,7 +483,7 @@
           body: JSON.stringify({}),
         });
         const data = await res.json();
-        document.getElementById("reportStatus").textContent = JSON.stringify({
+        document.getElementById("actionStatus").textContent = JSON.stringify({
           id: data.item.id,
           status: data.item.status,
           trends: (data.item.trend_ids || []).length,
@@ -342,17 +491,18 @@
           contents: (data.item.content_ids || []).length,
         });
         document.getElementById("report").textContent = data.item.markdown_content || "";
+        await loadDashboard();
       }
 
       async function loadLatestReport() {
         const res = await fetch(`${API}/reports?page=1&page_size=1`);
         const data = await res.json();
         if (!data.items.length) {
-          document.getElementById("reportStatus").textContent = "No report yet.";
+          document.getElementById("actionStatus").textContent = "No report yet.";
           return;
         }
         const report = data.items[0];
-        document.getElementById("reportStatus").textContent = JSON.stringify({
+        document.getElementById("actionStatus").textContent = JSON.stringify({
           id: report.id,
           status: report.status,
           week_start: report.week_start,
@@ -361,23 +511,40 @@
         document.getElementById("report").textContent = report.markdown_content || "";
       }
 
+      async function loadReportDetail(id) {
+        const res = await fetch(`${API}/reports/${id}`);
+        const report = await res.json();
+        document.getElementById("report").textContent = report.markdown_content || "";
+      }
+
+      async function downloadMarkdown(id) {
+        const res = await fetch(`${API}/reports/${id}`);
+        const report = await res.json();
+        const blob = new Blob([report.markdown_content || ""], { type: "text/markdown;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `${report.title || "weekly-report"}.md`;
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+
       function formatGrowth(value) {
         const number = Number(value || 0);
         const prefix = number > 0 ? "+" : "";
         return `${prefix}${Math.round(number * 100)}%`;
       }
 
+      function formatTime(value) {
+        if (!value) return "";
+        return new Date(value).toLocaleString("zh-CN", { hour12: false });
+      }
+
+      loadDashboard().catch(() => {
+        document.getElementById("actionStatus").textContent = "Dashboard API not available yet.";
+      });
       loadContent().catch(() => {
         document.getElementById("status").textContent = "API not available. Start backend first.";
-      });
-      loadTrends().catch(() => {
-        document.getElementById("trendStatus").textContent = "Trend API not available yet.";
-      });
-      loadIdeas().catch(() => {
-        document.getElementById("ideaStatus").textContent = "Idea API not available yet.";
-      });
-      loadLatestReport().catch(() => {
-        document.getElementById("reportStatus").textContent = "Report API not available yet.";
       });
     </script>
   </body>

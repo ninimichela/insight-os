@@ -298,16 +298,54 @@ DoD:
 
 ## Beta Sprint 4: Dashboard
 
-One real homepage, not a complex dashboard.
+Goal: answer one question: what should the content team pay attention to today?
+
+Principles:
+
+- One real homepage, not a complex dashboard.
+- Do not build an admin system.
+- Do not add complex navigation.
+- Do not recalculate data; only read existing results.
+- Frontend loads dashboard data through one API call.
 
 Sections:
 
-- Overview
-- Today's Trend
-- Latest Imported
-- Top Ideas
-- Weekly Report
+- Overview: Contents, Trends, Ideas, Reports
+- Today's Trends: Top 5 by `trend_score`
+- Today's Ideas: Top Ideas by `priority`
+- Latest Weekly Report
 - Statistics
+- Quick Actions
+- Recent Activity
+
+API:
+
+- `GET /dashboard`
+
+Response:
+
+```json
+{
+  "stats": {},
+  "top_trends": [],
+  "top_ideas": [],
+  "latest_report": {},
+  "recent_activity": []
+}
+```
+
+DoD:
+
+- `/dashboard` API exists.
+- Four statistics cards exist.
+- Top 5 Trends exist.
+- Top Ideas exist.
+- Latest Report exists.
+- Quick Actions exist.
+- Recent Activity exists.
+- First load target is under 2 seconds.
+- Dashboard does not recalculate data.
+- Tests pass.
 
 ## Beta Sprint 5: Beta Demo
 
