@@ -10,6 +10,7 @@ Planned modules:
 - `classifier.py`
 - `idea_generator.py`
 - `report_generator.py`
+- `trend_analyzer.py`
+- `prompt_loader.py`
 
 Avoid building one large `ai_service.py`.
-

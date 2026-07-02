@@ -1,0 +1,15 @@
+{
+  "version": "0.1",
+  "mvp": {
+    "content_import": "manual_or_csv",
+    "content_analysis": "manual_trigger",
+    "trend_generation": "post_alpha",
+    "idea_generation": "post_alpha",
+    "weekly_report": "post_alpha"
+  },
+  "schedule": {
+    "daily_collect": "08:00",
+    "weekly_report": "Friday 10:00"
+  }
+}
+

@@ -1,0 +1,20 @@
+{
+  "version": "1.0",
+  "weights": {
+    "innovation": 0.15,
+    "brand_fit": 0.25,
+    "execution_cost": 0.1,
+    "spread_potential": 0.2,
+    "save_potential": 0.15,
+    "trend_relevance": 0.1,
+    "timeliness": 0.05
+  },
+  "recommendations": [
+    {"min": 90, "action": "立即执行"},
+    {"min": 80, "action": "本周优先讨论"},
+    {"min": 70, "action": "可作为备选"},
+    {"min": 60, "action": "暂缓"},
+    {"min": 0, "action": "不建议执行"}
+  ]
+}
+

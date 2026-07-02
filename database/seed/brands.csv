@@ -1,0 +1,32 @@
+name,type,project,keywords,style_reference
+in77,project,in77,CBD;公园;城市;艺术;松弛,Monocle;Popeye
+in88,project,in88,王府井;科技;动漫;年轻;室内漫游,Popeye;Apple
+Monocle,reference,global,城市观察;国际化;克制;商业文化,Monocle
+Popeye,reference,global,青年;街区;日常;城市生活,Popeye
+&Premium,reference,global,温柔;生活美学;物件;慢生活,&Premium
+Kinfolk,reference,global,自然;简洁;生活方式;慢节奏,Kinfolk
+Aesop,reference,global,克制;文学感;空间;质感,Aesop
+Apple,reference,global,简洁;科技;清晰;产品体验,Apple
+Nike,reference,global,运动;行动;青年;能量,Nike
+Blue Bottle,reference,global,咖啡;留白;社区;日常,Blue Bottle
+LEGO,brand,in88,亲子;创造力;IP;玩具,Popeye
+Gundam,brand,in88,动漫;模型;年轻;IP,Popeye
+Huawei,brand,in88,科技;影像;终端;体验,Apple
+Unitree,brand,in88,机器人;科技;首店;未来感,Apple
+Insta360,brand,in88,影像;运动;科技;户外,Apple
+Pop Mart,brand,in88,潮玩;IP;年轻;收藏,Popeye
+%Arabica,brand,in77,咖啡;城市;打卡;日常,Blue Bottle
+M Stand,brand,in77,咖啡;社交;设计;城市,Blue Bottle
+lululemon,brand,in77,运动;社区;健康;生活方式,Nike
+On,brand,in77,跑步;城市;运动;轻量,Nike
+Aesop CN,brand,in77,香氛;空间;质感;生活方式,Aesop
+MUJI,brand,in77,日常;简洁;生活方式;物件,&Premium
+Tsutaya,brand,in77,书店;文化;生活方式;空间,Monocle
+Blueglass,brand,in77,健康;酸奶;生活方式;年轻,Kinfolk
+Seesaw,brand,in77,咖啡;城市;社区;年轻,Blue Bottle
+Heytea,brand,in88,年轻;新品;社交;饮品,Popeye
+Shake Shack,brand,in77,餐饮;城市;社交;户外,Monocle
+Harmay,brand,in88,美妆;仓储;年轻;探索,Popeye
+Nike Beijing,brand,in77,运动;城市;青年;社群,Nike
+Adidas,brand,in77,运动;潮流;社群;城市,Nike
+

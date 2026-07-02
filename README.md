@@ -65,12 +65,7 @@ This repository is at `v0.1` scaffold stage.
 
 ## Release Milestones
 
-- `v0.1`: Scaffold
-- `v0.2`: Database, import, AI analysis
-- `v0.3`: Trend and idea
-- `v0.4`: Weekly report
-- `v0.5`: Brand Brain
-- `v0.6`: Decision Engine
-- `v0.7`: Explainability
-- `v0.8`: Strategy Engine
-- `v1.0`: Commercial release
+- Alpha: Content Library, import, AI analysis
+- Beta: Trend, idea, weekly report
+- RC: Brand Brain, Decision, Memory, Explainability
+- 1.0: Commercial release

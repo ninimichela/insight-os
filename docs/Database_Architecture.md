@@ -98,6 +98,10 @@ Key fields:
 - `ai_reason`
 - `evidence`
 - `analysis_version`: e.g. `gpt55-v1`; enables re-analysis after prompt/model updates
+- `prompt_version`: prompt set used for AI output
+- `brand_brain_version`: Brand Brain version used for AI output
+- `score_version`: scoring rule version used for AI output
+- `workflow_version`: workflow version used for AI output
 - `analysis_trace`: structured trace of prompt, brand brain, trend, and scoring versions
 - `content_status`: new / parsed / analyzed / selected / published / archived
 
@@ -111,6 +115,8 @@ Indexes:
 - `category`
 - `competitor_id`
 - `analysis_version`
+- `prompt_version`
+- `brand_brain_version`
 
 ### 4.2 competitors
 

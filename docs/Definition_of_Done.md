@@ -68,6 +68,10 @@ Done means:
 - Result is saved to database.
 - `content_status = analyzed`.
 - `analysis_version` is saved.
+- `prompt_version` is saved.
+- `brand_brain_version` is saved.
+- `score_version` is saved.
+- `workflow_version` is saved.
 - `analysis_trace` is saved.
 - Timeout target is under 15 seconds per ordinary content item.
 - Retry mechanism exists for transient AI/API errors.
@@ -87,4 +91,3 @@ v0.2 is done only when:
   - Trend
   - Idea
 - A content operator can understand what to do next.
-

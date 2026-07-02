@@ -142,6 +142,10 @@ Analyze one or more content records.
       "suitable_for": ["in88"],
       "recommendation": "可作为王府井首店经济选题参考。",
       "analysis_version": "gpt55-v1",
+      "prompt_version": "v1",
+      "brand_brain_version": "1.0",
+      "score_version": "1.0",
+      "workflow_version": "0.1",
       "analysis_trace": {
         "prompt_version": "v1",
         "brand_brain_version": "1.0",
@@ -158,7 +162,10 @@ Analyze one or more content records.
 
 - AI output must be parsed into structured fields.
 - `analysis_version` must be saved.
+- `prompt_version` must be saved.
+- `brand_brain_version` must be saved.
+- `score_version` must be saved.
+- `workflow_version` must be saved.
 - `analysis_trace` must be saved.
 - Malformed AI JSON must return a useful error.
 - Failed items should not block successful items.
-

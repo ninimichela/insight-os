@@ -63,6 +63,10 @@ CREATE TABLE IF NOT EXISTS contents (
   ai_reason TEXT,
   evidence JSONB,
   analysis_version TEXT,
+  prompt_version TEXT,
+  brand_brain_version TEXT,
+  score_version TEXT,
+  workflow_version TEXT,
   analysis_trace JSONB,
   content_status TEXT DEFAULT 'new' CHECK (
     content_status IN ('new', 'parsed', 'analyzed', 'selected', 'published', 'archived')
@@ -199,6 +203,8 @@ CREATE INDEX IF NOT EXISTS idx_contents_city ON contents(city);
 CREATE INDEX IF NOT EXISTS idx_contents_category ON contents(category);
 CREATE INDEX IF NOT EXISTS idx_contents_competitor_id ON contents(competitor_id);
 CREATE INDEX IF NOT EXISTS idx_contents_analysis_version ON contents(analysis_version);
+CREATE INDEX IF NOT EXISTS idx_contents_prompt_version ON contents(prompt_version);
+CREATE INDEX IF NOT EXISTS idx_contents_brand_brain_version ON contents(brand_brain_version);
 
 CREATE INDEX IF NOT EXISTS idx_competitors_name ON competitors(name);
 CREATE INDEX IF NOT EXISTS idx_competitors_city ON competitors(city);

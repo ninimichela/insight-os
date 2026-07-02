@@ -106,6 +106,23 @@ Definition of done:
   - Is it faster than Notion + ChatGPT?
   - If we removed half the features, would it still help users make better content decisions?
 
+## Sprint 2.2 Final Development Order
+
+Do not skip steps:
+
+1. Establish PostgreSQL schema.
+2. Complete Repository Layer.
+3. Complete `POST /content/import`.
+4. Complete `GET /content`.
+5. Complete `POST /content/analyze`.
+6. Integrate OpenAI.
+7. Persist analysis results to database.
+8. Display Content Library in Dashboard.
+9. Import 20-50 real content items for validation.
+10. Complete Alpha Demo.
+
+After this point, do not modify architecture unless there is a critical blocker.
+
 ## Sprint 3: Trend and Idea
 
 Deliverables:

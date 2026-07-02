@@ -1,0 +1,16 @@
+{
+  "reference_library": [
+    {"name": "Monocle", "keywords": ["城市观察", "国际化", "克制", "商业文化"]},
+    {"name": "Popeye", "keywords": ["青年", "街区", "日常", "城市生活"]},
+    {"name": "&Premium", "keywords": ["温柔", "生活美学", "物件", "慢生活"]},
+    {"name": "Kinfolk", "keywords": ["自然", "简洁", "生活方式", "慢节奏"]},
+    {"name": "Aesop", "keywords": ["克制", "文学感", "空间", "质感"]},
+    {"name": "Apple", "keywords": ["简洁", "科技", "清晰", "产品体验"]},
+    {"name": "Nike", "keywords": ["运动", "行动", "青年", "能量"]},
+    {"name": "Blue Bottle", "keywords": ["咖啡", "留白", "社区", "日常"]}
+  ],
+  "blend_examples": {
+    "in77": {"brand_dna": 0.7, "Monocle": 0.2, "Popeye": 0.1},
+    "in88": {"brand_dna": 0.7, "Popeye": 0.2, "Apple": 0.1}
+  }
+}

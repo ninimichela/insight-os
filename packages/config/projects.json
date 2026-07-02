@@ -1,0 +1,17 @@
+{
+  "projects": [
+    {
+      "id": "in77",
+      "name": "北京in77",
+      "city": "北京",
+      "positioning": "CBD城市公园商业"
+    },
+    {
+      "id": "in88",
+      "name": "北京王府井银泰in88",
+      "city": "北京",
+      "positioning": "王府井年轻生活方式与科技潮流商业项目"
+    }
+  ]
+}
+

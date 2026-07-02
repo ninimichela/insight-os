@@ -6,19 +6,16 @@ INSight OS is an **AI Content Operating System for Commercial Real Estate**.
 
 It is not a copywriting tool. It is a content intelligence system that combines market content, competitor analysis, brand memory, decision logic, and performance feedback.
 
-## 2026 Q3: MVP
+## 2026 Q3: Alpha
 
 Goal:
 
-Run the first useful weekly content workflow.
+Run the first useful Content Library and AI Analysis workflow.
 
 Scope:
 
 - Content Library
 - Competitor Library
-- Trend Center
-- Idea Pool
-- Markdown Weekly Report
 - Basic AI analysis
 - Manual CSV import
 - Basic dashboard
@@ -26,16 +23,22 @@ Scope:
 Release targets:
 
 - `v0.1`: Repo scaffold, CI, Docker, docs
-- `v0.2`: Database, content import, AI analysis
-- `v0.3`: Trend and idea
-- `v0.4`: Weekly report
-- `v0.5`: Brand Brain
-- `v0.6`: Decision Engine
-- `v0.7`: Explainability
-- `v0.8`: Strategy Engine
-- `v1.0`: Commercial release
+- `Alpha`: Content Library, import, AI analysis
 
-## 2026 Q4: Intelligence Layer
+## 2026 Q4: Beta
+
+Goal:
+
+Complete the first weekly planning loop.
+
+Scope:
+
+- Trend
+- Idea
+- Weekly Report
+- Dashboard improvements
+
+## 2027 Q1: Release Candidate
 
 Goal:
 
@@ -50,11 +53,11 @@ Scope:
 - Prompt Composer
 - Duplicate idea detection
 
-## 2027 Q1: Strategy Layer
+## 2027 Q2: 1.0 Commercial Release
 
 Goal:
 
-Move from weekly ideas to monthly and campaign strategy.
+Prepare INSight OS for commercial use.
 
 Scope:
 
@@ -64,15 +67,6 @@ Scope:
 - Campaign planning
 - KPI-based recommendations
 - Dashboard analytics
-
-## 2027 Q2: SaaS Layer
-
-Goal:
-
-Make INSight OS reusable for multiple commercial real estate clients.
-
-Scope:
-
 - Enterprise version
 - Team version
 - Multi-brand workspace
