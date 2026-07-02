@@ -593,6 +593,169 @@
         border-color: var(--text);
       }
 
+      .capture-card {
+        padding: 14px;
+        border-radius: 20px;
+        border: 1px solid var(--line);
+        background: var(--page);
+        box-shadow: var(--shadow);
+      }
+
+      .capture-row,
+      .search-row {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 10px;
+        align-items: center;
+      }
+
+      .capture-input,
+      .search-input {
+        min-height: 48px;
+        background: var(--soft);
+      }
+
+      .capture-button {
+        width: 48px;
+        height: 48px;
+        display: inline-grid;
+        place-items: center;
+        border-radius: 50%;
+        color: #ffffff;
+        background: var(--text);
+        box-shadow: var(--shadow-hover);
+        cursor: pointer;
+        font-size: 22px;
+      }
+
+      .collection-strip {
+        display: flex;
+        gap: 12px;
+        overflow-x: auto;
+        padding: 2px 0 4px;
+        scroll-snap-type: x mandatory;
+      }
+
+      .collection-card {
+        flex: 0 0 132px;
+        min-height: 104px;
+        padding: 16px;
+        border-radius: 20px;
+        border: 1px solid var(--line);
+        background: var(--page);
+        box-shadow: var(--shadow);
+        scroll-snap-align: start;
+      }
+
+      .collection-icon {
+        font-size: 22px;
+      }
+
+      .collection-name {
+        margin-top: 12px;
+        font-size: 15px;
+        font-weight: 700;
+      }
+
+      .collection-count {
+        margin-top: 4px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .note-list {
+        display: grid;
+        gap: 12px;
+      }
+
+      .note-card {
+        padding: 16px;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: var(--page);
+        box-shadow: var(--shadow);
+        cursor: pointer;
+        transition: transform 160ms ease, box-shadow 160ms ease;
+      }
+
+      .note-card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-hover);
+      }
+
+      .note-title {
+        margin: 0;
+        font-size: 15px;
+        line-height: 1.45;
+        font-weight: 700;
+      }
+
+      .note-source {
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .inspiration-card {
+        display: grid;
+        grid-template-columns: 72px 1fr auto;
+        gap: 12px;
+        align-items: center;
+        padding: 14px 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .inspiration-card:last-child {
+        border-bottom: 0;
+      }
+
+      .favorite-star {
+        color: var(--brand);
+        font-size: 18px;
+      }
+
+      .draft-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: center;
+        padding: 14px 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .draft-row:last-child {
+        border-bottom: 0;
+      }
+
+      .fab-menu {
+        position: fixed;
+        right: max(20px, calc((100vw - 480px) / 2 + 20px));
+        bottom: 154px;
+        z-index: 9;
+        display: none;
+        width: 210px;
+        padding: 10px;
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.94);
+        box-shadow: var(--shadow-hover);
+        backdrop-filter: blur(16px);
+      }
+
+      .fab-menu.visible {
+        display: grid;
+        gap: 6px;
+      }
+
+      .fab-menu button {
+        min-height: 38px;
+        padding: 0 12px;
+        border-radius: 999px;
+        text-align: left;
+        color: var(--text);
+        background: var(--soft);
+        cursor: pointer;
+      }
+
       .detail-card {
         display: none;
         padding: 16px;
@@ -777,7 +940,7 @@
             <img class="brand-logo" src="assets/insight-logo-horizontal.png" alt="INSight OS" />
             <p class="hero-subtitle">Good morning, nini</p>
           </div>
-          <button class="icon-button" aria-label="More" onclick="navigate('profile')">⋯</button>
+          <button class="icon-button" aria-label="More" onclick="navigate('notebook')">⋯</button>
         </header>
 
         <section class="hero-card">
@@ -1004,30 +1167,108 @@
         </section>
       </section>
 
-      <section class="view" id="view-profile">
+      <section class="view" id="view-notebook">
         <div class="page-header">
           <button class="back-button" onclick="goBack()" aria-label="Back">‹</button>
           <div>
-            <h1 class="page-title">Profile</h1>
-            <p class="page-kicker">Pilot workspace</p>
+            <h1 class="page-title">Notebook</h1>
+            <p class="page-kicker">Your ideas, references and inspirations.</p>
           </div>
           <button class="icon-button" aria-label="More">⋯</button>
         </div>
+
+        <section class="capture-card">
+          <div class="search-row">
+            <input class="search-input" id="notebookSearch" placeholder="搜索标题、标签、来源、关键词" oninput="renderNotebook()" />
+            <button class="icon-button" aria-label="Search">⌕</button>
+          </div>
+          <div class="filters" style="padding: 14px 0 8px;">
+            <button class="pill active" data-note-filter="all" onclick="setNotebookFilter('all')">全部</button>
+            <button class="pill" data-note-filter="note" onclick="setNotebookFilter('note')">笔记</button>
+            <button class="pill" data-note-filter="favorite" onclick="setNotebookFilter('favorite')">收藏</button>
+            <button class="pill" data-note-filter="idea" onclick="setNotebookFilter('idea')">灵感</button>
+            <button class="pill" data-note-filter="reference" onclick="setNotebookFilter('reference')">案例</button>
+            <button class="pill" data-note-filter="draft" onclick="setNotebookFilter('draft')">草稿</button>
+          </div>
+          <div class="capture-row">
+            <input class="capture-input" id="quickCaptureInput" placeholder="记录一个灵感…… Paste a link, write an idea or save a reference." />
+            <button class="capture-button" onclick="captureNote()" aria-label="Add note">+</button>
+          </div>
+          <div id="notebookStatus" class="status"></div>
+        </section>
+
         <section class="panel">
-          <h2>INSight OS</h2>
-          <p class="idea-reason">AI Content Operating System for Commercial Real Estate.</p>
+          <div class="section-head">
+            <h2>Collections</h2>
+            <span class="meta">Inbox</span>
+          </div>
+          <div class="collection-strip">
+            <div class="collection-card"><div class="collection-icon">📚</div><div class="collection-name">Competitors</div><div class="collection-count">32 saved</div></div>
+            <div class="collection-card"><div class="collection-icon">🔥</div><div class="collection-name">Trends</div><div class="collection-count">18 signals</div></div>
+            <div class="collection-card"><div class="collection-icon">💡</div><div class="collection-name">Ideas</div><div class="collection-count">12 drafts</div></div>
+            <div class="collection-card"><div class="collection-icon">📌</div><div class="collection-name">References</div><div class="collection-count">89 clips</div></div>
+            <div class="collection-card"><div class="collection-icon">⭐</div><div class="collection-name">Favorites</div><div class="collection-count">36 items</div></div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="section-head">
+            <h2>Recent Notes</h2>
+            <button class="text-link" onclick="setNotebookFilter('note')">查看全部</button>
+          </div>
+          <div id="recentNotes" class="note-list"></div>
+        </section>
+
+        <section class="panel">
+          <div class="section-head">
+            <h2>Saved Inspirations</h2>
+            <button class="text-link" onclick="setNotebookFilter('favorite')">查看收藏</button>
+          </div>
+          <div id="savedInspirations"></div>
+        </section>
+
+        <section class="panel">
+          <div class="section-head">
+            <h2>My Tags</h2>
+            <span class="meta">Memory seeds</span>
+          </div>
+          <div id="myTags" class="tag-row"></div>
+        </section>
+
+        <section class="panel">
+          <div class="section-head">
+            <h2>Draft Ideas</h2>
+            <span class="meta">Continue later</span>
+          </div>
+          <div id="draftIdeas"></div>
+        </section>
+
+        <section class="panel">
+          <div class="section-head">
+            <h2>Statistics</h2>
+            <span class="meta">Notebook</span>
+          </div>
+          <div class="stats-grid" id="notebookStats"></div>
         </section>
       </section>
     </main>
 
-    <button class="fab" id="fab" onclick="navigate('import')" aria-label="Add content">+</button>
+    <button class="fab" id="fab" onclick="handleFab()" aria-label="Add content">+</button>
+    <div class="fab-menu" id="notebookFabMenu">
+      <button onclick="focusQuickCapture('新建笔记')">＋ 新建笔记</button>
+      <button onclick="focusQuickCapture('收藏网页')">＋ 收藏网页</button>
+      <button onclick="focusQuickCapture('收藏公众号')">＋ 收藏公众号</button>
+      <button onclick="focusQuickCapture('收藏小红书')">＋ 收藏小红书</button>
+      <button onclick="focusQuickCapture('上传图片')">＋ 上传图片</button>
+      <button onclick="focusQuickCapture('上传PDF')">＋ 上传PDF</button>
+    </div>
 
     <nav class="bottom-nav" aria-label="Main navigation">
       <button class="nav-item active" data-nav="home" onclick="navigate('home')"><span class="nav-icon">⌂</span>首页</button>
       <button class="nav-item" data-nav="content" onclick="navigate('content')"><span class="nav-icon">▣</span>内容</button>
       <button class="nav-item" data-nav="trends" onclick="navigate('trends')"><span class="nav-icon">↗</span>趋势</button>
       <button class="nav-item" data-nav="ideas" onclick="navigate('ideas')"><span class="nav-icon">✦</span>选题</button>
-      <button class="nav-item" data-nav="profile" onclick="navigate('profile')"><span class="nav-icon">◎</span>我的</button>
+      <button class="nav-item" data-nav="notebook" onclick="navigate('notebook')"><span class="nav-icon">◎</span>笔记</button>
     </nav>
 
     <script>
@@ -1039,6 +1280,41 @@
       let activeContentFilter = "all";
       let currentView = "home";
       let previousView = "home";
+      let activeNotebookFilter = "all";
+      let notebookNotes = [
+        {
+          title: "北京SKP夏日Campaign",
+          time: "2小时前",
+          tags: ["Campaign", "Summer"],
+          source: "公众号",
+          type: "favorite",
+          favorite: true,
+        },
+        {
+          title: "王府井夜间室内漫游路线",
+          time: "今天 11:20",
+          tags: ["王府井", "夜生活"],
+          source: "手动输入",
+          type: "note",
+          favorite: false,
+        },
+        {
+          title: "Citywalk + 咖啡座椅观察",
+          time: "昨天",
+          tags: ["Citywalk", "咖啡"],
+          source: "小红书",
+          type: "idea",
+          favorite: true,
+        },
+        {
+          title: "夏日漫画系列",
+          time: "未完成",
+          tags: ["动漫", "夏天"],
+          source: "Draft",
+          type: "draft",
+          favorite: false,
+        },
+      ];
 
       function navigate(view, options = {}) {
         const target = document.getElementById(`view-${view}`);
@@ -1048,7 +1324,9 @@
         document.querySelectorAll(".view").forEach((item) => item.classList.toggle("active", item.id === `view-${view}`));
         document.querySelectorAll(".nav-item").forEach((item) => item.classList.toggle("active", item.dataset.nav === navKey(view)));
         const fab = document.getElementById("fab");
-        if (fab) fab.style.display = ["home", "content"].includes(view) ? "block" : "none";
+        const fabMenu = document.getElementById("notebookFabMenu");
+        if (fab) fab.style.display = ["home", "content", "notebook"].includes(view) ? "block" : "none";
+        if (fabMenu && view !== "notebook") fabMenu.classList.remove("visible");
         window.scrollTo({ top: 0, behavior: "auto" });
 
         if (view === "home") loadDashboard().catch(showDashboardError);
@@ -1056,13 +1334,176 @@
         if (view === "trends") loadTrends().catch(() => setText("trendStatus", "Trends API not available."));
         if (view === "ideas") loadIdeas().catch(() => setText("ideaStatus", "Ideas API not available."));
         if (view === "reports") loadReports().catch(() => setText("reportStatus", "Reports API not available."));
+        if (view === "notebook") renderNotebook();
       }
 
       function navKey(view) {
         if (view.startsWith("trend")) return "trends";
         if (view.startsWith("idea")) return "ideas";
-        if (view.startsWith("report")) return "profile";
+        if (view.startsWith("report")) return "notebook";
+        if (view === "notebook") return "notebook";
         return view;
+      }
+
+      function handleFab() {
+        if (currentView === "notebook") {
+          document.getElementById("notebookFabMenu").classList.toggle("visible");
+          return;
+        }
+        navigate("import");
+      }
+
+      function focusQuickCapture(prefix = "") {
+        navigate("notebook");
+        const input = document.getElementById("quickCaptureInput");
+        if (input) {
+          input.value = prefix ? `${prefix}：` : input.value;
+          input.focus();
+        }
+        document.getElementById("notebookFabMenu").classList.remove("visible");
+      }
+
+      function captureNote() {
+        const input = document.getElementById("quickCaptureInput");
+        const value = input.value.trim();
+        if (!value) {
+          setText("notebookStatus", "先写下一条灵感或粘贴一个链接。");
+          return;
+        }
+        const isLink = value.startsWith("http://") || value.startsWith("https://");
+        notebookNotes.unshift({
+          title: value,
+          time: "刚刚",
+          tags: [isLink ? "Reference" : "Idea"],
+          source: isLink ? "Website" : "Quick Capture",
+          type: isLink ? "reference" : "note",
+          favorite: false,
+        });
+        input.value = "";
+        setText("notebookStatus", "已保存到 Notebook。");
+        renderNotebook();
+      }
+
+      function setNotebookFilter(filter) {
+        activeNotebookFilter = filter;
+        document.querySelectorAll(".pill[data-note-filter]").forEach((button) => {
+          button.classList.toggle("active", button.dataset.noteFilter === filter);
+        });
+        renderNotebook();
+      }
+
+      function renderNotebook() {
+        const query = (document.getElementById("notebookSearch")?.value || "").trim().toLowerCase();
+        const filtered = notebookNotes.filter((note) => {
+          const matchesFilter =
+            activeNotebookFilter === "all" ||
+            note.type === activeNotebookFilter ||
+            (activeNotebookFilter === "favorite" && note.favorite);
+          const searchable = `${note.title} ${note.tags.join(" ")} ${note.source}`.toLowerCase();
+          return matchesFilter && (!query || searchable.includes(query));
+        });
+        renderRecentNotes(filtered);
+        renderSavedInspirations(filtered);
+        renderMyTags();
+        renderDraftIdeas(filtered);
+        renderNotebookStats();
+      }
+
+      function renderRecentNotes(items) {
+        const container = document.getElementById("recentNotes");
+        if (!container) return;
+        const notes = items.filter((note) => note.type !== "draft").slice(0, 4);
+        container.innerHTML =
+          notes
+            .map(
+              (note) => `
+                <div class="note-card" onclick="setText('notebookStatus', 'Note Detail 将在后续 Pilot 接入。')">
+                  <div class="top-row">
+                    <h3 class="note-title">${note.title}</h3>
+                    <span class="note-source">${note.time}</span>
+                  </div>
+                  <div class="tag-row">${note.tags.map((tag) => `<span class="tag">#${tag}</span>`).join("")}</div>
+                  <div class="note-source">${note.source}</div>
+                </div>
+              `
+            )
+            .join("") || '<div class="empty">暂无笔记。</div>';
+      }
+
+      function renderSavedInspirations(items) {
+        const container = document.getElementById("savedInspirations");
+        if (!container) return;
+        const inspirations = items.filter((note) => note.favorite || note.type === "reference").slice(0, 4);
+        container.innerHTML =
+          inspirations
+            .map(
+              (note) => `
+                <div class="inspiration-card" onclick="setText('notebookStatus', 'Saved Inspiration Detail 将在后续 Pilot 接入。')">
+                  <div class="cover"></div>
+                  <div>
+                    <div class="content-title">${note.title}</div>
+                    <div class="content-meta">${note.source} · ${note.time}</div>
+                  </div>
+                  <div class="favorite-star">★</div>
+                </div>
+              `
+            )
+            .join("") || '<div class="empty">暂无收藏案例。</div>';
+      }
+
+      function renderMyTags() {
+        const container = document.getElementById("myTags");
+        if (!container) return;
+        const tags = ["商业地产", "Citywalk", "夏天", "艺术", "Campaign", "展览", "IP", "节气"];
+        container.innerHTML = tags.map((tag) => `<button class="tag" onclick="filterNotebookByTag('${tag}')">#${tag}</button>`).join("");
+      }
+
+      function filterNotebookByTag(tag) {
+        const input = document.getElementById("notebookSearch");
+        if (input) input.value = tag;
+        setNotebookFilter("all");
+      }
+
+      function renderDraftIdeas(items) {
+        const container = document.getElementById("draftIdeas");
+        if (!container) return;
+        const drafts = items.filter((note) => note.type === "draft").slice(0, 3);
+        container.innerHTML =
+          drafts
+            .map(
+              (note) => `
+                <div class="draft-row">
+                  <div>
+                    <div class="trend-topic">${note.title}</div>
+                    <div class="meta">${note.time}</div>
+                  </div>
+                  <button class="text-link" onclick="setText('notebookStatus', 'Draft 编辑将在后续 Pilot 接入。')">继续编辑</button>
+                </div>
+              `
+            )
+            .join("") || '<div class="empty">暂无草稿。</div>';
+      }
+
+      function renderNotebookStats() {
+        const container = document.getElementById("notebookStats");
+        if (!container) return;
+        const stats = [
+          ["Notes", notebookNotes.length],
+          ["Favorites", notebookNotes.filter((note) => note.favorite).length],
+          ["Ideas", notebookNotes.filter((note) => note.type === "idea").length],
+          ["References", notebookNotes.filter((note) => note.type === "reference" || note.favorite).length],
+        ];
+        container.innerHTML = stats
+          .map(
+            ([label, value]) => `
+              <div class="stat-card">
+                <div class="stat-label">${label}</div>
+                <div class="stat-value">${value}</div>
+                <div class="stat-delta">Notebook</div>
+              </div>
+            `
+          )
+          .join("");
       }
 
       function goBack() {
