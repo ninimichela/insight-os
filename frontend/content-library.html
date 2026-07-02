@@ -69,10 +69,14 @@
         padding: 6px 0 20px;
       }
 
-      .brand-name {
-        font-size: 18px;
-        font-weight: 700;
-        letter-spacing: 0;
+      .brand-logo {
+        display: block;
+        width: 188px;
+        height: 58px;
+        border-radius: 14px;
+        object-fit: cover;
+        object-position: center 82%;
+        background: var(--page);
       }
 
       .hero-title {
@@ -642,8 +646,8 @@
     <main class="app-shell">
       <header class="app-header">
         <div>
-          <div class="brand-name">INSight OS</div>
-          <p class="hero-subtitle">Good morning, Michelle</p>
+          <img class="brand-logo" src="assets/insight-logo.png" alt="INSight OS" />
+          <p class="hero-subtitle">Good morning, nini</p>
         </div>
         <button class="icon-button" aria-label="More">⋯</button>
       </header>
