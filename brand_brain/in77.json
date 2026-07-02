@@ -1,0 +1,9 @@
+{
+  "project": "in77",
+  "positioning": "CBD城市公园商业",
+  "keywords": ["城市", "自然", "艺术", "开放", "松弛", "CBD", "公园"],
+  "avoid_words": ["最低价", "爆款", "疯抢", "秒杀"],
+  "preferred_titles": ["城市观察", "今天适合", "夏天是一种", "CBD今天"],
+  "visual_style": ["Monocle", "Popeye", "自然光", "低饱和", "城市杂志感"]
+}
+

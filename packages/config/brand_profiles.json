@@ -1,0 +1,15 @@
+{
+  "in77": {
+    "name": "Beijing in77",
+    "positioning": "CBD urban park commercial project",
+    "keywords": ["CBD", "park", "city life", "art", "open", "relaxed"],
+    "avoid": ["最低价", "爆款", "疯抢", "秒杀"]
+  },
+  "in88": {
+    "name": "Beijing Wangfujing Intime in88",
+    "positioning": "Wangfujing young lifestyle, tech and pop culture commercial project",
+    "keywords": ["王府井", "科技", "动漫", "年轻", "室内漫游", "生活方式"],
+    "avoid": ["传统百货", "甩卖", "清仓", "老派商场话术"]
+  }
+}
+
