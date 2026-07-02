@@ -17,6 +17,7 @@ os.environ["AI_PROVIDER"] = "mock"
 from app.database import Base, get_db
 from app.main import app
 from app.models.content import Content
+from app.models.trend import Trend
 
 
 engine = create_engine(
@@ -42,6 +43,7 @@ app.dependency_overrides[get_db] = override_get_db
 @pytest.fixture(autouse=True)
 def clean_db():
     db = TestingSessionLocal()
+    db.query(Trend).delete()
     db.query(Content).delete()
     db.commit()
     db.close()
@@ -59,4 +61,3 @@ def db_session():
         yield db
     finally:
         db.close()
-

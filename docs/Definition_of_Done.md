@@ -92,3 +92,24 @@ v0.2 is done only when:
   - Trend
   - Idea
 - A content operator can understand what to do next.
+
+## 6. Beta Sprint 1: Trend Engine
+
+Done means:
+
+- `POST /trends/generate` runs successfully.
+- Trends are generated automatically from analyzed Content records.
+- Topic clustering uses `tags`, `keywords`, `category`, and `packages/config/topic_alias.json`.
+- Trend Score is calculated by code using the frozen weights:
+  - 40% Content Count
+  - 30% Growth Rate
+  - 20% Source Diversity
+  - 10% Recency
+- Lifecycle is calculated by rules, not AI.
+- `analysis_trace.no_gpt_statistics = true`.
+- `GET /trends` lists trends by score.
+- `GET /trends/{id}` returns Trend Detail.
+- Trend Detail includes Related Contents, Top Competitors, and AI Insight.
+- Dashboard shows Top 5 Trends.
+- Tests cover generation, listing, detail, alias clustering, score, and lifecycle.
+- Beta Demo validates against at least 300 real content items.

@@ -45,7 +45,7 @@ def tag_content(content) -> dict:
         tags = ["商业内容"]
 
     keywords = []
-    for candidate in ["北京", "王府井", "CBD", "周末", "夏天", "商场", "小红书", "公众号"]:
+    for candidate in ["北京", "王府井", "CBD", "Citywalk", "LEGO", "乐高", "积木", "周末", "夏天", "商场", "小红书", "公众号"]:
         if candidate.lower() in text:
             keywords.append(candidate)
     keywords.extend(tags[:3])

@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>INSight OS Alpha | Content Library</title>
+    <title>INSight OS Beta | Content Library</title>
     <style>
       body {
         margin: 0;
@@ -81,14 +81,54 @@
         font-size: 13px;
         margin-top: 8px;
       }
+      .trend-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+        gap: 12px;
+      }
+      .trend-card {
+        border: 1px solid #dde2e6;
+        border-radius: 8px;
+        padding: 12px;
+        background: #fbfcfc;
+        cursor: pointer;
+      }
+      .trend-title {
+        font-weight: 700;
+        margin-bottom: 8px;
+      }
+      .metric {
+        color: #52616b;
+        font-size: 13px;
+        line-height: 1.6;
+      }
+      .detail {
+        border-top: 1px solid #e7ebee;
+        margin-top: 12px;
+        padding-top: 12px;
+        color: #172026;
+        font-size: 14px;
+        line-height: 1.7;
+      }
     </style>
   </head>
   <body>
     <header>
-      <h1>INSight OS Alpha</h1>
-      <div>Content Library Demo</div>
+      <h1>INSight OS Beta</h1>
+      <div>Content Library + Trend Engine Demo</div>
     </header>
     <main>
+      <section class="panel">
+        <h2>Today's Trends</h2>
+        <div class="actions">
+          <button onclick="generateTrends()">Generate Trends</button>
+          <button class="secondary" onclick="loadTrends()">Refresh Trends</button>
+        </div>
+        <div id="trendStatus" class="status"></div>
+        <div id="trends" class="trend-grid"></div>
+        <div id="trendDetail" class="detail" style="display: none"></div>
+      </section>
+
       <section class="panel">
         <h2>Import Content</h2>
         <textarea id="payload">{
@@ -171,8 +211,59 @@
           .join("");
       }
 
+      async function generateTrends() {
+        const res = await fetch(`${API}/trends/generate`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ lookback_days: 7, min_content_count: 1 }),
+        });
+        document.getElementById("trendStatus").textContent = JSON.stringify(await res.json());
+        await loadTrends();
+      }
+
+      async function loadTrends() {
+        const res = await fetch(`${API}/trends?page=1&page_size=5`);
+        const data = await res.json();
+        document.getElementById("trends").innerHTML = data.items
+          .map(
+            (item) => `
+              <div class="trend-card" onclick="loadTrendDetail('${item.id}')">
+                <div class="trend-title">🔥 ${item.topic}</div>
+                <div class="metric">Trend Score: ${item.trend_score}</div>
+                <div class="metric">Count: ${item.content_count}</div>
+                <div class="metric">Growth: ${formatGrowth(item.growth_rate)}</div>
+                <div class="metric">Lifecycle: ${item.lifecycle}</div>
+              </div>
+            `
+          )
+          .join("");
+      }
+
+      async function loadTrendDetail(id) {
+        const res = await fetch(`${API}/trends/${id}`);
+        const item = await res.json();
+        const detail = document.getElementById("trendDetail");
+        detail.style.display = "block";
+        detail.innerHTML = `
+          <strong>${item.topic}</strong><br />
+          Trend Score: ${item.trend_score} · Lifecycle: ${item.lifecycle} · Growth: ${formatGrowth(item.growth_rate)} · Count: ${item.content_count}<br />
+          Recommended: ${(item.recommended_projects || []).join(", ")}<br />
+          Sources: ${(item.top_competitors || []).join(", ")}<br />
+          Insight: ${item.ai_insight ? item.ai_insight.why_hot : ""}
+        `;
+      }
+
+      function formatGrowth(value) {
+        const number = Number(value || 0);
+        const prefix = number > 0 ? "+" : "";
+        return `${prefix}${Math.round(number * 100)}%`;
+      }
+
       loadContent().catch(() => {
         document.getElementById("status").textContent = "API not available. Start backend first.";
+      });
+      loadTrends().catch(() => {
+        document.getElementById("trendStatus").textContent = "Trend API not available yet.";
       });
     </script>
   </body>

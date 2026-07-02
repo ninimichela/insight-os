@@ -2,10 +2,11 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.logging import configure_logging
-from app.database import Base, engine
-from app.models import Content
-from app.routers.content import router as content_router
 from app.core.telemetry import telemetry
+from app.database import Base, engine
+from app.models import Content, Trend
+from app.routers.content import router as content_router
+from app.routers.trend import router as trend_router
 
 configure_logging()
 
@@ -23,6 +24,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 app.include_router(content_router)
+app.include_router(trend_router)
 Base.metadata.create_all(bind=engine)
 
 

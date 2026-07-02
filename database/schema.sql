@@ -78,18 +78,21 @@ CREATE TABLE IF NOT EXISTS contents (
 
 CREATE TABLE IF NOT EXISTS trends (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  keyword TEXT NOT NULL,
-  period TEXT,
-  count INTEGER DEFAULT 0,
+  topic TEXT NOT NULL,
+  category TEXT,
+  tags TEXT[],
+  keywords TEXT[],
+  content_count INTEGER DEFAULT 0,
   growth_rate FLOAT DEFAULT 0,
+  trend_score INTEGER DEFAULT 0,
   lifecycle TEXT CHECK (
-    lifecycle IS NULL OR lifecycle IN ('rising', 'peak', 'declining', 'outdated')
+    lifecycle IS NULL OR lifecycle IN ('Emerging', 'Rising', 'Peak', 'Declining')
   ),
-  score INTEGER DEFAULT 0,
-  should_follow BOOLEAN DEFAULT FALSE,
-  insight TEXT,
-  recommendation TEXT,
-  created_at TIMESTAMP DEFAULT NOW()
+  related_contents UUID[],
+  recommended_projects TEXT[],
+  recommendation_reason TEXT,
+  generated_at TIMESTAMP DEFAULT NOW(),
+  analysis_trace JSONB
 );
 
 CREATE TABLE IF NOT EXISTS ideas (
@@ -215,10 +218,11 @@ CREATE INDEX IF NOT EXISTS idx_competitors_city ON competitors(city);
 CREATE INDEX IF NOT EXISTS idx_competitors_type ON competitors(type);
 CREATE INDEX IF NOT EXISTS idx_competitors_priority ON competitors(priority);
 
-CREATE INDEX IF NOT EXISTS idx_trends_keyword ON trends(keyword);
-CREATE INDEX IF NOT EXISTS idx_trends_period ON trends(period);
-CREATE INDEX IF NOT EXISTS idx_trends_score ON trends(score);
-CREATE INDEX IF NOT EXISTS idx_trends_created_at ON trends(created_at);
+CREATE INDEX IF NOT EXISTS idx_trends_topic ON trends(topic);
+CREATE INDEX IF NOT EXISTS idx_trends_category ON trends(category);
+CREATE INDEX IF NOT EXISTS idx_trends_lifecycle ON trends(lifecycle);
+CREATE INDEX IF NOT EXISTS idx_trends_trend_score ON trends(trend_score);
+CREATE INDEX IF NOT EXISTS idx_trends_generated_at ON trends(generated_at);
 
 CREATE INDEX IF NOT EXISTS idx_ideas_project ON ideas(project);
 CREATE INDEX IF NOT EXISTS idx_ideas_priority ON ideas(priority);

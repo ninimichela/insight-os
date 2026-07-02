@@ -2,7 +2,7 @@
 
 ## 0. Scope
 
-This spec freezes the v0.2 Content Library API.
+This spec freezes the Alpha Content Library API and Beta Sprint 1 Trend API.
 
 Only three endpoints are required:
 
@@ -10,6 +10,9 @@ Only three endpoints are required:
 POST /content/import
 GET  /content
 POST /content/analyze
+GET  /trends
+GET  /trends/{id}
+POST /trends/generate
 ```
 
 ## 1. POST /content/import
@@ -176,3 +179,119 @@ Analyze one or more content records.
 - `analysis_trace` must be saved.
 - Malformed AI JSON must return a useful error.
 - Failed items should not block successful items.
+
+## 4. POST /trends/generate
+
+Generate trends from analyzed content.
+
+### Request
+
+```json
+{
+  "lookback_days": 7,
+  "min_content_count": 1
+}
+```
+
+### Response
+
+```json
+{
+  "generated": 2,
+  "items": [
+    {
+      "id": "uuid",
+      "topic": "Citywalk",
+      "category": "生活方式",
+      "tags": ["Citywalk", "城市"],
+      "keywords": ["CBD", "公园"],
+      "content_count": 28,
+      "growth_rate": 0.42,
+      "trend_score": 91,
+      "lifecycle": "Rising",
+      "related_contents": ["uuid"],
+      "recommended_projects": ["in77"],
+      "recommendation_reason": "...",
+      "analysis_trace": {
+        "algorithm_version": "trend-rules-v1",
+        "no_gpt_statistics": true,
+        "score_weights": {
+          "content_count": 0.4,
+          "growth_rate": 0.3,
+          "source_diversity": 0.2,
+          "recency": 0.1
+        }
+      }
+    }
+  ]
+}
+```
+
+### Rules
+
+- GPT must not calculate clustering, score, growth, ranking, or lifecycle.
+- Topic clustering uses `tags`, `keywords`, and `category`.
+- Topic aliases come from `packages/config/topic_alias.json`.
+- Existing generated trends may be replaced by the latest generation run.
+
+## 5. GET /trends
+
+List trends ordered by `trend_score desc`, then `content_count desc`.
+
+### Query Parameters
+
+```text
+page=1
+page_size=20
+lifecycle=Rising
+category=生活方式
+```
+
+### Response
+
+```json
+{
+  "page": 1,
+  "page_size": 20,
+  "total": 1,
+  "items": [
+    {
+      "id": "uuid",
+      "topic": "Citywalk",
+      "content_count": 28,
+      "growth_rate": 0.42,
+      "trend_score": 91,
+      "lifecycle": "Rising"
+    }
+  ]
+}
+```
+
+## 6. GET /trends/{id}
+
+Return one Trend Detail.
+
+### Response
+
+```json
+{
+  "id": "uuid",
+  "topic": "Citywalk",
+  "trend_score": 91,
+  "lifecycle": "Rising",
+  "growth_rate": 0.42,
+  "content_count": 28,
+  "related_content_items": [],
+  "top_competitors": ["北京LOOK"],
+  "ai_insight": {
+    "why_hot": "...",
+    "watch_points": ["..."],
+    "suitable_for": ["in77"]
+  }
+}
+```
+
+### Rules
+
+- This is the only Trend Engine flow allowed to call GPT.
+- AI Insight explains the calculated result; it must not alter statistics.

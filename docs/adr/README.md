@@ -31,3 +31,12 @@ What we decided.
 Tradeoffs and implications.
 ```
 
+## Index
+
+- `0001-use-fastapi.md`
+- `0002-use-postgresql.md`
+- `0003-brand-brain-first.md`
+- `0004-repository-pattern.md`
+- `0005-feature-freeze.md`
+- `0006-no-prompt-in-db.md`
+- `0007-trend-statistics-in-code.md`

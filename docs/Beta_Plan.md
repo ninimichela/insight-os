@@ -19,35 +19,97 @@ Goal: turn Content Library into trends, not just a content list.
 Flow:
 
 ```text
-Content
+Content Library
   ↓
-Tag Cluster
+AI Tags
   ↓
 Topic Cluster
   ↓
 Trend Score
   ↓
-Trend Output
+Trend Repository
+  ↓
+Trend API
+  ↓
+Dashboard
+  ↓
+Idea Engine
 ```
+
+Design constraint:
+
+- GPT must not perform Trend statistics during Beta.
+- Clustering is done by code using `tags`, `keywords`, and `category`.
+- Sorting is done by API/database order.
+- Scoring is done by the fixed Trend Score algorithm.
+- Lifecycle is determined by fixed rules.
+- GPT is used only for Trend Detail insight: why it matters, what to watch, and whether it fits in77 or in88.
 
 Output shape:
 
 ```json
 {
   "topic": "Citywalk",
-  "count": 28,
+  "content_count": 28,
   "growth_rate": 0.42,
   "trend_score": 91,
   "lifecycle": "Rising",
-  "related_contents": []
+  "related_contents": [],
+  "recommended_projects": ["in77"],
+  "recommendation_reason": "..."
 }
 ```
+
+Data model:
+
+| Field | Type | Notes |
+| --- | --- | --- |
+| id | UUID | Primary key |
+| topic | TEXT | Trend name |
+| category | TEXT | Main category |
+| tags | TEXT[] | Cluster tags |
+| keywords | TEXT[] | Cluster keywords |
+| content_count | INT | Related content count |
+| growth_rate | FLOAT | Recent window vs previous window |
+| trend_score | INT | 0-100 |
+| lifecycle | ENUM | Emerging / Rising / Peak / Declining |
+| related_contents | UUID[] | Related Content IDs |
+| recommended_projects | TEXT[] | in77 / in88 reserved for Idea Engine |
+| recommendation_reason | TEXT | Why the topic fits projects |
+| generated_at | TIMESTAMP | Generation time |
+| analysis_trace | JSONB | Algorithm evidence |
+
+Trend Score:
+
+```text
+40% Content Count
+30% Growth Rate
+20% Source Diversity
+10% Recency
+```
+
+Lifecycle rules:
+
+| Lifecycle | Rule |
+| --- | --- |
+| Emerging | Low count but high growth |
+| Rising | Count is growing |
+| Peak | High/steady count with slower growth |
+| Declining | Count is falling |
+
+Topic Cluster:
+
+- Use `tags + keywords + category`.
+- Normalize aliases through `packages/config/topic_alias.json`.
+- Example: `乐高`, `积木`, and `LEGO` all become `LEGO`.
 
 APIs:
 
 - `GET /trends`
 - `POST /trends/generate`
 - `GET /trends/{id}`
+
+No additional Trend endpoints before Beta Demo.
 
 Dashboard:
 
@@ -57,6 +119,27 @@ Dashboard:
 - Summer
 - LEGO
 - Exhibition
+
+Trend Detail shows:
+
+- Topic
+- Trend Score
+- Lifecycle
+- Growth
+- Content Count
+- Related Contents
+- Top Competitors
+- AI Insight
+
+DoD:
+
+- `POST /trends/generate` runs.
+- System automatically generates trends from analyzed content.
+- Trend Score is calculated by code.
+- Lifecycle is calculated by rules.
+- `GET /trends/{id}` returns detail and AI Insight.
+- Dashboard displays Top 5 Trends.
+- Beta Demo validates against at least 300 real content records.
 
 ## Beta Sprint 2: Idea Engine
 
@@ -164,4 +247,3 @@ RC is fixed:
 2. Memory
 3. Decision
 4. Explainability
-
