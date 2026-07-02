@@ -73,6 +73,7 @@ Done means:
 - `score_version` is saved.
 - `workflow_version` is saved.
 - `analysis_trace` is saved.
+- `analysis_trace` includes provider, model, prompt_version, brand_brain_version, workflow_version, analysis_time_ms, and fallback.
 - Timeout target is under 15 seconds per ordinary content item.
 - Retry mechanism exists for transient AI/API errors.
 - Error handling exists for missing content, failed AI call, and malformed AI JSON.

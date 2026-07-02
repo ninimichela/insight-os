@@ -63,9 +63,16 @@ insight-os/
 
 This repository is at `v0.1` scaffold stage.
 
+## API Documentation
+
+When the backend is running:
+
+- Swagger: `http://127.0.0.1:8000/api/docs`
+- ReDoc: `http://127.0.0.1:8000/redoc`
+
 ## Release Milestones
 
-- Alpha: Content Library, import, AI analysis
+- Alpha: Content Library, import, AI analysis ✅
 - Beta: Trend, idea, weekly report
 - RC: Brand Brain, Decision, Memory, Explainability
 - 1.0: Commercial release

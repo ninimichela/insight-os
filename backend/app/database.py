@@ -4,11 +4,9 @@ from collections.abc import Generator
 from sqlalchemy import create_engine
 from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
 
+from app.core.settings import settings
 
-DATABASE_URL = os.getenv(
-    "DATABASE_URL",
-    "sqlite:///./alpha.db",
-)
+DATABASE_URL = settings.database_url
 
 connect_args = {"check_same_thread": False} if DATABASE_URL.startswith("sqlite") else {}
 engine = create_engine(DATABASE_URL, pool_pre_ping=True, connect_args=connect_args)

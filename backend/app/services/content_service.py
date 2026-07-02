@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import time
 from uuid import UUID
 
 from sqlalchemy.orm import Session
@@ -14,6 +15,7 @@ from app.schemas.content import (
     ContentImportResultItem,
 )
 from app.services.ai.classifier import classify_content
+from app.services.ai.openai_client import get_provider_trace
 from app.services.ai.scorer import score_content
 from app.services.ai.summarizer import summarize_content
 from app.services.ai.tagger import tag_content
@@ -74,16 +76,20 @@ class ContentService:
                 continue
 
             try:
+                start = time.perf_counter()
                 summary = summarize_content(content)
                 tags = tag_content(content)
                 scores = score_content(content)
                 classification = classify_content(content)
+                analysis_time_ms = int((time.perf_counter() - start) * 1000)
 
                 analysis_trace = {
+                    **get_provider_trace(),
+                    "analysis_time_ms": analysis_time_ms,
                     "prompt_version": "v1",
                     "brand_brain_version": "1.0",
                     "score_version": "1.0",
-                    "workflow_version": "alpha-0.1",
+                    "workflow_version": "alpha",
                 }
                 result = {
                     "summary": summary["summary"],
@@ -107,7 +113,7 @@ class ContentService:
                     "prompt_version": "v1",
                     "brand_brain_version": "1.0",
                     "score_version": "1.0",
-                    "workflow_version": "alpha-0.1",
+                    "workflow_version": "alpha",
                     "analysis_trace": analysis_trace,
                     "content_status": "analyzed",
                     "analysis_status": "completed",

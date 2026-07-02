@@ -1,38 +1,41 @@
 from __future__ import annotations
 
-import json
-import os
 from typing import Any, Optional
 
+from app.core.settings import settings
+from app.services.ai.providers.mock_provider import MockProvider
+from app.services.ai.providers.openai_provider import OpenAIProvider
 
-def has_openai_key() -> bool:
-    key = os.getenv("OPENAI_API_KEY", "")
-    return bool(key and key != "sk-xxx")
+
+_last_provider_name = "mock"
+_last_model_name = "local-alpha-rules"
+_last_fallback = True
+
+
+def get_provider():
+    if settings.ai_provider == "openai":
+        return OpenAIProvider()
+    return MockProvider()
 
 
 def generate_json(system_prompt: str, payload: dict[str, Any]) -> Optional[dict[str, Any]]:
-    """Call OpenAI and parse JSON.
+    """Call the configured AI provider and parse JSON.
 
     Returns None when no API key is configured or the response cannot be parsed.
     Alpha can then fall back to deterministic local analysis.
     """
-    if not has_openai_key():
-        return None
+    global _last_provider_name, _last_model_name, _last_fallback
+    provider = get_provider()
+    _last_provider_name = provider.name
+    _last_model_name = provider.model
+    result = provider.generate_json(system_prompt, payload)
+    _last_fallback = result is None
+    return result
 
-    from openai import OpenAI
 
-    client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-    model = os.getenv("OPENAI_MODEL", "gpt-5.5")
-    response = client.chat.completions.create(
-        model=model,
-        messages=[
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": json.dumps(payload, ensure_ascii=False)},
-        ],
-        response_format={"type": "json_object"},
-        timeout=15,
-    )
-    content = response.choices[0].message.content
-    if not content:
-        return None
-    return json.loads(content)
+def get_provider_trace() -> dict[str, object]:
+    return {
+        "provider": _last_provider_name,
+        "model": _last_model_name,
+        "fallback": _last_fallback,
+    }

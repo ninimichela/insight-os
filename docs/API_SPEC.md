@@ -148,10 +148,15 @@ Analyze one or more content records.
       "score_version": "1.0",
       "workflow_version": "0.1",
       "analysis_trace": {
+        "provider": "openai",
+        "model": "gpt-5.5",
         "prompt_version": "v1",
         "brand_brain_version": "1.0",
         "trend_version": "0.1",
-        "score_version": "1.0"
+        "score_version": "1.0",
+        "workflow_version": "alpha",
+        "analysis_time_ms": 6234,
+        "fallback": false
       }
     }
   ],

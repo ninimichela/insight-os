@@ -1,11 +1,19 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.core.logging import configure_logging
 from app.database import Base, engine
 from app.models import Content
 from app.routers.content import router as content_router
 
-app = FastAPI(title="INSight OS API", version="0.1.0")
+configure_logging()
+
+app = FastAPI(
+    title="INSight OS API",
+    version="0.1.0",
+    docs_url="/api/docs",
+    redoc_url="/redoc",
+)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],

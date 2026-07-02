@@ -2,7 +2,7 @@
 
 This file is the short entrypoint. See `Product_Roadmap.md` for the full roadmap.
 
-## Alpha
+## Alpha ✅
 
 Scope:
 
@@ -17,6 +17,22 @@ Scope:
 - Trend
 - Idea
 - Weekly Report
+
+Development order:
+
+1. Trend Engine
+2. Idea Engine
+3. Weekly Report
+4. Dashboard homepage
+5. Beta Demo
+
+Success criteria:
+
+- Import at least 500 real content items.
+- Trend Engine automatically clusters hot topics.
+- Generate 10 weekly ideas automatically: in77 ×5 and in88 ×5.
+- Generate `Weekly Report` automatically.
+- At least 80% of ideas are manually evaluated as useful references.
 
 ## RC
 
