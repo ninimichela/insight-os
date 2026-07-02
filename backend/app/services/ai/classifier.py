@@ -1,5 +1,6 @@
 from .prompt_loader import load_prompt
 from .openai_client import generate_json
+from app.core.features import features
 
 
 def get_classifier_prompt(version: str = "v1") -> str:
@@ -19,6 +20,9 @@ def classify_content(content) -> dict:
             "suitable_for": ai_result.get("suitable_for", []),
             "evidence": ai_result.get("evidence", [content.title]),
         }
+
+    if not features.enable_local_analysis:
+        raise RuntimeError("Local analysis fallback is disabled")
 
     text = f"{content.title} {content.raw_text or ''}"
     category = "商业地产"

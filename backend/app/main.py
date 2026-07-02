@@ -5,6 +5,7 @@ from app.core.logging import configure_logging
 from app.database import Base, engine
 from app.models import Content
 from app.routers.content import router as content_router
+from app.core.telemetry import telemetry
 
 configure_logging()
 
@@ -28,3 +29,8 @@ Base.metadata.create_all(bind=engine)
 @app.get("/health")
 def health():
     return {"status": "ok", "service": "insight-os-api"}
+
+
+@app.get("/telemetry")
+def get_telemetry():
+    return telemetry.snapshot()

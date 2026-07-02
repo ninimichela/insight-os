@@ -76,3 +76,5 @@ When the backend is running:
 - Beta: Trend, idea, weekly report
 - RC: Brand Brain, Decision, Memory, Explainability
 - 1.0: Commercial release
+
+Beta plan is frozen in `docs/Beta_Plan.md`.

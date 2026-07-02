@@ -1,5 +1,6 @@
 from .prompt_loader import load_prompt
 from .openai_client import generate_json
+from app.core.features import features
 
 
 def get_tag_prompt(version: str = "v1") -> str:
@@ -31,6 +32,9 @@ def tag_content(content) -> dict:
             "primary_tag": ai_result.get("primary_tag"),
             "evidence": ai_result.get("evidence", [content.title]),
         }
+
+    if not features.enable_local_analysis:
+        raise RuntimeError("Local analysis fallback is disabled")
 
     text = f"{content.title} {content.raw_text or ''}".lower()
     tags = []

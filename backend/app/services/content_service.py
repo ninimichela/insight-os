@@ -19,6 +19,7 @@ from app.services.ai.openai_client import get_provider_trace
 from app.services.ai.scorer import score_content
 from app.services.ai.summarizer import summarize_content
 from app.services.ai.tagger import tag_content
+from app.core.telemetry import telemetry
 
 
 class ContentService:
@@ -26,12 +27,14 @@ class ContentService:
         self.repository = ContentRepository(db)
 
     def import_contents(self, request: ContentImportRequest) -> ContentImportResponse:
+        telemetry.increment("api.content_import.calls")
         imported = 0
         skipped = 0
         results: list[ContentImportResultItem] = []
 
         for item in request.items:
             if item.url and self.repository.get_content_by_url(item.url):
+                telemetry.increment("api.content_import.skipped_duplicate")
                 skipped += 1
                 results.append(
                     ContentImportResultItem(
@@ -44,6 +47,7 @@ class ContentService:
                 continue
 
             content = self.repository.create_content(item.model_dump())
+            telemetry.increment("api.content_import.imported")
             imported += 1
             results.append(
                 ContentImportResultItem(
@@ -58,6 +62,7 @@ class ContentService:
         return ContentImportResponse(imported=imported, skipped=skipped, items=results)
 
     def analyze_contents(self, request: ContentAnalyzeRequest) -> ContentAnalyzeResponse:
+        telemetry.increment("api.content_analyze.calls")
         analyzed = 0
         failed = 0
         items: list[ContentAnalyzeResultItem] = []
@@ -82,6 +87,7 @@ class ContentService:
                 scores = score_content(content)
                 classification = classify_content(content)
                 analysis_time_ms = int((time.perf_counter() - start) * 1000)
+                telemetry.record_timing("api.content_analyze.analysis_time_ms", analysis_time_ms)
 
                 analysis_trace = {
                     **get_provider_trace(),
@@ -120,6 +126,7 @@ class ContentService:
                 }
                 updated = self.repository.update_analysis_result(content_id, result)
                 analyzed += 1
+                telemetry.increment("api.content_analyze.analyzed")
                 items.append(
                     ContentAnalyzeResultItem(
                         id=updated.id,
@@ -139,6 +146,7 @@ class ContentService:
                 )
             except Exception as exc:
                 failed += 1
+                telemetry.increment("api.content_analyze.failed")
                 self.repository.update(content_id, {"analysis_status": "failed"})
                 errors.append({"id": str(content_id), "error": str(exc)})
 

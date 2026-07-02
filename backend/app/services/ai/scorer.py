@@ -1,5 +1,6 @@
 from .prompt_loader import load_prompt
 from .openai_client import generate_json
+from app.core.features import features
 
 
 def get_score_prompt(version: str = "v1") -> str:
@@ -23,6 +24,9 @@ def score_content(content) -> dict:
             "reason": ai_result.get("reason", ""),
             "evidence": ai_result.get("evidence", [content.title]),
         }
+
+    if not features.enable_local_analysis:
+        raise RuntimeError("Local analysis fallback is disabled")
 
     text = f"{content.title} {content.raw_text or ''}"
     length_bonus = min(len(text) // 100, 20)

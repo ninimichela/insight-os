@@ -24,4 +24,4 @@ Environment:
 - Alpha benchmark validates API and local fallback speed, not real LLM latency.
 - Beta benchmark must be rerun with real provider, real data, token usage, cost, and 500+ content items.
 - Future benchmark rows should record provider, model, prompt version, and analysis trace version.
-
+- Telemetry is available at `/telemetry` while the backend is running.

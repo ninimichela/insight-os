@@ -26,6 +26,8 @@ Development order:
 4. Dashboard homepage
 5. Beta Demo
 
+See `Beta_Plan.md`.
+
 Success criteria:
 
 - Import at least 500 real content items.

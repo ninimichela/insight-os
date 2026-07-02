@@ -182,6 +182,8 @@ Do not change the order:
 
 Do not build Brand Brain before Beta. Beta must prove whether real data + Trend + AI can already generate useful ideas.
 
+See `docs/Beta_Plan.md` for the frozen Beta plan.
+
 ## Beta Success Criteria
 
 - Import at least 500 real content items.
