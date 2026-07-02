@@ -4,6 +4,8 @@ Do not enter RC until this checklist is complete.
 
 RC must not start immediately after Beta. Pilot must be completed first.
 
+The decision to enter RC must be recorded in `docs/Pilot_Review.md`.
+
 ## Functional Readiness
 
 - [x] Content Library
@@ -23,6 +25,8 @@ RC must not start immediately after Beta. Pilot must be completed first.
 ## Quality
 
 - [ ] Pilot completed
+- [ ] `docs/Pilot_Log.md` completed for 2 weeks
+- [ ] `docs/Pilot_Review.md` completed
 - [ ] Idea adoption rate recorded
 - [ ] Human edit rate recorded
 - [ ] Time saved recorded

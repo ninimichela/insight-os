@@ -22,6 +22,25 @@ Every feature must improve a content decision. If it only generates more content
 
 Before `v1.0`, do not add new engines, databases, workflows, or prompt categories. Only improve existing modules, fix bugs, improve experience, and improve accuracy.
 
+During Pilot, product design is stopped.
+
+Frozen during Pilot:
+
+- New Engine
+- New Database
+- New Workflow
+- New Prompt category
+- New Dashboard module
+- New API
+
+Allowed during Pilot:
+
+- Bug fixes
+- Data import
+- AI quality optimization
+- Prompt micro-tuning
+- Pilot validation
+
 Initial projects:
 
 - Beijing in77
@@ -88,6 +107,14 @@ Beta is not yet accepted. The project is at **Beta Gate**:
 
 Do not enter RC directly after Beta. The next stage is **Pilot**: two weeks of real daily operation and evaluation.
 
+Pilot outputs:
+
+- `docs/Pilot_Log.md`
+- `docs/Pilot_Review.md`
+- Updated `docs/Benchmark.md`
+- Updated `docs/RC_Checklist.md`
+- Evaluation results under `evaluation/`
+
 ## API Documentation
 
 When the backend is running:
@@ -109,6 +136,8 @@ Pilot plan is frozen in `docs/Pilot_Plan.md`.
 ## RC Feature Freeze
 
 Do not enter RC until `docs/RC_Checklist.md` is complete.
+
+RC is waiting for `docs/Pilot_Review.md`.
 
 RC scope is frozen:
 

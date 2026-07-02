@@ -12,6 +12,26 @@ Do not enter RC directly after Beta.
 
 Pilot is not a development phase. It is a real operating phase.
 
+Stop product design during Pilot.
+
+Frozen during Pilot:
+
+- New Engine
+- New Database
+- New Workflow
+- New Prompt category
+- New Dashboard module
+- New API
+
+Allowed during Pilot:
+
+- Bug fixes
+- Data import
+- AI quality evaluation
+- Prompt micro-tuning
+- Benchmark updates
+- Pilot validation
+
 ## Duration
 
 2 weeks.
@@ -108,7 +128,23 @@ Pilot is complete only when:
 
 At the end of Pilot, update:
 
+- `docs/Pilot_Log.md`
+- `docs/Pilot_Review.md`
 - `docs/Beta_Review.md`
 - `docs/Benchmark.md`
 - `docs/RC_Checklist.md`
 - `evaluation/` results
+
+## Final Checklist
+
+Execute in order:
+
+- [ ] Import 300-500 WeChat content records
+- [ ] Import 300-500 Xiaohongshu content records
+- [ ] Complete Beta Dataset v1
+- [ ] Use INSight OS continuously for 2 weeks
+- [ ] Maintain `docs/Pilot_Log.md` every day
+- [ ] Complete `docs/Benchmark.md`
+- [ ] Complete Trend / Idea / Report evaluation
+- [ ] Complete `docs/Pilot_Review.md`
+- [ ] Decide whether to enter RC based on Pilot Review
