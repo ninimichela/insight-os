@@ -4,10 +4,10 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <link rel="manifest" href="/manifest.json" />
-    <meta name="theme-color" content="#111111" />
+    <meta name="theme-color" content="#FFFFFF" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-title" content="INSight OS" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <title>INSight OS Beta | Home</title>
     <style>
       :root {
@@ -17,11 +17,17 @@
         --page: #ffffff;
         --line: #eaeaea;
         --brand: #e6007e;
+        --brand-pink: #e6007e;
+        --text-main: #111111;
+        --text-sub: #666666;
+        --border: #eaeaea;
+        --card-bg: #ffffff;
         --shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
         --shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.12);
         --app-max: 480px;
         --safe-top: env(safe-area-inset-top, 0px);
         --safe-bottom: env(safe-area-inset-bottom, 0px);
+        --page-x: 20px;
       }
 
       * {
@@ -38,8 +44,9 @@
         min-height: 100dvh;
         font-family: Inter, "PingFang SC", "Helvetica Neue", Arial, sans-serif;
         color: var(--text);
-        background: var(--soft);
+        background: var(--page);
         -webkit-tap-highlight-color: transparent;
+        -webkit-font-smoothing: antialiased;
       }
 
       button,
@@ -59,7 +66,7 @@
         min-height: 100vh;
         min-height: 100dvh;
         background: var(--page);
-        padding: calc(16px + var(--safe-top)) 20px calc(128px + var(--safe-bottom));
+        padding: 0 var(--page-x) calc(128px + var(--safe-bottom));
       }
 
       .app-header,
@@ -95,8 +102,9 @@
       .app-header {
         position: relative;
         justify-content: center;
-        min-height: 190px;
-        padding: max(24px, var(--safe-top)) 56px 30px;
+        min-height: auto;
+        padding: max(12px, var(--safe-top)) 56px 24px;
+        margin-top: 0;
         background: var(--page);
         text-align: center;
       }
@@ -142,7 +150,7 @@
 
       .header-more-button {
         position: absolute;
-        top: 18px;
+        top: max(12px, var(--safe-top));
         right: 0;
       }
 
@@ -195,9 +203,29 @@
       .page-header {
         display: flex;
         align-items: center;
-        justify-content: space-between;
+        justify-content: center;
+        position: relative;
         gap: 12px;
-        padding: 0 0 20px;
+        min-height: calc(56px + max(12px, var(--safe-top)));
+        padding: max(12px, var(--safe-top)) 56px 20px;
+        margin-top: 0;
+        text-align: center;
+      }
+
+      .page-header .back-button {
+        position: absolute;
+        left: 0;
+        top: max(12px, var(--safe-top));
+      }
+
+      .page-header > .icon-button {
+        position: absolute;
+        right: 0;
+        top: max(12px, var(--safe-top));
+      }
+
+      .page-header > div {
+        min-width: 0;
       }
 
       .page-title {
@@ -892,13 +920,14 @@
 
       .fixed-detail-actions {
         position: sticky;
-        bottom: calc(92px + var(--safe-bottom));
+        bottom: calc(88px + var(--safe-bottom));
+        z-index: 900;
         display: flex;
         gap: 10px;
         margin-top: 20px;
-        padding: 10px 0 calc(12px + var(--safe-bottom));
+        padding: 12px 0;
         border-radius: 20px;
-        background: rgba(255, 255, 255, 0.9);
+        background: var(--page);
         box-shadow: var(--shadow);
         backdrop-filter: blur(16px);
       }
@@ -1080,13 +1109,14 @@
       .bottom-nav {
         position: fixed;
         left: 50%;
-        bottom: calc(10px + var(--safe-bottom));
-        z-index: 10;
-        width: min(calc(100% - 32px), 448px);
+        bottom: max(12px, var(--safe-bottom));
+        z-index: 1000;
+        width: calc(100% - 40px);
+        max-width: 440px;
         transform: translateX(-50%);
         display: grid;
         grid-template-columns: repeat(5, 1fr);
-        padding: 8px 8px calc(8px + min(6px, var(--safe-bottom)));
+        padding: 8px;
         border: 1px solid var(--line);
         border-radius: 20px;
         background: rgba(255, 255, 255, 0.92);
@@ -1123,6 +1153,48 @@
 
         .fixed-detail-actions .btn-primary {
           grid-column: 1 / -1;
+        }
+      }
+
+      @media (max-width: 430px) {
+        :root {
+          --page-x: 18px;
+        }
+
+        .app-header {
+          padding-top: max(10px, var(--safe-top));
+          padding-bottom: 22px;
+        }
+
+        .page-header {
+          min-height: calc(54px + max(10px, var(--safe-top)));
+          padding-top: max(10px, var(--safe-top));
+          padding-bottom: 18px;
+        }
+
+        .page-header .back-button,
+        .page-header > .icon-button,
+        .header-more-button {
+          top: max(10px, var(--safe-top));
+        }
+
+        .page-title {
+          font-size: 24px;
+          line-height: 1.15;
+        }
+
+        .hero-card,
+        .panel,
+        .detail-card,
+        .report-card {
+          border-radius: 20px;
+          padding: 20px;
+        }
+      }
+
+      @media (min-width: 431px) and (max-width: 480px) {
+        :root {
+          --page-x: 22px;
         }
       }
 
@@ -1174,12 +1246,10 @@
 
       @media (min-width: 481px) {
         .app-shell {
+          max-width: 480px;
+          margin: 0 auto;
           border-left: 1px solid var(--line);
           border-right: 1px solid var(--line);
-        }
-
-        .app-header {
-          min-height: 204px;
         }
 
         .app-logo-circle {
@@ -1189,10 +1259,6 @@
       }
 
       @media (min-width: 900px) {
-        .app-header {
-          min-height: 216px;
-        }
-
         .app-logo-circle {
           width: 72px;
           height: 72px;
