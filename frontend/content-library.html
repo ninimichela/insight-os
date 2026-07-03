@@ -59,7 +59,7 @@
         min-height: 100vh;
         min-height: 100dvh;
         background: var(--page);
-        padding: calc(16px + var(--safe-top)) 20px calc(112px + var(--safe-bottom));
+        padding: calc(16px + var(--safe-top)) 20px calc(128px + var(--safe-bottom));
       }
 
       .app-header,
@@ -96,7 +96,7 @@
         position: relative;
         justify-content: center;
         min-height: 190px;
-        padding: 18px 56px 30px;
+        padding: max(24px, var(--safe-top)) 56px 30px;
         background: var(--page);
         text-align: center;
       }
@@ -322,7 +322,7 @@
 
       .trend-row {
         display: grid;
-        grid-template-columns: 1fr auto auto;
+        grid-template-columns: auto 1fr auto auto;
         align-items: center;
         gap: 12px;
         padding: 14px;
@@ -351,9 +351,41 @@
         font-weight: 700;
       }
 
+      .trend-indicator {
+        width: 8px;
+        height: 8px;
+        border-radius: 999px;
+        background: var(--brand);
+      }
+
       .trend-arrow {
+        width: 16px;
+        height: 16px;
+        position: relative;
         color: var(--brand);
-        font-size: 18px;
+      }
+
+      .trend-arrow::before {
+        content: "";
+        position: absolute;
+        left: 4px;
+        top: 8px;
+        width: 8px;
+        height: 1.5px;
+        background: currentColor;
+        transform: rotate(-45deg);
+        transform-origin: right center;
+      }
+
+      .trend-arrow::after {
+        content: "";
+        position: absolute;
+        right: 3px;
+        top: 4px;
+        width: 6px;
+        height: 6px;
+        border-top: 1.5px solid currentColor;
+        border-right: 1.5px solid currentColor;
       }
 
       .lifecycle {
@@ -460,6 +492,7 @@
         padding: 0 16px;
         border-radius: 999px;
         font-weight: 650;
+        white-space: nowrap;
         cursor: pointer;
       }
 
@@ -859,16 +892,35 @@
 
       .fixed-detail-actions {
         position: sticky;
-        bottom: calc(78px + var(--safe-bottom));
-        display: grid;
-        grid-template-columns: 1fr 1fr 1fr;
-        gap: 8px;
-        margin-top: 16px;
-        padding: 10px;
+        bottom: calc(92px + var(--safe-bottom));
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+        padding: 10px 0 calc(12px + var(--safe-bottom));
         border-radius: 20px;
         background: rgba(255, 255, 255, 0.9);
         box-shadow: var(--shadow);
         backdrop-filter: blur(16px);
+      }
+
+      #view-idea-detail {
+        padding-bottom: calc(120px + var(--safe-bottom));
+      }
+
+      .fixed-detail-actions .btn {
+        flex: 1;
+        min-width: 0;
+        min-height: 56px;
+        padding: 0 10px;
+        border-radius: 999px;
+        font-size: 18px;
+        font-weight: 650;
+        line-height: 1;
+        white-space: nowrap;
+      }
+
+      .fixed-detail-actions .btn-primary {
+        flex: 1.12;
       }
 
       .btn-outline {
@@ -1034,7 +1086,7 @@
         transform: translateX(-50%);
         display: grid;
         grid-template-columns: repeat(5, 1fr);
-        padding: 8px 8px;
+        padding: 8px 8px calc(8px + min(6px, var(--safe-bottom)));
         border: 1px solid var(--line);
         border-radius: 20px;
         background: rgba(255, 255, 255, 0.92);
@@ -1055,9 +1107,34 @@
       }
 
       .nav-icon {
+        display: grid;
+        place-items: center;
+        width: 22px;
+        height: 22px;
+        margin: 0 auto 4px;
+        color: currentColor;
+      }
+
+      @media (max-width: 379px) {
+        .fixed-detail-actions {
+          grid-template-columns: 1fr 1fr;
+          display: grid;
+        }
+
+        .fixed-detail-actions .btn-primary {
+          grid-column: 1 / -1;
+        }
+      }
+
+      .nav-icon svg {
+        width: 21px;
+        height: 21px;
         display: block;
-        margin-bottom: 4px;
-        font-size: 18px;
+        stroke: currentColor;
+        stroke-width: 1.8;
+        fill: none;
+        stroke-linecap: round;
+        stroke-linejoin: round;
       }
 
       .nav-item.active {
@@ -1535,11 +1612,11 @@
     </div>
 
     <nav class="bottom-nav" aria-label="Main navigation">
-      <button class="nav-item active" data-nav="home" onclick="navigate('home')"><span class="nav-icon">⌂</span>首页</button>
-      <button class="nav-item" data-nav="content" onclick="navigate('content')"><span class="nav-icon">▣</span>内容</button>
-      <button class="nav-item" data-nav="trends" onclick="navigate('trends')"><span class="nav-icon">↗</span>趋势</button>
-      <button class="nav-item" data-nav="ideas" onclick="navigate('ideas')"><span class="nav-icon">✦</span>选题</button>
-      <button class="nav-item" data-nav="notebook" onclick="navigate('notebook')"><span class="nav-icon">◎</span>笔记</button>
+      <button class="nav-item active" data-nav="home" onclick="navigate('home')"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11.5 12 5l8 6.5V20h-5v-5H9v5H4z" /></svg></span>首页</button>
+      <button class="nav-item" data-nav="content" onclick="navigate('content')"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="2" /><path d="M8 9h8M8 13h8M8 17h5" /></svg></span>内容</button>
+      <button class="nav-item" data-nav="trends" onclick="navigate('trends')"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 17l5-5 4 4 7-8" /><path d="M15 8h5v5" /></svg></span>趋势</button>
+      <button class="nav-item" data-nav="ideas" onclick="navigate('ideas')"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v3M12 17v3M5.6 7.6l2.1 2.1M16.3 16.3l2.1 2.1M4 12h3M17 12h3M5.6 16.4l2.1-2.1M16.3 7.7l2.1-2.1" /><circle cx="12" cy="12" r="3" /></svg></span>选题</button>
+      <button class="nav-item" data-nav="notebook" onclick="navigate('notebook')"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h9l3 3v13H7z" /><path d="M16 4v4h3M10 12h6M10 16h5" /></svg></span>笔记</button>
     </nav>
 
     <script>
@@ -2420,12 +2497,13 @@
           .map(
             (item) => `
               <div class="trend-row" onclick="${mode === "list" ? "navigate('trends')" : `openTrendDetail('${item.id}')`}">
+                <span class="trend-indicator" aria-hidden="true"></span>
                 <div>
                   <div class="trend-topic">${item.topic}</div>
                   <div class="lifecycle">${item.lifecycle}</div>
                 </div>
                 <div class="trend-score">${item.trend_score}</div>
-                <div class="trend-arrow">↗</div>
+                <div class="trend-arrow" aria-hidden="true"></div>
               </div>
             `
           )
@@ -2857,7 +2935,7 @@
           </div>
           <div class="outline-card">
             <strong>关联 Trend</strong>
-            <div class="tag-row"><span class="tag">${item.trend ? item.trend.topic : item.trend_id || "暂无"}</span></div>
+            <div class="tag-row"><span class="trend-indicator" aria-hidden="true"></span><span class="tag">${item.trend ? item.trend.topic : item.trend_id || "暂无"}</span></div>
           </div>
           <div class="outline-card">
             <strong>参考 Content</strong>
@@ -2867,7 +2945,7 @@
           </div>
           <div class="fixed-detail-actions">
             <button class="btn btn-primary" id="adoptIdeaButton" onclick="adoptCurrentIdea()">采用</button>
-            <button class="btn btn-secondary" onclick="rejectCurrentIdea()">暂不采用</button>
+            <button class="btn btn-secondary" onclick="rejectCurrentIdea()">放弃</button>
             <button class="btn btn-outline" onclick="exportCurrentIdea()">导出</button>
           </div>
         `;
@@ -2931,7 +3009,7 @@
         ideaItems = ideaItems.filter((item) => String(item.id) !== String(currentIdeaDetail.id));
         renderIdeaCards("ideasList", ideaItems, 50);
         renderIdeaCards("homeIdeas", ideaItems, 4, "list");
-        showToast("已暂不采用");
+        showToast("已放弃");
         const detail = document.getElementById("ideaDetailContent");
         if (detail) detail.classList.add("slide-out");
         window.setTimeout(() => navigate(previousView === "home" ? "home" : "ideas"), 220);
