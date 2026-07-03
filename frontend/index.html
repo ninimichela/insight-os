@@ -767,6 +767,25 @@
         background: var(--page);
       }
 
+      .mode-badge {
+        display: inline-flex;
+        align-items: center;
+        min-height: 28px;
+        padding: 5px 10px;
+        border-radius: 999px;
+        color: var(--muted);
+        background: var(--soft);
+        border: 1px solid var(--line);
+        font-size: 12px;
+        font-weight: 650;
+      }
+
+      .mode-badge.api {
+        color: var(--text);
+        background: rgba(230, 0, 126, 0.08);
+        border-color: rgba(230, 0, 126, 0.22);
+      }
+
       .workspace-label {
         color: var(--muted);
         font-size: 12px;
@@ -1124,6 +1143,7 @@
             <button class="workspace-button" onclick="setText('actionStatus', 'Workspace selector is a UI placeholder for the next platform iteration.')">
               Beijing in77 <span>⌄</span>
             </button>
+            <span class="mode-badge" id="dataModeBadge">Local Mode</span>
           </div>
           <h1 class="hero-title">Home</h1>
           <p class="hero-subtitle">今天最应该关注的内容信号</p>
@@ -1241,6 +1261,10 @@
               <button class="icon-button" aria-label="Search">⌕</button>
               <button class="icon-button" aria-label="More">⋯</button>
             </div>
+          </div>
+          <div class="search-row" style="margin-bottom: 14px;">
+            <input class="search-input" id="contentSearch" placeholder="搜索标题、摘要、标签、来源" oninput="renderContentList()" />
+            <span class="mode-badge" id="contentModeBadge">Local Mode</span>
           </div>
           <div class="filters">
             <button class="pill active" data-filter="all" onclick="setContentFilter('all')">全部</button>
@@ -1496,15 +1520,16 @@
           </div>
         </div>
         <div class="sheet-body">
+          <p class="idea-reason">当前模式：<span class="mode-badge" id="apiSettingsModeBadge">Local Mode</span></p>
           <label>
             <span class="field-label">API Base URL</span>
             <input id="apiBaseInput" placeholder="https://your-backend.trycloudflare.com" />
           </label>
-          <p class="idea-reason">用于手机测试时填写后端服务地址。留空会恢复本地默认地址。</p>
+          <p class="idea-reason">用于手机测试时填写后端服务地址。清除后会回到 Local Mode，本机浏览器数据不会被删除。</p>
         </div>
         <div class="sheet-actions">
-          <button class="btn btn-primary" onclick="saveApiSettings()">保存</button>
-          <button class="btn btn-secondary" onclick="closeApiSettings()">关闭</button>
+          <button class="btn btn-primary" onclick="saveApiSettings()">Save API Base URL</button>
+          <button class="btn btn-secondary" onclick="clearApiSettings()">Clear API Base URL</button>
         </div>
       </div>
     </div>
@@ -1521,6 +1546,7 @@
       const API_BASE_STORAGE_KEY = "INSIGHT_API_BASE";
       const DEFAULT_API_BASE = "http://127.0.0.1:8000";
       let API_BASE = getApiBase();
+      let dataMode = getDataMode();
       let contentItems = [];
       let trendItems = [];
       let ideaItems = [];
@@ -1536,23 +1562,55 @@
         name: "Beijing in77",
       };
       const NOTEBOOK_STORAGE_KEY = "insight_notebook_items";
+      const SAVED_INSPIRATIONS_STORAGE_KEY = "insight_saved_inspirations";
       const REJECTED_ID_STORAGE_KEY = "insight_rejected_idea_ids";
+      const LOCAL_CONTENTS_STORAGE_KEY = "insight_local_contents";
+      const LOCAL_IDEAS_STORAGE_KEY = "insight_local_ideas";
+      const LOCAL_TRENDS_STORAGE_KEY = "insight_local_trends";
+      const LOCAL_REPORTS_STORAGE_KEY = "insight_local_reports";
       const seedNotebookNotes = [];
       let notebookNotes = loadNotebookItems();
       let currentNoteDetailId = null;
       let previousNotebookListView = "recent-notes";
       let pendingDeleteNoteId = null;
 
+      function hasConfiguredApiBase() {
+        return Boolean(localStorage.getItem(API_BASE_STORAGE_KEY) || window.INSIGHT_API_BASE);
+      }
+
       function getApiBase() {
         return localStorage.getItem(API_BASE_STORAGE_KEY) || window.INSIGHT_API_BASE || DEFAULT_API_BASE;
+      }
+
+      function getDataMode() {
+        return hasConfiguredApiBase() ? "api" : "local";
+      }
+
+      function isApiMode() {
+        return dataMode === "api" && hasConfiguredApiBase();
+      }
+
+      function setDataMode(mode) {
+        dataMode = mode;
+        updateModeBadges();
+      }
+
+      function updateModeBadges() {
+        const label = dataMode === "api" ? "API Mode" : "Local Mode";
+        document.querySelectorAll("#dataModeBadge, #contentModeBadge, #apiSettingsModeBadge").forEach((node) => {
+          node.textContent = label;
+          node.classList.toggle("api", dataMode === "api");
+        });
       }
 
       function setApiBase(value) {
         const nextValue = value.trim();
         if (nextValue) {
           localStorage.setItem(API_BASE_STORAGE_KEY, nextValue);
+          setDataMode("api");
         } else {
           localStorage.removeItem(API_BASE_STORAGE_KEY);
+          setDataMode("local");
         }
         API_BASE = getApiBase();
       }
@@ -1562,6 +1620,7 @@
         if (input) {
           input.value = localStorage.getItem(API_BASE_STORAGE_KEY) || window.INSIGHT_API_BASE || "";
         }
+        updateModeBadges();
         document.getElementById("apiSettingsSheet").classList.add("visible");
       }
 
@@ -1576,6 +1635,30 @@
         closeApiSettings();
         showToast("API Base URL saved");
         refreshAll().catch(() => {});
+      }
+
+      function clearApiSettings() {
+        localStorage.removeItem(API_BASE_STORAGE_KEY);
+        API_BASE = getApiBase();
+        setDataMode("local");
+        const input = document.getElementById("apiBaseInput");
+        if (input) input.value = "";
+        closeApiSettings();
+        showToast("已切换到 Local Mode");
+        refreshAll().catch(() => {});
+      }
+
+      async function apiRequest(path, options = {}) {
+        if (!isApiMode()) throw new Error("Local Mode");
+        try {
+          const res = await fetch(`${API_BASE}${path}`, options);
+          if (!res.ok) throw new Error(`API ${res.status}`);
+          return await res.json();
+        } catch (error) {
+          setDataMode("local");
+          showToast("已切换到 Local Mode");
+          throw error;
+        }
       }
 
       function navigate(view, options = {}) {
@@ -1593,9 +1676,9 @@
 
         if (view === "home") loadDashboard().catch(showDashboardError);
         if (view === "content") loadContent().catch(showContentError);
-        if (view === "trends") loadTrends().catch(() => setText("trendStatus", "Trends API not available."));
-        if (view === "ideas") loadIdeas().catch(() => setText("ideaStatus", "Ideas API not available."));
-        if (view === "reports") loadReports().catch(() => setText("reportStatus", "Reports API not available."));
+        if (view === "trends") loadTrends().catch(() => setText("trendStatus", "当前为 Local Mode，数据仅保存在本机浏览器。"));
+        if (view === "ideas") loadIdeas().catch(() => setText("ideaStatus", "当前为 Local Mode，数据仅保存在本机浏览器。"));
+        if (view === "reports") loadReports().catch(() => setText("reportStatus", "当前为 Local Mode，数据仅保存在本机浏览器。"));
         if (view === "notebook") renderNotebook();
         if (view === "recent-notes") renderAllNotes();
         if (view === "saved-inspirations") renderAllInspirations();
@@ -1641,11 +1724,13 @@
           content: value,
           time: "刚刚",
           tags: [isLink ? "Reference" : "Idea"],
-          source: isLink ? "Website" : "Quick Capture",
+          source: isLink ? "Website" : "manual",
           type: "quick_note",
           favorite: false,
           marked_as_favorite: false,
+          status: "saved",
           created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
         });
         saveNotebookItems();
         input.value = "";
@@ -1690,7 +1775,11 @@
       }
 
       function filterInspirations(items) {
-        return items.map(normalizeNote).filter(isFavoriteNote);
+        const savedInspirations = readStorage(SAVED_INSPIRATIONS_STORAGE_KEY, []).map(normalizeNote);
+        const merged = [...items.map(normalizeNote), ...savedInspirations];
+        const byId = new Map();
+        merged.filter(isFavoriteNote).forEach((item) => byId.set(item.id, item));
+        return [...byId.values()];
       }
 
       function isFavoriteNote(note) {
@@ -1714,6 +1803,7 @@
           tags: Array.isArray(note.tags) ? note.tags : [],
           source: note.source || note.workspace || "Notebook",
           created_at: note.created_at || new Date().toISOString(),
+          updated_at: note.updated_at || note.created_at || new Date().toISOString(),
           marked_as_favorite: Boolean(note.marked_as_favorite || note.favorite),
         };
       }
@@ -1829,6 +1919,7 @@
           updatedItems.unshift(updatedNote);
         }
         localStorage.setItem(NOTEBOOK_STORAGE_KEY, JSON.stringify(updatedItems));
+        localStorage.setItem(SAVED_INSPIRATIONS_STORAGE_KEY, JSON.stringify(updatedItems.map(normalizeNote).filter(isFavoriteNote)));
         notebookNotes = updatedItems.map(normalizeNote);
         currentNoteDetailId = updatedNote.id;
         renderNotebook();
@@ -1987,7 +2078,9 @@
       }
 
       function saveNotebookItems() {
-        localStorage.setItem(NOTEBOOK_STORAGE_KEY, JSON.stringify(notebookNotes.map(normalizeNote)));
+        const normalized = notebookNotes.map(normalizeNote);
+        localStorage.setItem(NOTEBOOK_STORAGE_KEY, JSON.stringify(normalized));
+        localStorage.setItem(SAVED_INSPIRATIONS_STORAGE_KEY, JSON.stringify(normalized.filter(isFavoriteNote)));
       }
 
       function getRejectedIdeaIds() {
@@ -2002,6 +2095,198 @@
         localStorage.setItem(REJECTED_ID_STORAGE_KEY, JSON.stringify([...new Set(ids)]));
       }
 
+      function readStorage(key, fallback = []) {
+        try {
+          return JSON.parse(localStorage.getItem(key) || JSON.stringify(fallback));
+        } catch {
+          return fallback;
+        }
+      }
+
+      function writeStorage(key, value) {
+        localStorage.setItem(key, JSON.stringify(value));
+      }
+
+      function getLocalContents() {
+        let items = readStorage(LOCAL_CONTENTS_STORAGE_KEY, []);
+        if (!items.length) {
+          items = seedLocalContents();
+          writeStorage(LOCAL_CONTENTS_STORAGE_KEY, items);
+        }
+        return items;
+      }
+
+      function getLocalTrends() {
+        let items = readStorage(LOCAL_TRENDS_STORAGE_KEY, []);
+        if (!items.length) {
+          items = seedLocalTrends();
+          writeStorage(LOCAL_TRENDS_STORAGE_KEY, items);
+        }
+        return items;
+      }
+
+      function getLocalIdeas() {
+        let items = readStorage(LOCAL_IDEAS_STORAGE_KEY, []);
+        if (!items.length) {
+          items = seedLocalIdeas(getLocalTrends());
+          writeStorage(LOCAL_IDEAS_STORAGE_KEY, items);
+        }
+        return items;
+      }
+
+      function getLocalReports() {
+        return readStorage(LOCAL_REPORTS_STORAGE_KEY, []);
+      }
+
+      function seedLocalContents() {
+        const now = Date.now();
+        return [
+          ["content_demo_1", "北京夏日室内漫游指南", "wechat", "北京LOOK", ["夏天", "室内", "Citywalk"], "从商场、展览和咖啡空间里寻找适合夏天的城市休息点。"],
+          ["content_demo_2", "王府井年轻人周末打卡地图", "xiaohongshu", "小红书北京商场", ["王府井", "年轻", "动漫"], "围绕王府井商圈的年轻客群、IP空间和周末路线进行内容整理。"],
+          ["content_demo_3", "THE BOX 夏夜活动观察", "wechat", "商业地产观察", ["夜经济", "音乐", "户外"], "夜间活动和开放空间正在成为北京商业项目的内容抓手。"],
+          ["content_demo_4", "北京艺术展与商业空间联动", "news", "城市活动", ["艺术", "展览", "生活方式"], "艺术展、快闪和商业空间联动，为社交传播提供新素材。"],
+          ["content_demo_5", "CBD 午间放空路线", "wechat", "Timeout Beijing", ["CBD", "公园", "松弛"], "工作日午间的短路线和休息场景适合生成轻量生活方式内容。"],
+        ].map((item, index) => ({
+          id: item[0],
+          title: item[1],
+          platform: item[2],
+          source_name: item[3],
+          content_source: item[2] === "news" ? "article" : item[2],
+          url: `https://example.com/local-demo-${index + 1}`,
+          summary: item[5],
+          raw_text: item[5],
+          tags: item[4],
+          content_status: "analyzed",
+          analysis_status: "completed",
+          created_at: new Date(now - index * 3600000).toISOString(),
+          published_at: new Date(now - index * 86400000).toISOString(),
+        }));
+      }
+
+      function seedLocalTrends() {
+        return [
+          ["trend_demo_1", "Citywalk", "Rising", 92, ["Citywalk", "CBD", "城市"]],
+          ["trend_demo_2", "Summer", "Peak", 88, ["夏天", "室内", "公园"]],
+          ["trend_demo_3", "Night Economy", "Rising", 84, ["夜经济", "音乐", "户外"]],
+          ["trend_demo_4", "Exhibition", "Emerging", 81, ["艺术", "展览", "生活方式"]],
+          ["trend_demo_5", "Anime IP", "Emerging", 78, ["动漫", "年轻", "王府井"]],
+        ].map((item, index) => ({
+          id: item[0],
+          topic: item[1],
+          category: "local_demo",
+          tags: item[4],
+          keywords: item[4],
+          content_count: Math.max(3, 8 - index),
+          growth_rate: Math.max(0.12, 0.42 - index * 0.06),
+          trend_score: item[3],
+          lifecycle: item[2],
+          related_contents: getLocalContents().slice(0, 3).map((content) => content.id),
+          related_content_items: getLocalContents().slice(0, 3),
+          recommended_projects: ["Current Workspace"],
+          recommendation_reason: "Local Mode demo trend for mobile Pilot testing.",
+          ai_insight: { why_hot: `${item[1]} 正在成为近期商业内容中的高频线索，适合作为选题入口。` },
+          generated_at: new Date().toISOString(),
+        }));
+      }
+
+      function seedLocalIdeas(trends) {
+        const templates = [
+          ["今天最适合停下来的一个角落", "把热点转化为空间里的可感知体验，适合做轻量图文。"],
+          ["一条可以收藏的周末路线", "路线型内容更容易被收藏，也方便连接多个场景。"],
+        ];
+        return trends.slice(0, 5).flatMap((trend, trendIndex) =>
+          templates.map((template, templateIndex) => ({
+            id: `idea_demo_${trendIndex + 1}_${templateIndex + 1}`,
+            title: `${trend.topic}｜${template[0]}`,
+            project: "current_workspace",
+            trend_id: trend.id,
+            trend,
+            priority: Math.max(72, trend.trend_score - templateIndex * 4),
+            outline: `1. 从 ${trend.topic} 切入\n2. 找到空间里的真实场景\n3. 输出可拍摄、可收藏、可执行的内容方向`,
+            references: trend.related_contents || [],
+            reference_items: trend.related_content_items || [],
+            recommendation_reason: template[1],
+            execution_cost: templateIndex === 0 ? "low" : "medium",
+            platforms: ["wechat", "xiaohongshu"],
+            status: "draft",
+            created_at: new Date().toISOString(),
+          }))
+        );
+      }
+
+      function generateLocalTrendsFromContents() {
+        const contents = getLocalContents();
+        const groups = new Map();
+        contents.forEach((content) => {
+          (content.tags || ["内容"]).forEach((tag) => {
+            const topic = normalizeTopic(tag);
+            const current = groups.get(topic) || { topic, tags: [], contents: [] };
+            current.tags.push(tag);
+            current.contents.push(content);
+            groups.set(topic, current);
+          });
+        });
+        const trends = [...groups.values()]
+          .map((group, index) => ({
+            id: `trend_local_${Date.now()}_${index}`,
+            topic: group.topic,
+            category: "local",
+            tags: [...new Set(group.tags)],
+            keywords: [...new Set(group.tags)],
+            content_count: group.contents.length,
+            growth_rate: Math.min(0.6, 0.18 + group.contents.length * 0.08),
+            trend_score: Math.min(98, 62 + group.contents.length * 12),
+            lifecycle: group.contents.length >= 3 ? "Rising" : "Emerging",
+            related_contents: group.contents.map((content) => content.id),
+            related_content_items: group.contents,
+            recommended_projects: ["Current Workspace"],
+            recommendation_reason: "基于本地内容标签聚合生成。",
+            ai_insight: { why_hot: `${group.topic} 在本地内容中出现 ${group.contents.length} 次，适合作为 Pilot 选题线索。` },
+            generated_at: new Date().toISOString(),
+          }))
+          .sort((a, b) => b.trend_score - a.trend_score)
+          .slice(0, 10);
+        writeStorage(LOCAL_TRENDS_STORAGE_KEY, trends);
+        return trends;
+      }
+
+      function generateLocalIdeasFromTrends() {
+        const ideas = seedLocalIdeas(getLocalTrends());
+        writeStorage(LOCAL_IDEAS_STORAGE_KEY, ideas);
+        return ideas;
+      }
+
+      function generateLocalReport() {
+        const trends = getLocalTrends().slice(0, 10);
+        const ideas = getLocalIdeas().filter((item) => !getRejectedIdeaIds().includes(String(item.id))).slice(0, 10);
+        const now = new Date();
+        const weekStart = new Date(now.getTime() - 6 * 86400000);
+        const markdown = [
+          `# 北京商业内容观察｜Local Week`,
+          `## 1. 本周热点 TOP10\n${trends.map((trend, index) => `${index + 1}. ${trend.topic}｜${trend.trend_score}｜${trend.lifecycle}`).join("\n")}`,
+          `## 2. 竞品内容观察\nLocal Mode 暂以本地内容标签和来源作为观察样本。`,
+          `## 3. 值得参考案例\n${getLocalContents().slice(0, 5).map((content) => `- ${content.title}（${content.source_name}）`).join("\n")}`,
+          `## 4. Workspace 本周建议 ×5\n${ideas.slice(0, 5).map((idea) => `- ${idea.title}：${idea.recommendation_reason}`).join("\n")}`,
+          `## 5. 下周执行优先级\n优先选择趋势分高、执行成本低、可当天拍摄的选题。`,
+          `## 6. 数据说明\n当前为 Local Mode，数据仅保存在本机浏览器。`,
+        ].join("\n\n");
+        const report = {
+          id: `report_local_${Date.now()}`,
+          title: "Local Weekly Report",
+          week_start: weekStart.toISOString().slice(0, 10),
+          week_end: now.toISOString().slice(0, 10),
+          markdown_content: markdown,
+          trend_ids: trends.map((trend) => trend.id),
+          idea_ids: ideas.map((idea) => idea.id),
+          content_ids: getLocalContents().map((content) => content.id),
+          status: "completed",
+          created_at: now.toISOString(),
+        };
+        const reports = [report, ...getLocalReports()];
+        writeStorage(LOCAL_REPORTS_STORAGE_KEY, reports);
+        return report;
+      }
+
       function showToast(message) {
         const toast = document.getElementById("toast");
         if (!toast) return;
@@ -2012,12 +2297,13 @@
       }
 
       function showDashboardError() {
-        setText("actionStatus", "Home API not available yet.");
+        loadLocalDashboard();
       }
 
       function showContentError() {
-        const container = document.getElementById("contentList");
-        if (container) container.innerHTML = '<div class="empty">API not available. Start backend first.</div>';
+        setDataMode("local");
+        contentItems = getLocalContents();
+        renderContentList();
       }
 
       async function refreshAll() {
@@ -2027,8 +2313,17 @@
 
       async function loadDashboard() {
         const start = performance.now();
-        const res = await fetch(`${API_BASE}/dashboard`);
-        const data = await res.json();
+        if (!isApiMode()) {
+          loadLocalDashboard();
+          return;
+        }
+        let data;
+        try {
+          data = await apiRequest("/dashboard");
+        } catch {
+          loadLocalDashboard();
+          return;
+        }
         renderStats(data.stats || { contents: 0, trends: 0, ideas: 0, reports: 0 });
         trendItems = data.top_trends || trendItems;
         ideaItems = data.top_ideas || ideaItems;
@@ -2038,6 +2333,30 @@
         renderActivity(data.recent_activity || []);
         const elapsed = Math.round(performance.now() - start);
         setText("actionStatus", `Home loaded in ${elapsed} ms`);
+      }
+
+      function loadLocalDashboard() {
+        setDataMode("local");
+        contentItems = getLocalContents();
+        trendItems = getLocalTrends();
+        ideaItems = getLocalIdeas();
+        reportItems = getLocalReports();
+        const visibleIdeas = ideaItems.filter((item) => !getRejectedIdeaIds().includes(String(item.id)));
+        renderStats({
+          contents: contentItems.length,
+          trends: trendItems.length,
+          ideas: visibleIdeas.length,
+          reports: reportItems.length,
+        });
+        renderDashboardTrends(trendItems.slice(0, 5));
+        renderDashboardIdeas(visibleIdeas.slice(0, 4));
+        renderLatestReport(reportItems[0]);
+        renderActivity([
+          { time: new Date().toISOString(), label: "Local Mode ready", count: "Pilot" },
+          { time: new Date().toISOString(), label: "Contents available", count: contentItems.length },
+          { time: new Date().toISOString(), label: "Ideas available", count: visibleIdeas.length },
+        ]);
+        setText("actionStatus", "当前为 Local Mode，数据仅保存在本机浏览器。");
       }
 
       function renderStats(stats) {
@@ -2179,33 +2498,86 @@
             },
           ],
         };
-        const res = await fetch(`${API_BASE}/content/import`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
-        const data = await res.json();
-        setText("importStatus", JSON.stringify(data));
-        await loadContent();
+        if (isApiMode()) {
+          try {
+            const data = await apiRequest("/content/import", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(payload),
+            });
+            setText("importStatus", JSON.stringify(data));
+            await loadContent();
+            await loadDashboard();
+            navigate("home");
+            return;
+          } catch {
+            setDataMode("local");
+          }
+        }
+        const item = {
+          id: `content_local_${Date.now()}`,
+          ...payload.items[0],
+          summary: payload.items[0].raw_text,
+          tags: [platformLabel(sourceType), "Local"],
+          content_status: "new",
+          analysis_status: "pending",
+          created_at: new Date().toISOString(),
+        };
+        const localContents = [item, ...getLocalContents()];
+        writeStorage(LOCAL_CONTENTS_STORAGE_KEY, localContents);
+        contentItems = localContents;
+        setText("importStatus", "已保存到 Local Mode");
+        showToast("已保存");
         await loadDashboard();
-        if (res.ok) navigate("home");
+        navigate("home");
       }
 
       async function analyzeContent(id) {
-        const res = await fetch(`${API_BASE}/content/analyze`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ content_ids: [id], analysis_version: "gpt55-v1", force: true }),
+        if (isApiMode()) {
+          try {
+            const data = await apiRequest("/content/analyze", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ content_ids: [id], analysis_version: "gpt55-v1", force: true }),
+            });
+            setText("actionStatus", JSON.stringify(data));
+            await loadContent();
+            await loadDashboard();
+            return;
+          } catch {
+            setDataMode("local");
+          }
+        }
+        const localContents = getLocalContents().map((item) => {
+          if (String(item.id) !== String(id)) return item;
+          return {
+            ...item,
+            content_status: "analyzed",
+            analysis_status: "completed",
+            summary: item.summary || item.raw_text || item.title,
+            tags: item.tags && item.tags.length ? item.tags : ["Local", platformLabel(item.platform)],
+            updated_at: new Date().toISOString(),
+          };
         });
-        setText("actionStatus", JSON.stringify(await res.json()));
-        await loadContent();
+        writeStorage(LOCAL_CONTENTS_STORAGE_KEY, localContents);
+        contentItems = localContents;
+        renderContentList();
         await loadDashboard();
+        showToast("已保存");
       }
 
       async function loadContent() {
-        const res = await fetch(`${API_BASE}/content?page=1&page_size=50`);
-        const data = await res.json();
-        contentItems = data.items || [];
+        if (isApiMode()) {
+          try {
+            const data = await apiRequest("/content?page=1&page_size=50");
+            contentItems = data.items || [];
+            renderContentList();
+            return;
+          } catch {
+            setDataMode("local");
+          }
+        }
+        contentItems = getLocalContents();
         renderContentList();
       }
 
@@ -2219,10 +2591,14 @@
 
       function renderContentList() {
         const container = document.getElementById("contentList");
+        const query = (document.getElementById("contentSearch")?.value || "").trim().toLowerCase();
         const filtered = contentItems.filter((item) => {
           if (activeContentFilter === "all") return true;
           if (activeContentFilter === "event") return item.content_source === "event";
           return item.platform === activeContentFilter || item.content_source === activeContentFilter;
+        }).filter((item) => {
+          const searchable = `${item.title} ${item.summary || ""} ${(item.tags || []).join(" ")} ${item.source_name || ""}`.toLowerCase();
+          return !query || searchable.includes(query);
         });
         if (!filtered.length) {
           container.innerHTML = '<div class="empty">暂无内容。点击右上角 + 导入第一条内容。</div>';
@@ -2233,7 +2609,7 @@
             (item) => `
               <div class="content-item">
                 <div class="cover"></div>
-                <div>
+                <div onclick="openContentUrl('${item.id}')">
                   <div class="content-meta">${platformLabel(item.platform || item.content_source)} · ${formatDate(item.published_at)}</div>
                   <div class="content-title">${item.title}</div>
                   <div class="content-meta">${item.source_name || ""} · ${item.content_status} ${item.analysis_status === "completed" ? '<span class="status-dot"></span>' : ""}</div>
@@ -2245,24 +2621,53 @@
           .join("");
       }
 
+      function openContentUrl(id) {
+        const item = contentItems.find((content) => String(content.id) === String(id));
+        if (item?.url) window.open(item.url, "_blank");
+      }
+
       async function loadTrends() {
-        const res = await fetch(`${API_BASE}/trends?page=1&page_size=50`);
-        const data = await res.json();
-        trendItems = data.items || [];
+        if (isApiMode()) {
+          try {
+            const data = await apiRequest("/trends?page=1&page_size=50");
+            trendItems = data.items || [];
+            renderTrendRows("trendsList", trendItems, 50);
+            return;
+          } catch {
+            setDataMode("local");
+          }
+        }
+        trendItems = getLocalTrends();
         renderTrendRows("trendsList", trendItems, 50);
       }
 
       async function loadIdeas() {
-        const res = await fetch(`${API_BASE}/ideas?page=1&page_size=50`);
-        const data = await res.json();
-        ideaItems = data.items || [];
+        if (isApiMode()) {
+          try {
+            const data = await apiRequest("/ideas?page=1&page_size=50");
+            ideaItems = data.items || [];
+            renderIdeaCards("ideasList", ideaItems, 50);
+            return;
+          } catch {
+            setDataMode("local");
+          }
+        }
+        ideaItems = getLocalIdeas();
         renderIdeaCards("ideasList", ideaItems, 50);
       }
 
       async function loadReports() {
-        const res = await fetch(`${API_BASE}/reports?page=1&page_size=20`);
-        const data = await res.json();
-        reportItems = data.items || [];
+        if (isApiMode()) {
+          try {
+            const data = await apiRequest("/reports?page=1&page_size=20");
+            reportItems = data.items || [];
+            renderReportList(reportItems);
+            return;
+          } catch {
+            setDataMode("local");
+          }
+        }
+        reportItems = getLocalReports();
         renderReportList(reportItems);
       }
 
@@ -2308,23 +2713,41 @@
       async function generateTrends() {
         navigate("trends");
         setText("trendStatus", "Generating trends...");
-        const res = await fetch(`${API_BASE}/trends/generate`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ lookback_days: 7, min_content_count: 1 }),
-        });
-        const data = await res.json();
-        trendItems = data.items || [];
-        setText("trendStatus", `Generated ${data.generated || trendItems.length} trends.`);
+        if (isApiMode()) {
+          try {
+            const data = await apiRequest("/trends/generate", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ lookback_days: 7, min_content_count: 1 }),
+            });
+            trendItems = data.items || [];
+            setText("trendStatus", `Generated ${data.generated || trendItems.length} trends.`);
+            renderTrendRows("trendsList", trendItems, 50);
+            await loadDashboard();
+            return;
+          } catch {
+            setDataMode("local");
+          }
+        }
+        trendItems = generateLocalTrendsFromContents();
+        setText("trendStatus", `Generated ${trendItems.length} local trends.`);
         renderTrendRows("trendsList", trendItems, 50);
         await loadDashboard();
+        showToast("已生成本地 Trends");
       }
 
       async function openTrendDetail(id) {
         previousView = currentView;
         navigate("trend-detail", { from: "trends" });
-        const res = await fetch(`${API_BASE}/trends/${id}`);
-        const item = await res.json();
+        let item = trendItems.find((trend) => String(trend.id) === String(id)) || getLocalTrends().find((trend) => String(trend.id) === String(id));
+        if (isApiMode() && !item) {
+          try {
+            item = await apiRequest(`/trends/${id}`);
+          } catch {
+            item = getLocalTrends().find((trend) => String(trend.id) === String(id));
+          }
+        }
+        if (!item) return;
         const detail = document.getElementById("trendDetailContent");
         detail.innerHTML = `
           <h3 class="detail-title">${item.topic}</h3>
@@ -2350,23 +2773,41 @@
       async function generateIdeas() {
         navigate("ideas");
         setText("ideaStatus", "Generating ideas...");
-        const res = await fetch(`${API_BASE}/ideas/generate`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ projects: [currentWorkspace.id], ideas_per_project: 5 }),
-        });
-        const data = await res.json();
-        ideaItems = data.items || [];
-        setText("ideaStatus", `Generated ${data.generated || ideaItems.length} ideas.`);
+        if (isApiMode()) {
+          try {
+            const data = await apiRequest("/ideas/generate", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ projects: [currentWorkspace.id], ideas_per_project: 5 }),
+            });
+            ideaItems = data.items || [];
+            setText("ideaStatus", `Generated ${data.generated || ideaItems.length} ideas.`);
+            renderIdeaCards("ideasList", ideaItems, 50);
+            await loadDashboard();
+            return;
+          } catch {
+            setDataMode("local");
+          }
+        }
+        ideaItems = generateLocalIdeasFromTrends();
+        setText("ideaStatus", `Generated ${ideaItems.length} local ideas.`);
         renderIdeaCards("ideasList", ideaItems, 50);
         await loadDashboard();
+        showToast("已生成本地 Ideas");
       }
 
       async function openIdeaDetail(id) {
         previousView = currentView;
         navigate("idea-detail", { from: "ideas" });
-        const res = await fetch(`${API_BASE}/ideas/${id}`);
-        const item = await res.json();
+        let item = ideaItems.find((idea) => String(idea.id) === String(id)) || getLocalIdeas().find((idea) => String(idea.id) === String(id));
+        if (isApiMode() && !item) {
+          try {
+            item = await apiRequest(`/ideas/${id}`);
+          } catch {
+            item = getLocalIdeas().find((idea) => String(idea.id) === String(id));
+          }
+        }
+        if (!item) return;
         currentIdeaDetail = item;
         const detail = document.getElementById("ideaDetailContent");
         detail.classList.remove("slide-out");
@@ -2446,6 +2887,7 @@
           priority: item.priority,
           status: "adopted",
           created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
           source_idea_id: String(item.id),
           time: "刚刚",
           tags: ["Adopted", "Idea", workspaceLabel(item.project)],
@@ -2522,36 +2964,62 @@
       async function generateReport() {
         navigate("reports");
         setText("reportStatus", "Generating weekly report...");
-        const res = await fetch(`${API_BASE}/reports/generate`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({}),
-        });
-        const data = await res.json();
-        setText("reportStatus", JSON.stringify({
-          id: data.item.id,
-          status: data.item.status,
-          trends: (data.item.trend_ids || []).length,
-          ideas: (data.item.idea_ids || []).length,
-          contents: (data.item.content_ids || []).length,
-        }));
+        if (isApiMode()) {
+          try {
+            const data = await apiRequest("/reports/generate", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({}),
+            });
+            setText("reportStatus", JSON.stringify({
+              id: data.item.id,
+              status: data.item.status,
+              trends: (data.item.trend_ids || []).length,
+              ideas: (data.item.idea_ids || []).length,
+              contents: (data.item.content_ids || []).length,
+            }));
+            await loadReports();
+            await loadDashboard();
+            openReportDetail(data.item.id);
+            return;
+          } catch {
+            setDataMode("local");
+          }
+        }
+        const report = generateLocalReport();
+        setText("reportStatus", "Generated local report.");
         await loadReports();
         await loadDashboard();
-        openReportDetail(data.item.id);
+        showToast("已生成本地 Report");
+        openReportDetail(report.id);
       }
 
       async function openReportDetail(id) {
         previousView = currentView;
         navigate("report-detail", { from: "reports" });
-        const res = await fetch(`${API_BASE}/reports/${id}`);
-        const report = await res.json();
+        let report = reportItems.find((item) => String(item.id) === String(id)) || getLocalReports().find((item) => String(item.id) === String(id));
+        if (isApiMode() && !report) {
+          try {
+            report = await apiRequest(`/reports/${id}`);
+          } catch {
+            report = getLocalReports().find((item) => String(item.id) === String(id));
+          }
+        }
+        if (!report) return;
         document.getElementById("reportDetailContent").textContent = report.markdown_content || "";
         document.getElementById("reportExportButton").onclick = () => downloadMarkdown(id);
       }
 
       async function downloadMarkdown(id) {
-        const res = await fetch(`${API_BASE}/reports/${id}`);
-        const report = await res.json();
+        let report = reportItems.find((item) => String(item.id) === String(id)) || getLocalReports().find((item) => String(item.id) === String(id));
+        if (isApiMode() && !report) {
+          try {
+            report = await apiRequest(`/reports/${id}`);
+          } catch {
+            report = getLocalReports().find((item) => String(item.id) === String(id));
+          }
+        }
+        if (!report) return;
         const blob = new Blob([report.markdown_content || ""], { type: "text/markdown;charset=utf-8" });
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
@@ -2589,6 +3057,23 @@
         return labels[value] || value || "内容";
       }
 
+      function normalizeTopic(value) {
+        const key = String(value || "内容").trim().toLowerCase();
+        const aliases = {
+          "city walk": "Citywalk",
+          citywalk: "Citywalk",
+          cbd: "CBD",
+          "夜经济": "Night Economy",
+          "夏天": "Summer",
+          "室内": "Indoor",
+          "艺术": "Art",
+          "展览": "Exhibition",
+          "动漫": "Anime IP",
+          "王府井": "Wangfujing",
+        };
+        return aliases[key] || value || "内容";
+      }
+
       function workspaceLabel() {
         return "Current Workspace";
       }
@@ -2621,8 +3106,9 @@
         return date.toLocaleString("zh-CN", { month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false });
       }
 
+      updateModeBadges();
       loadDashboard().catch(() => {
-        setText("actionStatus", "Home API not available yet.");
+        loadLocalDashboard();
       });
       loadContent().catch(() => {
         showContentError();
