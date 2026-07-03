@@ -1135,7 +1135,7 @@
             <h1 class="page-title">Import Content</h1>
             <p class="page-kicker">导入一条内容后返回 Home</p>
           </div>
-          <button class="icon-button" aria-label="More">⋯</button>
+          <button class="icon-button" onclick="openApiSettings()" aria-label="More">⋯</button>
         </div>
         <section class="panel">
           <div class="form-grid">
@@ -1307,7 +1307,7 @@
             <h1 class="page-title">Notebook</h1>
             <p class="page-kicker">Your ideas, references and inspirations.</p>
           </div>
-          <button class="icon-button" aria-label="More">⋯</button>
+          <button class="icon-button" onclick="openApiSettings()" aria-label="More">⋯</button>
         </div>
 
         <section class="capture-card">
@@ -1433,6 +1433,27 @@
         </div>
       </div>
     </div>
+    <div class="sheet-backdrop" id="apiSettingsSheet" onclick="closeApiSettings(event)">
+      <div class="bottom-sheet" onclick="event.stopPropagation()">
+        <div class="sheet-head">
+          <div class="section-head" style="margin-bottom: 0;">
+            <h2>API Settings</h2>
+            <button class="icon-button" onclick="closeApiSettings()" aria-label="Close">×</button>
+          </div>
+        </div>
+        <div class="sheet-body">
+          <label>
+            <span class="field-label">API Base URL</span>
+            <input id="apiBaseInput" placeholder="https://your-backend.trycloudflare.com" />
+          </label>
+          <p class="idea-reason">用于手机测试时填写后端服务地址。留空会恢复本地默认地址。</p>
+        </div>
+        <div class="sheet-actions">
+          <button class="btn btn-primary" onclick="saveApiSettings()">保存</button>
+          <button class="btn btn-secondary" onclick="closeApiSettings()">关闭</button>
+        </div>
+      </div>
+    </div>
 
     <nav class="bottom-nav" aria-label="Main navigation">
       <button class="nav-item active" data-nav="home" onclick="navigate('home')"><span class="nav-icon">⌂</span>首页</button>
@@ -1443,7 +1464,9 @@
     </nav>
 
     <script>
-      const API = "http://localhost:8000";
+      const API_BASE_STORAGE_KEY = "INSIGHT_API_BASE";
+      const DEFAULT_API_BASE = "http://127.0.0.1:8000";
+      let API_BASE = getApiBase();
       let contentItems = [];
       let trendItems = [];
       let ideaItems = [];
@@ -1465,6 +1488,41 @@
       let currentNoteDetailId = null;
       let previousNotebookListView = "recent-notes";
       let pendingDeleteNoteId = null;
+
+      function getApiBase() {
+        return localStorage.getItem(API_BASE_STORAGE_KEY) || window.INSIGHT_API_BASE || DEFAULT_API_BASE;
+      }
+
+      function setApiBase(value) {
+        const nextValue = value.trim();
+        if (nextValue) {
+          localStorage.setItem(API_BASE_STORAGE_KEY, nextValue);
+        } else {
+          localStorage.removeItem(API_BASE_STORAGE_KEY);
+        }
+        API_BASE = getApiBase();
+      }
+
+      function openApiSettings() {
+        const input = document.getElementById("apiBaseInput");
+        if (input) {
+          input.value = localStorage.getItem(API_BASE_STORAGE_KEY) || window.INSIGHT_API_BASE || "";
+        }
+        document.getElementById("apiSettingsSheet").classList.add("visible");
+      }
+
+      function closeApiSettings(event) {
+        if (event && event.target !== event.currentTarget) return;
+        document.getElementById("apiSettingsSheet").classList.remove("visible");
+      }
+
+      function saveApiSettings() {
+        const input = document.getElementById("apiBaseInput");
+        setApiBase(input ? input.value : "");
+        closeApiSettings();
+        showToast("API Base URL saved");
+        refreshAll().catch(() => {});
+      }
 
       function navigate(view, options = {}) {
         const target = document.getElementById(`view-${view}`);
@@ -1915,7 +1973,7 @@
 
       async function loadDashboard() {
         const start = performance.now();
-        const res = await fetch(`${API}/dashboard`);
+        const res = await fetch(`${API_BASE}/dashboard`);
         const data = await res.json();
         renderStats(data.stats || { contents: 0, trends: 0, ideas: 0, reports: 0 });
         trendItems = data.top_trends || trendItems;
@@ -2067,7 +2125,7 @@
             },
           ],
         };
-        const res = await fetch(`${API}/content/import`, {
+        const res = await fetch(`${API_BASE}/content/import`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
@@ -2080,7 +2138,7 @@
       }
 
       async function analyzeContent(id) {
-        const res = await fetch(`${API}/content/analyze`, {
+        const res = await fetch(`${API_BASE}/content/analyze`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ content_ids: [id], analysis_version: "gpt55-v1", force: true }),
@@ -2091,7 +2149,7 @@
       }
 
       async function loadContent() {
-        const res = await fetch(`${API}/content?page=1&page_size=50`);
+        const res = await fetch(`${API_BASE}/content?page=1&page_size=50`);
         const data = await res.json();
         contentItems = data.items || [];
         renderContentList();
@@ -2134,21 +2192,21 @@
       }
 
       async function loadTrends() {
-        const res = await fetch(`${API}/trends?page=1&page_size=50`);
+        const res = await fetch(`${API_BASE}/trends?page=1&page_size=50`);
         const data = await res.json();
         trendItems = data.items || [];
         renderTrendRows("trendsList", trendItems, 50);
       }
 
       async function loadIdeas() {
-        const res = await fetch(`${API}/ideas?page=1&page_size=50`);
+        const res = await fetch(`${API_BASE}/ideas?page=1&page_size=50`);
         const data = await res.json();
         ideaItems = data.items || [];
         renderIdeaCards("ideasList", ideaItems, 50);
       }
 
       async function loadReports() {
-        const res = await fetch(`${API}/reports?page=1&page_size=20`);
+        const res = await fetch(`${API_BASE}/reports?page=1&page_size=20`);
         const data = await res.json();
         reportItems = data.items || [];
         renderReportList(reportItems);
@@ -2196,7 +2254,7 @@
       async function generateTrends() {
         navigate("trends");
         setText("trendStatus", "Generating trends...");
-        const res = await fetch(`${API}/trends/generate`, {
+        const res = await fetch(`${API_BASE}/trends/generate`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ lookback_days: 7, min_content_count: 1 }),
@@ -2211,7 +2269,7 @@
       async function openTrendDetail(id) {
         previousView = currentView;
         navigate("trend-detail", { from: "trends" });
-        const res = await fetch(`${API}/trends/${id}`);
+        const res = await fetch(`${API_BASE}/trends/${id}`);
         const item = await res.json();
         const detail = document.getElementById("trendDetailContent");
         detail.innerHTML = `
@@ -2238,7 +2296,7 @@
       async function generateIdeas() {
         navigate("ideas");
         setText("ideaStatus", "Generating ideas...");
-        const res = await fetch(`${API}/ideas/generate`, {
+        const res = await fetch(`${API_BASE}/ideas/generate`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ projects: [currentWorkspace.id], ideas_per_project: 5 }),
@@ -2253,7 +2311,7 @@
       async function openIdeaDetail(id) {
         previousView = currentView;
         navigate("idea-detail", { from: "ideas" });
-        const res = await fetch(`${API}/ideas/${id}`);
+        const res = await fetch(`${API_BASE}/ideas/${id}`);
         const item = await res.json();
         currentIdeaDetail = item;
         const detail = document.getElementById("ideaDetailContent");
@@ -2410,7 +2468,7 @@
       async function generateReport() {
         navigate("reports");
         setText("reportStatus", "Generating weekly report...");
-        const res = await fetch(`${API}/reports/generate`, {
+        const res = await fetch(`${API_BASE}/reports/generate`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({}),
@@ -2431,14 +2489,14 @@
       async function openReportDetail(id) {
         previousView = currentView;
         navigate("report-detail", { from: "reports" });
-        const res = await fetch(`${API}/reports/${id}`);
+        const res = await fetch(`${API_BASE}/reports/${id}`);
         const report = await res.json();
         document.getElementById("reportDetailContent").textContent = report.markdown_content || "";
         document.getElementById("reportExportButton").onclick = () => downloadMarkdown(id);
       }
 
       async function downloadMarkdown(id) {
-        const res = await fetch(`${API}/reports/${id}`);
+        const res = await fetch(`${API_BASE}/reports/${id}`);
         const report = await res.json();
         const blob = new Blob([report.markdown_content || ""], { type: "text/markdown;charset=utf-8" });
         const url = URL.createObjectURL(blob);

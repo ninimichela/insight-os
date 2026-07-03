@@ -122,6 +122,55 @@ When the backend is running:
 - Swagger: `http://127.0.0.1:8000/api/docs`
 - ReDoc: `http://127.0.0.1:8000/redoc`
 
+## Vercel Frontend Deploy
+
+The current frontend is a static Pilot PWA and can be deployed directly to Vercel.
+
+1. Confirm this repository is pushed to GitHub.
+2. Log in to Vercel.
+3. Choose **New Project**.
+4. Import the `insight-os` repository.
+5. Set **Root Directory** to `frontend`.
+6. Set **Framework Preset** to **Other** or **Static**.
+7. Deploy.
+
+After the first deploy, every `git push main` will trigger a new Vercel deployment.
+
+The frontend includes `frontend/vercel.json`, which routes `/`, `/dashboard`, `/content`, `/trends`, `/ideas`, `/reports`, and `/notebook` back to `content-library.html` so refreshes do not 404.
+
+## Mobile Testing Flow
+
+Vercel deploys only the frontend for now. During Pilot, run the backend locally and expose it with Cloudflare Tunnel:
+
+1. Open the Vercel frontend URL on desktop or iPhone.
+2. Start the backend locally:
+
+```bash
+cd backend
+. .venv/bin/activate
+uvicorn app.main:app --host 127.0.0.1 --port 8000
+```
+
+3. Expose the local backend:
+
+```bash
+cloudflared tunnel --url http://127.0.0.1:8000
+```
+
+4. Copy the generated `https://...trycloudflare.com` backend URL.
+5. In INSight OS, open **Notebook** and tap the `...` button.
+6. Open **API Settings**.
+7. Paste the tunnel URL into **API Base URL** and save.
+8. Refresh the page and start testing with live backend data.
+
+The frontend reads the API endpoint in this order:
+
+1. `localStorage.getItem("INSIGHT_API_BASE")`
+2. `window.INSIGHT_API_BASE`
+3. `http://127.0.0.1:8000`
+
+For iPhone PWA testing, open the Vercel URL in Safari, tap **Share**, then choose **Add to Home Screen**.
+
 ## Release Milestones
 
 - Alpha: Content Library, import, AI analysis ✅
