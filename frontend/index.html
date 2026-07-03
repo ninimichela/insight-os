@@ -1,0 +1,2638 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#111111" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="INSight OS" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <title>INSight OS Beta | Home</title>
+    <style>
+      :root {
+        --text: #111111;
+        --muted: #666666;
+        --soft: #f2f2f2;
+        --page: #ffffff;
+        --line: #eaeaea;
+        --brand: #e6007e;
+        --shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+        --shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.12);
+        --app-max: 480px;
+        --safe-top: env(safe-area-inset-top, 0px);
+        --safe-bottom: env(safe-area-inset-bottom, 0px);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: auto;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        min-height: 100dvh;
+        font-family: Inter, "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+        color: var(--text);
+        background: var(--soft);
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      button,
+      textarea,
+      input {
+        font: inherit;
+      }
+
+      button {
+        border: 0;
+      }
+
+      .app-shell {
+        width: min(100%, var(--app-max));
+        max-width: var(--app-max);
+        margin: 0 auto;
+        min-height: 100vh;
+        min-height: 100dvh;
+        background: var(--page);
+        padding: calc(16px + var(--safe-top)) 20px calc(112px + var(--safe-bottom));
+      }
+
+      .app-header,
+      .section-head,
+      .top-row,
+      .report-meta,
+      .pill-row,
+      .bottom-actions {
+        display: flex;
+        align-items: center;
+      }
+
+      .view {
+        display: none;
+        animation: page-in 180ms ease;
+      }
+
+      .view.active {
+        display: block;
+      }
+
+      @keyframes page-in {
+        from {
+          opacity: 0;
+          transform: translateX(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      .app-header {
+        position: relative;
+        justify-content: center;
+        min-height: 190px;
+        padding: 18px 56px 30px;
+        background: var(--page);
+        text-align: center;
+      }
+
+      .app-logo {
+        display: grid;
+        justify-items: center;
+        gap: 8px;
+      }
+
+      .app-logo-circle {
+        width: 56px;
+        height: 56px;
+        overflow: hidden;
+        border-radius: 50%;
+        border: 1px solid var(--line);
+        background: var(--page);
+        box-shadow: var(--shadow);
+      }
+
+      .app-logo-circle img {
+        width: 100%;
+        height: 100%;
+        display: block;
+        object-fit: cover;
+        object-position: left center;
+      }
+
+      .app-title {
+        margin: 2px 0 0;
+        color: var(--text);
+        font-size: 28px;
+        line-height: 1.2;
+        font-weight: 700;
+      }
+
+      .app-subtitle {
+        margin: 0;
+        color: var(--muted);
+        font-size: 17px;
+        line-height: 1.35;
+      }
+
+      .header-more-button {
+        position: absolute;
+        top: 18px;
+        right: 0;
+      }
+
+      .hero-title {
+        margin: 0;
+        font-size: 28px;
+        line-height: 1.22;
+        font-weight: 700;
+      }
+
+      .hero-subtitle,
+      .muted,
+      .meta,
+      .empty {
+        color: var(--muted);
+      }
+
+      .hero-subtitle {
+        margin: 6px 0 0;
+        font-size: 14px;
+      }
+
+      .icon-button {
+        width: 44px;
+        height: 44px;
+        display: inline-grid;
+        place-items: center;
+        border-radius: 50%;
+        color: var(--text);
+        background: var(--page);
+        border: 1px solid var(--line);
+        box-shadow: var(--shadow);
+        cursor: pointer;
+      }
+
+      .back-button {
+        width: 44px;
+        height: 44px;
+        display: inline-grid;
+        place-items: center;
+        border-radius: 50%;
+        color: var(--text);
+        background: var(--page);
+        border: 1px solid var(--line);
+        box-shadow: var(--shadow);
+        cursor: pointer;
+        font-size: 22px;
+      }
+
+      .page-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 0 0 20px;
+      }
+
+      .page-title {
+        margin: 0;
+        font-size: 24px;
+        line-height: 1.25;
+        font-weight: 700;
+      }
+
+      .page-kicker {
+        margin: 4px 0 0;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .icon-button:active,
+      .btn:active,
+      .pill:active {
+        opacity: 0.85;
+      }
+
+      .hero-card,
+      .panel,
+      .detail-card,
+      .report-card {
+        border-radius: 20px;
+        background: var(--page);
+        box-shadow: var(--shadow);
+      }
+
+      .hero-card {
+        padding: 20px;
+        margin-bottom: 24px;
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 10px;
+        margin-top: 18px;
+      }
+
+      .stat-card {
+        min-height: 82px;
+        padding: 12px 10px;
+        border-radius: 16px;
+        border: 1px solid var(--line);
+        background: var(--page);
+      }
+
+      .stat-label {
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .stat-value {
+        margin-top: 8px;
+        font-size: 22px;
+        font-weight: 700;
+      }
+
+      .stat-delta {
+        margin-top: 2px;
+        color: var(--brand);
+        font-size: 12px;
+      }
+
+      .panel {
+        padding: 20px;
+        margin-bottom: 24px;
+      }
+
+      .section-head {
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 12px;
+      }
+
+      h2 {
+        margin: 0;
+        font-size: 20px;
+        line-height: 1.3;
+        font-weight: 700;
+      }
+
+      .text-link {
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+        padding: 0;
+        color: var(--text);
+        background: transparent;
+        font-size: 13px;
+        cursor: pointer;
+      }
+
+      .text-link::after {
+        content: "  >";
+        color: var(--brand);
+      }
+
+      .list {
+        display: grid;
+        gap: 0;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        overflow: hidden;
+      }
+
+      .trend-row,
+      .activity-item,
+      .content-item {
+        background: var(--page);
+        border-bottom: 1px solid var(--line);
+      }
+
+      .trend-row:last-child,
+      .activity-item:last-child,
+      .content-item:last-child {
+        border-bottom: 0;
+      }
+
+      .trend-row {
+        display: grid;
+        grid-template-columns: 1fr auto auto;
+        align-items: center;
+        gap: 12px;
+        padding: 14px;
+        cursor: pointer;
+        transition: transform 160ms ease, box-shadow 160ms ease;
+      }
+
+      .trend-row:hover,
+      .idea-card:hover,
+      .content-item:hover,
+      .report-card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-hover);
+      }
+
+      .trend-topic,
+      .idea-title,
+      .content-title {
+        font-size: 15px;
+        font-weight: 650;
+      }
+
+      .trend-score,
+      .priority-pill {
+        color: var(--brand);
+        font-weight: 700;
+      }
+
+      .trend-arrow {
+        color: var(--brand);
+        font-size: 18px;
+      }
+
+      .lifecycle {
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .idea-list {
+        display: grid;
+        gap: 12px;
+      }
+
+      .idea-card {
+        padding: 20px;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: var(--page);
+        cursor: pointer;
+        transition: transform 160ms ease, box-shadow 160ms ease;
+      }
+
+      .idea-card .top-row {
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .idea-reason {
+        margin: 10px 0 0;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.55;
+      }
+
+      .tag-row,
+      .pill-row {
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .tag-row {
+        display: flex;
+        margin-top: 12px;
+      }
+
+      .tag,
+      .pill,
+      .priority-pill {
+        display: inline-flex;
+        align-items: center;
+        min-height: 26px;
+        padding: 5px 10px;
+        border-radius: 999px;
+        font-size: 12px;
+        line-height: 1;
+      }
+
+      .tag,
+      .pill {
+        color: var(--text);
+        background: var(--soft);
+      }
+
+      button.tag {
+        min-height: 44px;
+        cursor: pointer;
+      }
+
+      .priority-pill {
+        background: rgba(230, 0, 126, 0.09);
+      }
+
+      .report-card {
+        padding: 20px;
+        border: 1px solid var(--line);
+      }
+
+      .report-meta {
+        justify-content: space-between;
+        gap: 12px;
+        margin-top: 10px;
+      }
+
+      .report-preview {
+        margin-top: 14px;
+        padding-top: 14px;
+        border-top: 1px solid var(--line);
+        max-height: 360px;
+        overflow: auto;
+        white-space: pre-wrap;
+        word-break: break-word;
+        color: var(--text);
+        font-size: 13px;
+        line-height: 1.7;
+      }
+
+      .quick-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .btn {
+        min-height: 46px;
+        padding: 0 16px;
+        border-radius: 999px;
+        font-weight: 650;
+        cursor: pointer;
+      }
+
+      .btn-primary {
+        color: #ffffff;
+        background: var(--text);
+      }
+
+      .btn-primary::after {
+        content: "";
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        margin-left: 10px;
+        border-radius: 50%;
+        background: var(--brand);
+      }
+
+      .btn-secondary {
+        color: var(--text);
+        background: var(--page);
+        border: 1px solid var(--line);
+      }
+
+      .activity-list {
+        display: grid;
+        gap: 0;
+      }
+
+      .activity-item {
+        display: grid;
+        grid-template-columns: 54px 1fr auto;
+        gap: 12px;
+        align-items: center;
+        padding: 12px 0;
+      }
+
+      .activity-dot,
+      .status-dot {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--brand);
+      }
+
+      .content-toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 14px;
+      }
+
+      .toolbar-actions {
+        display: flex;
+        gap: 8px;
+      }
+
+      .filters {
+        display: flex;
+        gap: 8px;
+        overflow-x: auto;
+        padding: 0 0 14px;
+      }
+
+      .pill {
+        min-height: 44px;
+        white-space: nowrap;
+        border: 1px solid var(--line);
+        cursor: pointer;
+      }
+
+      .pill.active {
+        color: #ffffff;
+        background: var(--text);
+        border-color: var(--text);
+      }
+
+      .content-list {
+        display: grid;
+        gap: 0;
+      }
+
+      .content-item {
+        display: grid;
+        grid-template-columns: 74px 1fr auto;
+        gap: 12px;
+        align-items: center;
+        padding: 14px 0;
+      }
+
+      .cover {
+        width: 74px;
+        height: 74px;
+        border-radius: 14px;
+        background: linear-gradient(135deg, #ededed, #dcdcdc);
+      }
+
+      .content-title {
+        margin: 4px 0 6px;
+        line-height: 1.45;
+      }
+
+      .content-meta {
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .analyze-btn {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: var(--text);
+        color: #ffffff;
+        cursor: pointer;
+      }
+
+      textarea {
+        width: 100%;
+        min-height: 160px;
+        padding: 14px;
+        color: var(--text);
+        background: var(--soft);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        resize: vertical;
+      }
+
+      .form-grid {
+        display: grid;
+        gap: 14px;
+      }
+
+      .field-label {
+        display: block;
+        margin-bottom: 8px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      input {
+        width: 100%;
+        min-height: 48px;
+        padding: 0 14px;
+        color: var(--text);
+        background: var(--soft);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+      }
+
+      .source-options {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .source-option input {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .source-option span {
+        display: inline-flex;
+        align-items: center;
+        min-height: 44px;
+        padding: 8px 12px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        color: var(--text);
+        background: var(--page);
+        font-size: 13px;
+      }
+
+      .source-option input:checked + span {
+        color: #ffffff;
+        background: var(--text);
+        border-color: var(--text);
+      }
+
+      .capture-card {
+        padding: 20px;
+        border-radius: 20px;
+        border: 1px solid var(--line);
+        background: var(--page);
+        box-shadow: var(--shadow);
+      }
+
+      .capture-row,
+      .search-row {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 10px;
+        align-items: center;
+      }
+
+      .capture-input,
+      .search-input {
+        min-height: 48px;
+        background: var(--soft);
+      }
+
+      .capture-button {
+        width: 48px;
+        height: 48px;
+        display: inline-grid;
+        place-items: center;
+        border-radius: 50%;
+        color: #ffffff;
+        background: var(--text);
+        box-shadow: var(--shadow-hover);
+        cursor: pointer;
+        font-size: 22px;
+      }
+
+      .note-list {
+        display: grid;
+        gap: 12px;
+      }
+
+      .note-card {
+        padding: 20px;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: var(--page);
+        box-shadow: var(--shadow);
+        cursor: pointer;
+        transition: transform 160ms ease, box-shadow 160ms ease;
+      }
+
+      .note-card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-hover);
+      }
+
+      .note-title {
+        margin: 0;
+        font-size: 15px;
+        line-height: 1.45;
+        font-weight: 700;
+      }
+
+      .note-source {
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .inspiration-card {
+        display: grid;
+        grid-template-columns: 72px 1fr auto;
+        gap: 12px;
+        align-items: center;
+        padding: 14px 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .inspiration-card:last-child {
+        border-bottom: 0;
+      }
+
+      .favorite-star {
+        color: var(--brand);
+        font-size: 18px;
+      }
+
+      .fab-menu {
+        position: fixed;
+        right: max(20px, calc((100vw - var(--app-max)) / 2 + 20px));
+        bottom: calc(154px + var(--safe-bottom));
+        z-index: 9;
+        display: none;
+        width: 210px;
+        padding: 10px;
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.94);
+        box-shadow: var(--shadow-hover);
+        backdrop-filter: blur(16px);
+      }
+
+      .fab-menu.visible {
+        display: grid;
+        gap: 6px;
+      }
+
+      .fab-menu button {
+        min-height: 44px;
+        padding: 0 12px;
+        border-radius: 999px;
+        text-align: left;
+        color: var(--text);
+        background: var(--soft);
+        cursor: pointer;
+      }
+
+      .workspace-selector {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 16px;
+        padding: 8px 10px 8px 12px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: var(--page);
+      }
+
+      .workspace-label {
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .workspace-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        min-height: 44px;
+        color: var(--text);
+        background: transparent;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      .detail-card {
+        display: none;
+        padding: 20px;
+        margin-top: 14px;
+        border: 1px solid var(--line);
+      }
+
+      .detail-card.visible {
+        display: block;
+      }
+
+      .detail-nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 14px;
+      }
+
+      .detail-title {
+        margin: 0 0 12px;
+        font-size: 20px;
+        line-height: 1.35;
+        font-weight: 700;
+      }
+
+      .detail-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        margin-top: 12px;
+      }
+
+      .detail-metric {
+        padding: 12px;
+        border-radius: 16px;
+        background: var(--soft);
+      }
+
+      .detail-metric strong {
+        display: block;
+        margin-top: 4px;
+        color: var(--brand);
+        font-size: 18px;
+      }
+
+      .insight-card,
+      .outline-card {
+        margin-top: 14px;
+        padding: 14px;
+        border-radius: 16px;
+        background: var(--page);
+        border: 1px solid var(--line);
+      }
+
+      .fixed-detail-actions {
+        position: sticky;
+        bottom: calc(78px + var(--safe-bottom));
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 8px;
+        margin-top: 16px;
+        padding: 10px;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.9);
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(16px);
+      }
+
+      .btn-outline {
+        color: var(--text);
+        background: var(--page);
+        border: 1px solid var(--text);
+      }
+
+      .btn-adopted {
+        color: #ffffff;
+        background: var(--brand);
+      }
+
+      .slide-out {
+        animation: slide-out 220ms ease forwards;
+      }
+
+      @keyframes slide-out {
+        to {
+          opacity: 0;
+          transform: translateY(24px);
+        }
+      }
+
+      .toast {
+        position: fixed;
+        left: 50%;
+        bottom: calc(154px + var(--safe-bottom));
+        z-index: 30;
+        display: none;
+        min-height: 38px;
+        align-items: center;
+        padding: 0 18px;
+        transform: translateX(-50%);
+        border-radius: 999px;
+        color: #ffffff;
+        background: var(--text);
+        box-shadow: var(--shadow-hover);
+        font-size: 13px;
+      }
+
+      .toast.visible {
+        display: inline-flex;
+      }
+
+      .sheet-backdrop {
+        position: fixed;
+        inset: 0;
+        z-index: 24;
+        display: none;
+        align-items: flex-end;
+        justify-content: center;
+        padding: 20px 20px calc(20px + var(--safe-bottom));
+        background: rgba(0, 0, 0, 0.22);
+      }
+
+      .sheet-backdrop.visible {
+        display: flex;
+      }
+
+      .bottom-sheet {
+        width: min(100%, 520px);
+        max-height: 78vh;
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+        border-radius: 20px;
+        background: var(--page);
+        box-shadow: var(--shadow-hover);
+        overflow: hidden;
+      }
+
+      .sheet-head,
+      .sheet-actions {
+        padding: 16px;
+      }
+
+      .sheet-head {
+        border-bottom: 1px solid var(--line);
+      }
+
+      .sheet-body {
+        padding: 16px;
+        overflow: auto;
+      }
+
+      .export-text {
+        margin: 0;
+        white-space: pre-wrap;
+        word-break: break-word;
+        color: var(--text);
+        font-size: 13px;
+        line-height: 1.7;
+      }
+
+      .sheet-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        border-top: 1px solid var(--line);
+      }
+
+      .note-body {
+        margin: 10px 0 0;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.6;
+      }
+
+      .note-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 8px;
+        margin-top: 16px;
+      }
+
+      .danger-button {
+        color: var(--brand);
+        background: var(--page);
+        border: 1px solid rgba(230, 0, 126, 0.28);
+      }
+
+      .edit-form {
+        display: grid;
+        gap: 12px;
+      }
+
+      .confirm-dialog {
+        width: min(100%, 360px);
+        padding: 18px;
+        border-radius: 20px;
+        background: var(--page);
+        box-shadow: var(--shadow-hover);
+      }
+
+      .confirm-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-top: 18px;
+      }
+
+      .fab {
+        position: fixed;
+        right: max(20px, calc((100vw - var(--app-max)) / 2 + 20px));
+        bottom: calc(92px + var(--safe-bottom));
+        z-index: 8;
+        width: 54px;
+        height: 54px;
+        border-radius: 50%;
+        color: #ffffff;
+        background: var(--text);
+        box-shadow: var(--shadow-hover);
+        font-size: 28px;
+        cursor: pointer;
+      }
+
+      .bottom-nav {
+        position: fixed;
+        left: 50%;
+        bottom: calc(10px + var(--safe-bottom));
+        z-index: 10;
+        width: min(calc(100% - 32px), 448px);
+        transform: translateX(-50%);
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        padding: 8px 8px;
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.92);
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(16px);
+      }
+
+      .nav-item {
+        position: relative;
+        min-height: 44px;
+        padding: 0;
+        color: var(--muted);
+        text-align: center;
+        text-decoration: none;
+        font-size: 11px;
+        background: transparent;
+        cursor: pointer;
+      }
+
+      .nav-icon {
+        display: block;
+        margin-bottom: 4px;
+        font-size: 18px;
+      }
+
+      .nav-item.active {
+        color: var(--text);
+      }
+
+      .nav-item.active::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        bottom: -5px;
+        width: 5px;
+        height: 5px;
+        transform: translateX(-50%);
+        border-radius: 50%;
+        background: var(--brand);
+      }
+
+      .empty {
+        padding: 18px 0;
+        font-size: 13px;
+      }
+
+      .skeleton {
+        min-height: 18px;
+        border-radius: 999px;
+        background: linear-gradient(90deg, #eeeeee, #f7f7f7, #eeeeee);
+        background-size: 200% 100%;
+        animation: shimmer 1.4s infinite linear;
+      }
+
+      @keyframes shimmer {
+        to {
+          background-position: -200% 0;
+        }
+      }
+
+      @media (min-width: 481px) {
+        .app-shell {
+          border-left: 1px solid var(--line);
+          border-right: 1px solid var(--line);
+        }
+
+        .app-header {
+          min-height: 204px;
+        }
+
+        .app-logo-circle {
+          width: 64px;
+          height: 64px;
+        }
+      }
+
+      @media (min-width: 900px) {
+        .app-header {
+          min-height: 216px;
+        }
+
+        .app-logo-circle {
+          width: 72px;
+          height: 72px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="view active" id="view-home">
+        <header class="app-header">
+          <div class="app-logo">
+            <div class="app-logo-circle" aria-hidden="true">
+              <img src="assets/insight-logo-horizontal.png" alt="" />
+            </div>
+            <h1 class="app-title">INSight OS</h1>
+            <p class="app-subtitle">Good morning, nini</p>
+          </div>
+          <button class="icon-button header-more-button" aria-label="More" onclick="navigate('notebook')">⋯</button>
+        </header>
+
+        <section class="hero-card">
+          <div class="workspace-selector">
+            <span class="workspace-label">Workspace</span>
+            <button class="workspace-button" onclick="setText('actionStatus', 'Workspace selector is a UI placeholder for the next platform iteration.')">
+              Beijing in77 <span>⌄</span>
+            </button>
+          </div>
+          <h1 class="hero-title">Home</h1>
+          <p class="hero-subtitle">今天最应该关注的内容信号</p>
+          <div class="stats-grid" id="homeStats">
+            <div class="skeleton"></div>
+            <div class="skeleton"></div>
+            <div class="skeleton"></div>
+            <div class="skeleton"></div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="section-head">
+            <h2>Today's Trends</h2>
+            <button class="text-link" onclick="navigate('trends')">查看全部</button>
+          </div>
+          <div id="homeTrends" class="list"></div>
+        </section>
+
+        <section class="panel">
+          <div class="section-head">
+            <h2>Today's Ideas</h2>
+            <button class="text-link" onclick="navigate('ideas')">查看全部</button>
+          </div>
+          <div id="homeIdeas" class="idea-list"></div>
+        </section>
+
+        <section class="panel">
+          <div class="section-head">
+            <h2>Latest Weekly Report</h2>
+            <button class="text-link" onclick="navigate('reports')">查看全部</button>
+          </div>
+          <div id="latestReport" class="report-card"></div>
+        </section>
+
+        <section class="panel">
+          <div class="section-head">
+            <h2>Quick Actions</h2>
+            <button class="text-link" onclick="refreshAll()">刷新</button>
+          </div>
+          <div class="quick-grid">
+            <button class="btn btn-secondary" onclick="navigate('import')">Import Content</button>
+            <button class="btn btn-primary" onclick="openGenerateTrends()">Generate Trends</button>
+            <button class="btn btn-primary" onclick="openGenerateIdeas()">Generate Ideas</button>
+            <button class="btn btn-primary" onclick="openGenerateReport()">Generate Report</button>
+          </div>
+          <div id="actionStatus" class="status"></div>
+        </section>
+
+        <section class="panel">
+          <div class="section-head">
+            <h2>Recent Activity</h2>
+            <span class="meta">Pilot log</span>
+          </div>
+          <div id="activity" class="activity-list"></div>
+        </section>
+      </section>
+
+      <section class="view" id="view-import">
+        <div class="page-header">
+          <button class="back-button" onclick="goBack()" aria-label="Back">‹</button>
+          <div>
+            <h1 class="page-title">Import Content</h1>
+            <p class="page-kicker">导入一条内容后返回 Home</p>
+          </div>
+          <button class="icon-button" onclick="openApiSettings()" aria-label="More">⋯</button>
+        </div>
+        <section class="panel">
+          <div class="form-grid">
+            <div>
+              <span class="field-label">来源</span>
+              <div class="source-options">
+                <label class="source-option"><input type="radio" name="sourceType" value="wechat" checked /><span>微信公众号</span></label>
+                <label class="source-option"><input type="radio" name="sourceType" value="xiaohongshu" /><span>小红书</span></label>
+                <label class="source-option"><input type="radio" name="sourceType" value="news" /><span>新闻</span></label>
+                <label class="source-option"><input type="radio" name="sourceType" value="webpage" /><span>网页</span></label>
+                <label class="source-option"><input type="radio" name="sourceType" value="manual" /><span>手动输入</span></label>
+              </div>
+            </div>
+            <label>
+              <span class="field-label">标题</span>
+              <input id="importTitle" placeholder="例如：北京夏日室内漫游指南" />
+            </label>
+            <label>
+              <span class="field-label">来源名称</span>
+              <input id="importSourceName" placeholder="例如：北京LOOK" />
+            </label>
+            <label>
+              <span class="field-label">URL</span>
+              <input id="importUrl" placeholder="https://example.com/article" />
+            </label>
+            <label>
+              <span class="field-label">正文</span>
+              <textarea id="importRawText" placeholder="粘贴正文、笔记内容或要分析的内容摘要"></textarea>
+            </label>
+            <button class="btn btn-primary" onclick="importContent()">Submit</button>
+            <div id="importStatus" class="status"></div>
+          </div>
+        </section>
+      </section>
+
+      <section class="view" id="view-content">
+        <div class="page-header">
+          <button class="back-button" onclick="goBack()" aria-label="Back">‹</button>
+          <div>
+            <h1 class="page-title">内容库</h1>
+            <p class="page-kicker">导入、分析和筛选内容</p>
+          </div>
+          <button class="icon-button" onclick="navigate('import')" aria-label="Add">+</button>
+        </div>
+        <section class="panel">
+          <div class="content-toolbar">
+            <h2>Content Library</h2>
+            <div class="toolbar-actions">
+              <button class="icon-button" aria-label="Search">⌕</button>
+              <button class="icon-button" aria-label="More">⋯</button>
+            </div>
+          </div>
+          <div class="filters">
+            <button class="pill active" data-filter="all" onclick="setContentFilter('all')">全部</button>
+            <button class="pill" data-filter="wechat" onclick="setContentFilter('wechat')">公众号</button>
+            <button class="pill" data-filter="xiaohongshu" onclick="setContentFilter('xiaohongshu')">小红书</button>
+            <button class="pill" data-filter="news" onclick="setContentFilter('news')">新闻</button>
+            <button class="pill" data-filter="event" onclick="setContentFilter('event')">活动</button>
+          </div>
+          <div id="contentList" class="content-list"></div>
+        </section>
+      </section>
+
+      <section class="view" id="view-trends">
+        <div class="page-header">
+          <button class="back-button" onclick="goBack()" aria-label="Back">‹</button>
+          <div>
+            <h1 class="page-title">Trends</h1>
+            <p class="page-kicker">从已分析内容生成热点</p>
+          </div>
+          <button class="icon-button" aria-label="More">⋯</button>
+        </div>
+        <section class="panel">
+          <div class="section-head">
+            <h2>Trend Engine</h2>
+            <button class="text-link" onclick="generateTrends()">Generate</button>
+          </div>
+          <div id="trendStatus" class="status"></div>
+          <div id="trendsList" class="list"></div>
+        </section>
+      </section>
+
+      <section class="view" id="view-trend-detail">
+        <div class="page-header">
+          <button class="back-button" onclick="navigate('trends')" aria-label="Back">‹</button>
+          <div>
+            <h1 class="page-title">Trend Detail</h1>
+            <p class="page-kicker">热点来源与解释</p>
+          </div>
+          <button class="icon-button" aria-label="More">⋯</button>
+        </div>
+        <section class="detail-card visible" id="trendDetailContent"></section>
+      </section>
+
+      <section class="view" id="view-ideas">
+        <div class="page-header">
+          <button class="back-button" onclick="goBack()" aria-label="Back">‹</button>
+          <div>
+            <h1 class="page-title">Ideas</h1>
+            <p class="page-kicker">为 Current Workspace 生成可讨论选题</p>
+          </div>
+          <button class="icon-button" aria-label="More">⋯</button>
+        </div>
+        <section class="panel">
+          <div class="workspace-selector">
+            <span class="workspace-label">Workspace</span>
+            <button class="workspace-button" onclick="setText('ideaStatus', 'Workspace selector is a UI placeholder for the next platform iteration.')">
+              Beijing in77 <span>⌄</span>
+            </button>
+          </div>
+          <div class="section-head">
+            <h2>Idea Engine</h2>
+            <button class="text-link" onclick="generateIdeas()">Generate</button>
+          </div>
+          <div id="ideaStatus" class="status"></div>
+          <div id="ideasList" class="idea-list"></div>
+        </section>
+      </section>
+
+      <section class="view" id="view-idea-detail">
+        <div class="page-header">
+          <button class="back-button" onclick="navigate('ideas')" aria-label="Back">‹</button>
+          <div>
+            <h1 class="page-title">Idea Detail</h1>
+            <p class="page-kicker">选题依据、趋势和参考内容</p>
+          </div>
+          <button class="icon-button" aria-label="More">⋯</button>
+        </div>
+        <section class="detail-card visible" id="ideaDetailContent"></section>
+      </section>
+
+      <section class="view" id="view-reports">
+        <div class="page-header">
+          <button class="back-button" onclick="goBack()" aria-label="Back">‹</button>
+          <div>
+            <h1 class="page-title">Weekly Report</h1>
+            <p class="page-kicker">生成并查看 Markdown 周报</p>
+          </div>
+          <button class="icon-button" aria-label="More">⋯</button>
+        </div>
+        <section class="panel">
+          <div class="section-head">
+            <h2>Reports</h2>
+            <button class="text-link" onclick="generateReport()">Generate</button>
+          </div>
+          <div id="reportStatus" class="status"></div>
+          <div id="reportsList" class="idea-list"></div>
+        </section>
+      </section>
+
+      <section class="view" id="view-report-detail">
+        <div class="page-header">
+          <button class="back-button" onclick="navigate('reports')" aria-label="Back">‹</button>
+          <div>
+            <h1 class="page-title">Report Detail</h1>
+            <p class="page-kicker">Markdown 周报</p>
+          </div>
+          <button class="icon-button" id="reportExportButton" aria-label="Export">↓</button>
+        </div>
+        <section class="report-card">
+          <pre id="reportDetailContent" class="report-preview"></pre>
+        </section>
+      </section>
+
+      <section class="view" id="view-notebook">
+        <div class="page-header">
+          <button class="back-button" onclick="goBack()" aria-label="Back">‹</button>
+          <div>
+            <h1 class="page-title">Notebook</h1>
+            <p class="page-kicker">Your ideas, references and inspirations.</p>
+          </div>
+          <button class="icon-button" onclick="openApiSettings()" aria-label="More">⋯</button>
+        </div>
+
+        <section class="capture-card">
+          <div class="search-row">
+            <input class="search-input" id="notebookSearch" placeholder="搜索标题、标签、来源、关键词" oninput="renderNotebook()" />
+            <button class="icon-button" aria-label="Search">⌕</button>
+          </div>
+          <div class="filters" style="padding: 14px 0 8px;">
+            <button class="pill active" data-note-filter="all" onclick="setNotebookFilter('all')">全部</button>
+            <button class="pill" data-note-filter="note" onclick="setNotebookFilter('note')">笔记</button>
+            <button class="pill" data-note-filter="favorite" onclick="setNotebookFilter('favorite')">收藏</button>
+            <button class="pill" data-note-filter="idea" onclick="setNotebookFilter('idea')">灵感</button>
+            <button class="pill" data-note-filter="reference" onclick="setNotebookFilter('reference')">案例</button>
+            <button class="pill" data-note-filter="draft" onclick="setNotebookFilter('draft')">草稿</button>
+          </div>
+          <div class="capture-row">
+            <input class="capture-input" id="quickCaptureInput" placeholder="记录一个灵感…… Paste a link, write an idea or save a reference." />
+            <button class="capture-button" onclick="captureNote()" aria-label="Add note">+</button>
+          </div>
+          <div id="notebookStatus" class="status"></div>
+        </section>
+
+        <section class="panel">
+          <div class="section-head">
+            <h2>Recent Notes</h2>
+            <button class="text-link" onclick="openNotebookList('notes')">查看全部</button>
+          </div>
+          <div id="recentNotes" class="note-list"></div>
+        </section>
+
+        <section class="panel">
+          <div class="section-head">
+            <h2>Saved Inspirations</h2>
+            <button class="text-link" onclick="openNotebookList('inspirations')">查看收藏</button>
+          </div>
+          <div id="savedInspirations"></div>
+        </section>
+
+        <section class="panel">
+          <div class="section-head">
+            <h2>My Tags</h2>
+            <span class="meta">Memory seeds</span>
+          </div>
+          <div id="myTags" class="tag-row"></div>
+        </section>
+      </section>
+
+      <section class="view" id="view-recent-notes">
+        <div class="page-header">
+          <button class="back-button" onclick="navigate('notebook')" aria-label="Back">‹</button>
+          <div>
+            <h1 class="page-title">Recent Notes</h1>
+            <p class="page-kicker">All saved notes and adopted ideas.</p>
+          </div>
+          <button class="icon-button" onclick="focusQuickCapture('新建笔记')" aria-label="Add">+</button>
+        </div>
+        <section class="panel">
+          <div id="allNotesList" class="note-list"></div>
+        </section>
+      </section>
+
+      <section class="view" id="view-saved-inspirations">
+        <div class="page-header">
+          <button class="back-button" onclick="navigate('notebook')" aria-label="Back">‹</button>
+          <div>
+            <h1 class="page-title">Saved Inspirations</h1>
+            <p class="page-kicker">All saved references and inspirations.</p>
+          </div>
+          <button class="icon-button" aria-label="More">⋯</button>
+        </div>
+        <section class="panel">
+          <div id="allInspirationsList"></div>
+        </section>
+      </section>
+
+      <section class="view" id="view-note-detail">
+        <div class="page-header">
+          <button class="back-button" onclick="backToNotebookList()" aria-label="Back">‹</button>
+          <div>
+            <h1 class="page-title">Note Detail</h1>
+            <p class="page-kicker">Edit, tag and manage this note.</p>
+          </div>
+          <button class="icon-button" aria-label="More">⋯</button>
+        </div>
+        <section class="detail-card visible" id="noteDetailContent"></section>
+      </section>
+    </main>
+
+    <button class="fab" id="fab" onclick="handleFab()" aria-label="Add content">+</button>
+    <div class="fab-menu" id="notebookFabMenu">
+      <button onclick="focusQuickCapture('新建笔记')">＋ 新建笔记</button>
+      <button onclick="focusQuickCapture('收藏网页')">＋ 收藏网页</button>
+      <button onclick="focusQuickCapture('收藏公众号')">＋ 收藏公众号</button>
+      <button onclick="focusQuickCapture('收藏小红书')">＋ 收藏小红书</button>
+      <button onclick="focusQuickCapture('上传图片')">＋ 上传图片</button>
+      <button onclick="focusQuickCapture('上传PDF')">＋ 上传PDF</button>
+    </div>
+    <div class="toast" id="toast"></div>
+    <div class="sheet-backdrop" id="exportSheet" onclick="closeExportSheet(event)">
+      <div class="bottom-sheet" onclick="event.stopPropagation()">
+        <div class="sheet-head">
+          <div class="section-head" style="margin-bottom: 0;">
+            <h2>导出文案集合</h2>
+            <button class="icon-button" onclick="closeExportSheet()" aria-label="Close">×</button>
+          </div>
+        </div>
+        <div class="sheet-body">
+          <pre class="export-text" id="exportText"></pre>
+        </div>
+        <div class="sheet-actions">
+          <button class="btn btn-primary" onclick="copyExportText()">复制全部</button>
+          <button class="btn btn-secondary" onclick="closeExportSheet()">关闭</button>
+        </div>
+      </div>
+    </div>
+    <div class="sheet-backdrop" id="deleteConfirmSheet" onclick="closeDeleteConfirm(event)">
+      <div class="confirm-dialog" onclick="event.stopPropagation()">
+        <h2>确定删除这条笔记吗？</h2>
+        <p class="idea-reason">删除后会从当前 Notebook 中移除。</p>
+        <div class="confirm-actions">
+          <button class="btn btn-secondary" onclick="closeDeleteConfirm()">取消</button>
+          <button class="btn danger-button" onclick="confirmDeleteNote()">删除</button>
+        </div>
+      </div>
+    </div>
+    <div class="sheet-backdrop" id="apiSettingsSheet" onclick="closeApiSettings(event)">
+      <div class="bottom-sheet" onclick="event.stopPropagation()">
+        <div class="sheet-head">
+          <div class="section-head" style="margin-bottom: 0;">
+            <h2>API Settings</h2>
+            <button class="icon-button" onclick="closeApiSettings()" aria-label="Close">×</button>
+          </div>
+        </div>
+        <div class="sheet-body">
+          <label>
+            <span class="field-label">API Base URL</span>
+            <input id="apiBaseInput" placeholder="https://your-backend.trycloudflare.com" />
+          </label>
+          <p class="idea-reason">用于手机测试时填写后端服务地址。留空会恢复本地默认地址。</p>
+        </div>
+        <div class="sheet-actions">
+          <button class="btn btn-primary" onclick="saveApiSettings()">保存</button>
+          <button class="btn btn-secondary" onclick="closeApiSettings()">关闭</button>
+        </div>
+      </div>
+    </div>
+
+    <nav class="bottom-nav" aria-label="Main navigation">
+      <button class="nav-item active" data-nav="home" onclick="navigate('home')"><span class="nav-icon">⌂</span>首页</button>
+      <button class="nav-item" data-nav="content" onclick="navigate('content')"><span class="nav-icon">▣</span>内容</button>
+      <button class="nav-item" data-nav="trends" onclick="navigate('trends')"><span class="nav-icon">↗</span>趋势</button>
+      <button class="nav-item" data-nav="ideas" onclick="navigate('ideas')"><span class="nav-icon">✦</span>选题</button>
+      <button class="nav-item" data-nav="notebook" onclick="navigate('notebook')"><span class="nav-icon">◎</span>笔记</button>
+    </nav>
+
+    <script>
+      const API_BASE_STORAGE_KEY = "INSIGHT_API_BASE";
+      const DEFAULT_API_BASE = "http://127.0.0.1:8000";
+      let API_BASE = getApiBase();
+      let contentItems = [];
+      let trendItems = [];
+      let ideaItems = [];
+      let reportItems = [];
+      let activeContentFilter = "all";
+      let currentView = "home";
+      let previousView = "home";
+      let activeNotebookFilter = "all";
+      let currentIdeaDetail = null;
+      let currentExportText = "";
+      const currentWorkspace = {
+        id: "in77",
+        name: "Beijing in77",
+      };
+      const NOTEBOOK_STORAGE_KEY = "insight_notebook_items";
+      const REJECTED_ID_STORAGE_KEY = "insight_rejected_idea_ids";
+      const seedNotebookNotes = [];
+      let notebookNotes = loadNotebookItems();
+      let currentNoteDetailId = null;
+      let previousNotebookListView = "recent-notes";
+      let pendingDeleteNoteId = null;
+
+      function getApiBase() {
+        return localStorage.getItem(API_BASE_STORAGE_KEY) || window.INSIGHT_API_BASE || DEFAULT_API_BASE;
+      }
+
+      function setApiBase(value) {
+        const nextValue = value.trim();
+        if (nextValue) {
+          localStorage.setItem(API_BASE_STORAGE_KEY, nextValue);
+        } else {
+          localStorage.removeItem(API_BASE_STORAGE_KEY);
+        }
+        API_BASE = getApiBase();
+      }
+
+      function openApiSettings() {
+        const input = document.getElementById("apiBaseInput");
+        if (input) {
+          input.value = localStorage.getItem(API_BASE_STORAGE_KEY) || window.INSIGHT_API_BASE || "";
+        }
+        document.getElementById("apiSettingsSheet").classList.add("visible");
+      }
+
+      function closeApiSettings(event) {
+        if (event && event.target !== event.currentTarget) return;
+        document.getElementById("apiSettingsSheet").classList.remove("visible");
+      }
+
+      function saveApiSettings() {
+        const input = document.getElementById("apiBaseInput");
+        setApiBase(input ? input.value : "");
+        closeApiSettings();
+        showToast("API Base URL saved");
+        refreshAll().catch(() => {});
+      }
+
+      function navigate(view, options = {}) {
+        const target = document.getElementById(`view-${view}`);
+        if (!target) return;
+        previousView = options.from || currentView;
+        currentView = view;
+        document.querySelectorAll(".view").forEach((item) => item.classList.toggle("active", item.id === `view-${view}`));
+        document.querySelectorAll(".nav-item").forEach((item) => item.classList.toggle("active", item.dataset.nav === navKey(view)));
+        const fab = document.getElementById("fab");
+        const fabMenu = document.getElementById("notebookFabMenu");
+        if (fab) fab.style.display = ["home", "content", "notebook", "recent-notes"].includes(view) ? "block" : "none";
+        if (fabMenu && view !== "notebook") fabMenu.classList.remove("visible");
+        window.scrollTo({ top: 0, behavior: "auto" });
+
+        if (view === "home") loadDashboard().catch(showDashboardError);
+        if (view === "content") loadContent().catch(showContentError);
+        if (view === "trends") loadTrends().catch(() => setText("trendStatus", "Trends API not available."));
+        if (view === "ideas") loadIdeas().catch(() => setText("ideaStatus", "Ideas API not available."));
+        if (view === "reports") loadReports().catch(() => setText("reportStatus", "Reports API not available."));
+        if (view === "notebook") renderNotebook();
+        if (view === "recent-notes") renderAllNotes();
+        if (view === "saved-inspirations") renderAllInspirations();
+      }
+
+      function navKey(view) {
+        if (view.startsWith("trend")) return "trends";
+        if (view.startsWith("idea")) return "ideas";
+        if (view.startsWith("report")) return "notebook";
+        if (view === "notebook" || view === "recent-notes" || view === "saved-inspirations" || view === "note-detail") return "notebook";
+        return view;
+      }
+
+      function handleFab() {
+        if (currentView === "notebook") {
+          document.getElementById("notebookFabMenu").classList.toggle("visible");
+          return;
+        }
+        navigate("import");
+      }
+
+      function focusQuickCapture(prefix = "") {
+        navigate("notebook");
+        const input = document.getElementById("quickCaptureInput");
+        if (input) {
+          input.value = prefix ? `${prefix}：` : input.value;
+          input.focus();
+        }
+        document.getElementById("notebookFabMenu").classList.remove("visible");
+      }
+
+      function captureNote() {
+        const input = document.getElementById("quickCaptureInput");
+        const value = input.value.trim();
+        if (!value) {
+          showToast("请先输入内容");
+          return;
+        }
+        const isLink = value.startsWith("http://") || value.startsWith("https://");
+        notebookNotes.unshift({
+          id: `note_${Date.now()}`,
+          title: truncate(value, 42),
+          content: value,
+          time: "刚刚",
+          tags: [isLink ? "Reference" : "Idea"],
+          source: isLink ? "Website" : "Quick Capture",
+          type: "quick_note",
+          favorite: false,
+          marked_as_favorite: false,
+          created_at: new Date().toISOString(),
+        });
+        saveNotebookItems();
+        input.value = "";
+        showToast("已保存到 Notebook");
+        renderNotebook();
+      }
+
+      function setNotebookFilter(filter) {
+        activeNotebookFilter = filter;
+        document.querySelectorAll(".pill[data-note-filter]").forEach((button) => {
+          button.classList.toggle("active", button.dataset.noteFilter === filter);
+        });
+        if (filter === "favorite") {
+          openNotebookList("inspirations");
+          return;
+        }
+        renderNotebook();
+      }
+
+      function openNotebookList(kind) {
+        if (kind === "inspirations") {
+          previousNotebookListView = "saved-inspirations";
+          navigate("saved-inspirations", { from: "notebook" });
+          return;
+        }
+        previousNotebookListView = "recent-notes";
+        navigate("recent-notes", { from: "notebook" });
+      }
+
+      function filterNotebookItems(query = "", filter = "all") {
+        return notebookNotes.map(normalizeNote).filter((note) => {
+          const matchesFilter =
+            filter === "all" ||
+            (filter === "note" && isNoteLike(note)) ||
+            (filter === "idea" && (note.type === "idea" || note.type === "adopted_idea")) ||
+            (filter === "reference" && (note.type === "reference" || note.type === "saved_reference")) ||
+            (filter === "draft" && note.type === "draft") ||
+            (filter === "favorite" && isFavoriteNote(note));
+          const searchable = `${note.title} ${note.content} ${note.tags.join(" ")} ${note.source}`.toLowerCase();
+          return matchesFilter && (!query || searchable.includes(query));
+        });
+      }
+
+      function filterInspirations(items) {
+        return items.map(normalizeNote).filter(isFavoriteNote);
+      }
+
+      function isFavoriteNote(note) {
+        return note.type === "saved_reference" || note.type === "favorite" || note.favorite || note.marked_as_favorite || (note.type === "adopted_idea" && note.marked_as_favorite);
+      }
+
+      function isNoteLike(note) {
+        return ["quick_note", "note", "adopted_idea", "idea", "reference", "saved_reference", "favorite"].includes(note.type);
+      }
+
+      function sortNotes(items) {
+        return [...items].sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
+      }
+
+      function normalizeNote(note) {
+        return {
+          ...note,
+          id: note.id || `note_${Date.now()}`,
+          title: note.title || "Untitled Note",
+          content: note.content || note.summary || note.body || note.reason || note.outline || note.title || "",
+          tags: Array.isArray(note.tags) ? note.tags : [],
+          source: note.source || note.workspace || "Notebook",
+          created_at: note.created_at || new Date().toISOString(),
+          marked_as_favorite: Boolean(note.marked_as_favorite || note.favorite),
+        };
+      }
+
+      function openNoteDetail(id, from = "recent-notes") {
+        const note = notebookNotes.map(normalizeNote).find((item) => item.id === id);
+        if (!note) return;
+        currentNoteDetailId = id;
+        previousNotebookListView = from;
+        navigate("note-detail", { from });
+        renderNoteDetail(note);
+      }
+
+      function renderNoteDetail(note, mode = "view") {
+        const item = normalizeNote(note);
+        const container = document.getElementById("noteDetailContent");
+        if (!container) return;
+        if (mode === "edit") {
+          container.innerHTML = `
+            <div class="edit-form">
+              <label>
+                <span class="field-label">标题</span>
+                <input id="editNoteTitle" value="${escapeAttribute(item.title)}" />
+              </label>
+              <label>
+                <span class="field-label">正文</span>
+                <textarea id="editNoteContent">${escapeHtml(item.content)}</textarea>
+              </label>
+              <label>
+                <span class="field-label">标签，用逗号分隔</span>
+                <input id="editNoteTags" value="${escapeAttribute(item.tags.join(", "))}" />
+              </label>
+              <div class="note-actions">
+                <button class="btn btn-primary" onclick="saveNoteEdit()">保存</button>
+                <button class="btn btn-secondary" onclick="cancelNoteEdit()">取消</button>
+                <button class="btn danger-button" onclick="requestDeleteNote('${item.id}')">删除</button>
+              </div>
+            </div>
+          `;
+          return;
+        }
+        container.innerHTML = `
+          <h3 class="detail-title">${escapeHtml(item.title)}</h3>
+          <p class="note-body">${escapeHtml(item.content) || "暂无正文。"}</p>
+          <div class="tag-row">${item.tags.map((tag) => `<span class="tag">#${escapeHtml(tag)}</span>`).join("") || '<span class="tag">No tags</span>'}</div>
+          <div class="outline-card">
+            <strong>Source</strong>
+            <p class="idea-reason">${escapeHtml(item.source || "Notebook")}</p>
+          </div>
+          <div class="outline-card">
+            <strong>Created At</strong>
+            <p class="idea-reason">${formatTime(item.created_at)}</p>
+          </div>
+          ${
+            item.updated_at
+              ? `<div class="outline-card">
+                  <strong>Updated At</strong>
+                  <p class="idea-reason">${formatTime(item.updated_at)}</p>
+                </div>`
+              : ""
+          }
+          <div class="note-actions">
+            <button class="btn btn-primary" onclick="renderNoteDetail(getCurrentNote(), 'edit')">编辑</button>
+            <button class="btn btn-secondary" onclick="toggleFavoriteNote('${item.id}')">${isFavoriteNote(item) ? "取消收藏" : "收藏"}</button>
+            <button class="btn danger-button" onclick="requestDeleteNote('${item.id}')">删除</button>
+          </div>
+        `;
+      }
+
+      function getCurrentNote() {
+        return notebookNotes.map(normalizeNote).find((item) => item.id === currentNoteDetailId);
+      }
+
+      function cancelNoteEdit() {
+        const note = getCurrentNote();
+        if (note) renderNoteDetail(note);
+      }
+
+      function saveNoteEdit() {
+        const note = getCurrentNote();
+        if (!note) return;
+        const title = document.getElementById("editNoteTitle").value.trim();
+        if (!title) {
+          showToast("标题不能为空");
+          return;
+        }
+        const content = document.getElementById("editNoteContent").value.trim();
+        const tags = document.getElementById("editNoteTags").value.split(",").map((tag) => tag.trim()).filter(Boolean);
+        const storedItems = JSON.parse(localStorage.getItem(NOTEBOOK_STORAGE_KEY) || "[]").map(normalizeNote);
+        const baseItems = storedItems.length ? storedItems : notebookNotes.map(normalizeNote);
+        let updatedNote = null;
+        const updatedItems = baseItems.map((item) => {
+          if (item.id !== note.id) return item;
+          updatedNote = {
+            ...item,
+            title,
+            content,
+            summary: content,
+            tags,
+            updated_at: new Date().toISOString(),
+          };
+          return updatedNote;
+        });
+        if (!updatedNote) {
+          updatedNote = {
+            ...note,
+            title,
+            content,
+            summary: content,
+            tags,
+            updated_at: new Date().toISOString(),
+          };
+          updatedItems.unshift(updatedNote);
+        }
+        localStorage.setItem(NOTEBOOK_STORAGE_KEY, JSON.stringify(updatedItems));
+        notebookNotes = updatedItems.map(normalizeNote);
+        currentNoteDetailId = updatedNote.id;
+        renderNotebook();
+        renderAllNotes();
+        renderAllInspirations();
+        renderNoteDetail(updatedNote);
+        showToast("已保存");
+      }
+
+      function requestDeleteNote(id) {
+        pendingDeleteNoteId = id;
+        document.getElementById("deleteConfirmSheet").classList.add("visible");
+      }
+
+      function closeDeleteConfirm(event) {
+        if (event && event.target !== event.currentTarget) return;
+        document.getElementById("deleteConfirmSheet").classList.remove("visible");
+      }
+
+      function confirmDeleteNote() {
+        if (!pendingDeleteNoteId) return;
+        notebookNotes = notebookNotes.filter((item) => item.id !== pendingDeleteNoteId);
+        saveNotebookItems();
+        closeDeleteConfirm();
+        showToast("已删除");
+        pendingDeleteNoteId = null;
+        renderNotebook();
+        navigate(previousNotebookListView === "saved-inspirations" ? "saved-inspirations" : "recent-notes");
+      }
+
+      function toggleFavoriteNote(id) {
+        notebookNotes = notebookNotes.map((item) => {
+          if (item.id !== id) return item;
+          const nextFavorite = !isFavoriteNote(normalizeNote(item));
+          return { ...item, favorite: nextFavorite, marked_as_favorite: nextFavorite };
+        });
+        saveNotebookItems();
+        renderNotebook();
+        renderAllInspirations();
+        const note = getCurrentNote();
+        if (note) renderNoteDetail(note);
+        showToast(isFavoriteNote(note || {}) ? "已收藏" : "已取消收藏");
+        if (previousNotebookListView === "saved-inspirations" && note && !isFavoriteNote(note)) {
+          navigate("saved-inspirations");
+        }
+      }
+
+      function backToNotebookList() {
+        navigate(previousNotebookListView || "recent-notes");
+      }
+
+      function renderNotebook() {
+        const query = (document.getElementById("notebookSearch")?.value || "").trim().toLowerCase();
+        const filtered = filterNotebookItems(query, activeNotebookFilter);
+        renderRecentNotes(filtered.slice(0, 3));
+        const shouldShowInspirations = ["all", "favorite", "reference", "idea"].includes(activeNotebookFilter);
+        renderSavedInspirations(shouldShowInspirations ? filterInspirations(filtered).slice(0, 4) : []);
+        renderMyTags();
+      }
+
+      function renderRecentNotes(items) {
+        const container = document.getElementById("recentNotes");
+        if (!container) return;
+        const notes = sortNotes(items).filter(isNoteLike).slice(0, 3);
+        container.innerHTML =
+          notes
+            .map(
+              (note) => noteCard(note)
+            )
+            .join("") || '<div class="empty">暂无笔记。</div>';
+      }
+
+      function renderSavedInspirations(items) {
+        const container = document.getElementById("savedInspirations");
+        if (!container) return;
+        const inspirations = sortNotes(items).slice(0, 4);
+        container.innerHTML =
+          inspirations
+            .map((note) => inspirationCard(note))
+            .join("") || '<div class="empty">暂无收藏案例。</div>';
+      }
+
+      function renderAllNotes() {
+        const container = document.getElementById("allNotesList");
+        if (!container) return;
+        const query = (document.getElementById("notebookSearch")?.value || "").trim().toLowerCase();
+        const notes = sortNotes(filterNotebookItems(query, "all")).filter(isNoteLike);
+        container.innerHTML = notes.map((note) => noteCard(note)).join("") || '<div class="empty">暂无笔记。</div>';
+      }
+
+      function renderAllInspirations() {
+        const container = document.getElementById("allInspirationsList");
+        if (!container) return;
+        const inspirations = sortNotes(filterInspirations(notebookNotes));
+        container.innerHTML = inspirations.map((note) => inspirationCard(note)).join("") || '<div class="empty">暂无收藏案例。</div>';
+      }
+
+      function noteCard(note) {
+        const item = normalizeNote(note);
+        return `
+                <div class="note-card" onclick="openNoteDetail('${item.id}', '${currentView === "saved-inspirations" ? "saved-inspirations" : currentView === "recent-notes" ? "recent-notes" : "notebook"}')">
+                  <div class="top-row">
+                    <h3 class="note-title">${escapeHtml(item.title)}</h3>
+                    <span class="note-source">${formatNotebookTime(item.created_at) || item.time || ""}</span>
+                  </div>
+                  <p class="note-body">${escapeHtml(truncate(item.content, 80))}</p>
+                  <div class="tag-row">${item.tags.map((tag) => `<span class="tag">#${escapeHtml(tag)}</span>`).join("")}</div>
+                  <div class="note-source">${escapeHtml(item.source || "Notebook")}</div>
+                </div>
+              `;
+      }
+
+      function inspirationCard(note) {
+        const item = normalizeNote(note);
+        return `
+                <div class="inspiration-card" onclick="openNoteDetail('${item.id}', '${currentView === "saved-inspirations" ? "saved-inspirations" : "notebook"}')">
+                  <div class="cover"></div>
+                  <div>
+                    <div class="content-title">${escapeHtml(item.title)}</div>
+                    <div class="content-meta">${escapeHtml(item.source || "Notebook")} · ${formatNotebookTime(item.created_at) || item.time || ""}</div>
+                  </div>
+                  <div class="favorite-star">★</div>
+                </div>
+              `;
+      }
+
+      function renderMyTags() {
+        const container = document.getElementById("myTags");
+        if (!container) return;
+        const tags = ["商业地产", "Citywalk", "夏天", "艺术", "Campaign", "展览", "IP", "节气"];
+        container.innerHTML = tags.map((tag) => `<button class="tag" onclick="filterNotebookByTag('${tag}')">#${tag}</button>`).join("");
+      }
+
+      function filterNotebookByTag(tag) {
+        const input = document.getElementById("notebookSearch");
+        if (input) input.value = tag;
+        setNotebookFilter("all");
+      }
+
+      function goBack() {
+        navigate(previousView && previousView !== currentView ? previousView : "home");
+      }
+
+      function setText(id, value) {
+        const node = document.getElementById(id);
+        if (node) node.textContent = value || "";
+      }
+
+      function loadNotebookItems() {
+        try {
+          const saved = JSON.parse(localStorage.getItem(NOTEBOOK_STORAGE_KEY) || "[]");
+          return [...saved, ...seedNotebookNotes].map(normalizeNote);
+        } catch {
+          return [...seedNotebookNotes].map(normalizeNote);
+        }
+      }
+
+      function saveNotebookItems() {
+        localStorage.setItem(NOTEBOOK_STORAGE_KEY, JSON.stringify(notebookNotes.map(normalizeNote)));
+      }
+
+      function getRejectedIdeaIds() {
+        try {
+          return JSON.parse(localStorage.getItem(REJECTED_ID_STORAGE_KEY) || "[]");
+        } catch {
+          return [];
+        }
+      }
+
+      function saveRejectedIdeaIds(ids) {
+        localStorage.setItem(REJECTED_ID_STORAGE_KEY, JSON.stringify([...new Set(ids)]));
+      }
+
+      function showToast(message) {
+        const toast = document.getElementById("toast");
+        if (!toast) return;
+        toast.textContent = message;
+        toast.classList.add("visible");
+        window.clearTimeout(showToast.timer);
+        showToast.timer = window.setTimeout(() => toast.classList.remove("visible"), 1500);
+      }
+
+      function showDashboardError() {
+        setText("actionStatus", "Home API not available yet.");
+      }
+
+      function showContentError() {
+        const container = document.getElementById("contentList");
+        if (container) container.innerHTML = '<div class="empty">API not available. Start backend first.</div>';
+      }
+
+      async function refreshAll() {
+        await Promise.allSettled([loadDashboard(), loadContent(), loadTrends(), loadIdeas(), loadReports()]);
+        setText("actionStatus", "Home refreshed.");
+      }
+
+      async function loadDashboard() {
+        const start = performance.now();
+        const res = await fetch(`${API_BASE}/dashboard`);
+        const data = await res.json();
+        renderStats(data.stats || { contents: 0, trends: 0, ideas: 0, reports: 0 });
+        trendItems = data.top_trends || trendItems;
+        ideaItems = data.top_ideas || ideaItems;
+        renderDashboardTrends(data.top_trends || []);
+        renderDashboardIdeas(data.top_ideas || []);
+        renderLatestReport(data.latest_report);
+        renderActivity(data.recent_activity || []);
+        const elapsed = Math.round(performance.now() - start);
+        setText("actionStatus", `Home loaded in ${elapsed} ms`);
+      }
+
+      function renderStats(stats) {
+        const cards = [
+          ["Contents", stats.contents, "+12%"],
+          ["Trends", stats.trends, "+5%"],
+          ["Ideas", stats.ideas, "+18%"],
+          ["Reports", stats.reports, "+2%"],
+        ]
+          .map(
+            ([label, value, delta]) => `
+              <div class="stat-card">
+                <div class="stat-label">${label}</div>
+                <div class="stat-value">${value}</div>
+                <div class="stat-delta">${delta}</div>
+              </div>
+            `
+          )
+          .join("");
+        document.getElementById("homeStats").innerHTML = cards;
+      }
+
+      function renderDashboardTrends(items) {
+        renderTrendRows("homeTrends", items, 5, "list");
+      }
+
+      function renderTrendRows(containerId, items, limit = 50, mode = "detail") {
+        const container = document.getElementById(containerId);
+        if (!items.length) {
+          container.innerHTML = '<div class="empty">暂无趋势。请先导入并分析内容，再生成趋势。</div>';
+          return;
+        }
+        container.innerHTML = items
+          .slice(0, limit)
+          .map(
+            (item) => `
+              <div class="trend-row" onclick="${mode === "list" ? "navigate('trends')" : `openTrendDetail('${item.id}')`}">
+                <div>
+                  <div class="trend-topic">${item.topic}</div>
+                  <div class="lifecycle">${item.lifecycle}</div>
+                </div>
+                <div class="trend-score">${item.trend_score}</div>
+                <div class="trend-arrow">↗</div>
+              </div>
+            `
+          )
+          .join("");
+      }
+
+      function renderDashboardIdeas(items) {
+        renderIdeaCards("homeIdeas", items, 4, "list");
+      }
+
+      function renderIdeaCards(containerId, items, limit = 50, mode = "detail") {
+        const container = document.getElementById(containerId);
+        const visibleItems = items.filter((item) => !getRejectedIdeaIds().includes(String(item.id)));
+        if (!visibleItems.length) {
+          container.innerHTML = '<div class="empty">暂无选题。请先生成趋势，再生成选题。</div>';
+          return;
+        }
+        container.innerHTML = visibleItems
+          .slice(0, limit)
+          .map(
+            (item) => `
+              <div class="idea-card" onclick="${mode === "list" ? "navigate('ideas')" : `openIdeaDetail('${item.id}')`}">
+                <div class="top-row">
+                  <div class="idea-title">${item.title}</div>
+                  <span class="priority-pill">优先级 ${item.priority}</span>
+                </div>
+                <p class="idea-reason">${truncate(item.recommendation_reason || item.outline || "进入内容会讨论。", 72)}</p>
+                <div class="tag-row">
+                  <span class="tag">${workspaceLabel(item.project)}</span>
+                  <span class="tag">${item.execution_cost}</span>
+                </div>
+              </div>
+            `
+          )
+          .join("");
+      }
+
+      function renderLatestReport(report) {
+        const container = document.getElementById("latestReport");
+        if (!report) {
+          container.innerHTML = '<div class="empty">暂无周报。生成 Trends 和 Ideas 后，可生成 Weekly Report。</div>';
+          return;
+        }
+        container.innerHTML = `
+          <div class="top-row" onclick="navigate('reports')">
+            <div>
+              <div class="trend-topic">${report.title}</div>
+              <div class="meta">${report.week_start || ""} - ${report.week_end || ""}</div>
+            </div>
+            <span class="priority-pill">${report.status}</span>
+          </div>
+          <div class="report-meta">
+            <span class="meta">Generated ${formatTime(report.created_at)}</span>
+            <div class="tag-row">
+              <button class="btn btn-secondary" onclick="openReportDetail('${report.id}')">查看</button>
+              <button class="btn btn-primary" onclick="downloadMarkdown('${report.id}')">导出 Markdown</button>
+            </div>
+          </div>
+        `;
+      }
+
+      function renderActivity(items) {
+        const container = document.getElementById("activity");
+        if (!items.length) {
+          container.innerHTML = '<div class="empty">暂无活动记录。</div>';
+          return;
+        }
+        container.innerHTML = items
+          .map(
+            (item) => `
+              <div class="activity-item">
+                <span class="meta">${formatClock(item.time)}</span>
+                <span><span class="activity-dot"></span> ${item.label}</span>
+                <strong>${item.count || ""}</strong>
+              </div>
+            `
+          )
+          .join("");
+      }
+
+      async function importContent() {
+        const sourceType = document.querySelector('input[name="sourceType"]:checked')?.value || "manual";
+        const url = document.getElementById("importUrl").value.trim();
+        const rawText = document.getElementById("importRawText").value.trim();
+        const title = document.getElementById("importTitle").value.trim() || url || "手动导入内容";
+        const payload = {
+          items: [
+            {
+              title,
+              platform: sourceType,
+              source_name: document.getElementById("importSourceName").value.trim() || platformLabel(sourceType),
+              content_source: sourceType === "news" || sourceType === "webpage" ? "article" : sourceType,
+              url: url || `manual://${Date.now()}`,
+              published_at: new Date().toISOString(),
+              raw_text: rawText || title,
+            },
+          ],
+        };
+        const res = await fetch(`${API_BASE}/content/import`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        const data = await res.json();
+        setText("importStatus", JSON.stringify(data));
+        await loadContent();
+        await loadDashboard();
+        if (res.ok) navigate("home");
+      }
+
+      async function analyzeContent(id) {
+        const res = await fetch(`${API_BASE}/content/analyze`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ content_ids: [id], analysis_version: "gpt55-v1", force: true }),
+        });
+        setText("actionStatus", JSON.stringify(await res.json()));
+        await loadContent();
+        await loadDashboard();
+      }
+
+      async function loadContent() {
+        const res = await fetch(`${API_BASE}/content?page=1&page_size=50`);
+        const data = await res.json();
+        contentItems = data.items || [];
+        renderContentList();
+      }
+
+      function setContentFilter(filter) {
+        activeContentFilter = filter;
+        document.querySelectorAll(".pill[data-filter]").forEach((button) => {
+          button.classList.toggle("active", button.dataset.filter === filter);
+        });
+        renderContentList();
+      }
+
+      function renderContentList() {
+        const container = document.getElementById("contentList");
+        const filtered = contentItems.filter((item) => {
+          if (activeContentFilter === "all") return true;
+          if (activeContentFilter === "event") return item.content_source === "event";
+          return item.platform === activeContentFilter || item.content_source === activeContentFilter;
+        });
+        if (!filtered.length) {
+          container.innerHTML = '<div class="empty">暂无内容。点击右上角 + 导入第一条内容。</div>';
+          return;
+        }
+        container.innerHTML = filtered
+          .map(
+            (item) => `
+              <div class="content-item">
+                <div class="cover"></div>
+                <div>
+                  <div class="content-meta">${platformLabel(item.platform || item.content_source)} · ${formatDate(item.published_at)}</div>
+                  <div class="content-title">${item.title}</div>
+                  <div class="content-meta">${item.source_name || ""} · ${item.content_status} ${item.analysis_status === "completed" ? '<span class="status-dot"></span>' : ""}</div>
+                </div>
+                <button class="analyze-btn" onclick="analyzeContent('${item.id}')" aria-label="Analyze">↗</button>
+              </div>
+            `
+          )
+          .join("");
+      }
+
+      async function loadTrends() {
+        const res = await fetch(`${API_BASE}/trends?page=1&page_size=50`);
+        const data = await res.json();
+        trendItems = data.items || [];
+        renderTrendRows("trendsList", trendItems, 50);
+      }
+
+      async function loadIdeas() {
+        const res = await fetch(`${API_BASE}/ideas?page=1&page_size=50`);
+        const data = await res.json();
+        ideaItems = data.items || [];
+        renderIdeaCards("ideasList", ideaItems, 50);
+      }
+
+      async function loadReports() {
+        const res = await fetch(`${API_BASE}/reports?page=1&page_size=20`);
+        const data = await res.json();
+        reportItems = data.items || [];
+        renderReportList(reportItems);
+      }
+
+      function renderReportList(items) {
+        const container = document.getElementById("reportsList");
+        if (!items.length) {
+          container.innerHTML = '<div class="empty">暂无周报。生成 Trends 和 Ideas 后，可生成 Weekly Report。</div>';
+          return;
+        }
+        container.innerHTML = items
+          .map(
+            (report) => `
+              <div class="report-card" onclick="openReportDetail('${report.id}')">
+                <div class="top-row">
+                  <div>
+                    <div class="trend-topic">${report.title}</div>
+                    <div class="meta">${report.week_start || ""} - ${report.week_end || ""}</div>
+                  </div>
+                  <span class="priority-pill">${report.status}</span>
+                </div>
+                <div class="report-meta">
+                  <span class="meta">${formatTime(report.created_at)}</span>
+                  <button class="btn btn-secondary" onclick="event.stopPropagation(); downloadMarkdown('${report.id}')">导出 Markdown</button>
+                </div>
+              </div>
+            `
+          )
+          .join("");
+      }
+
+      function openGenerateTrends() {
+        navigate("trends");
+      }
+
+      function openGenerateIdeas() {
+        navigate("ideas");
+      }
+
+      function openGenerateReport() {
+        navigate("reports");
+      }
+
+      async function generateTrends() {
+        navigate("trends");
+        setText("trendStatus", "Generating trends...");
+        const res = await fetch(`${API_BASE}/trends/generate`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ lookback_days: 7, min_content_count: 1 }),
+        });
+        const data = await res.json();
+        trendItems = data.items || [];
+        setText("trendStatus", `Generated ${data.generated || trendItems.length} trends.`);
+        renderTrendRows("trendsList", trendItems, 50);
+        await loadDashboard();
+      }
+
+      async function openTrendDetail(id) {
+        previousView = currentView;
+        navigate("trend-detail", { from: "trends" });
+        const res = await fetch(`${API_BASE}/trends/${id}`);
+        const item = await res.json();
+        const detail = document.getElementById("trendDetailContent");
+        detail.innerHTML = `
+          <h3 class="detail-title">${item.topic}</h3>
+          <div class="detail-grid">
+            <div class="detail-metric"><span class="meta">Trend Score</span><strong>${item.trend_score}</strong></div>
+            <div class="detail-metric"><span class="meta">Lifecycle</span><strong>${item.lifecycle}</strong></div>
+            <div class="detail-metric"><span class="meta">Growth Rate</span><strong>${formatGrowth(item.growth_rate)}</strong></div>
+            <div class="detail-metric"><span class="meta">Content Count</span><strong>${item.content_count}</strong></div>
+          </div>
+          <div class="insight-card">
+            <strong>AI Insight</strong>
+            <p class="idea-reason">${item.ai_insight ? item.ai_insight.why_hot : "暂无 insight。"}</p>
+          </div>
+          <div class="insight-card">
+            <strong>Related Contents</strong>
+            ${(item.related_content_items || [])
+              .map((content) => `<p class="idea-reason"><span class="status-dot"></span> ${content.title}</p>`)
+              .join("") || '<p class="idea-reason">暂无相关内容。</p>'}
+          </div>
+        `;
+      }
+
+      async function generateIdeas() {
+        navigate("ideas");
+        setText("ideaStatus", "Generating ideas...");
+        const res = await fetch(`${API_BASE}/ideas/generate`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ projects: [currentWorkspace.id], ideas_per_project: 5 }),
+        });
+        const data = await res.json();
+        ideaItems = data.items || [];
+        setText("ideaStatus", `Generated ${data.generated || ideaItems.length} ideas.`);
+        renderIdeaCards("ideasList", ideaItems, 50);
+        await loadDashboard();
+      }
+
+      async function openIdeaDetail(id) {
+        previousView = currentView;
+        navigate("idea-detail", { from: "ideas" });
+        const res = await fetch(`${API_BASE}/ideas/${id}`);
+        const item = await res.json();
+        currentIdeaDetail = item;
+        const detail = document.getElementById("ideaDetailContent");
+        detail.classList.remove("slide-out");
+        detail.innerHTML = `
+          <h3 class="detail-title">${item.title}</h3>
+          <div class="tag-row">
+            <span class="tag">${workspaceLabel(item.project)}</span>
+            <span class="priority-pill">优先级 ${item.priority}</span>
+          </div>
+          <div class="outline-card">
+            <strong>摘要</strong>
+            <p class="idea-reason">${truncate(item.outline || "暂无摘要。", 110)}</p>
+          </div>
+          <div class="outline-card">
+            <strong>推荐理由</strong>
+            <p class="idea-reason">${item.recommendation_reason || "暂无推荐理由。"}</p>
+          </div>
+          <div class="outline-card">
+            <strong>内容大纲</strong>
+            <p class="idea-reason">${(item.outline || "暂无内容大纲。").replaceAll("\n", "<br />")}</p>
+          </div>
+          <div class="outline-card">
+            <strong>关联 Trend</strong>
+            <div class="tag-row"><span class="tag">${item.trend ? item.trend.topic : item.trend_id || "暂无"}</span></div>
+          </div>
+          <div class="outline-card">
+            <strong>参考 Content</strong>
+            ${(item.reference_items || [])
+              .map((content) => `<p class="idea-reason"><span class="status-dot"></span> ${content.title}</p>`)
+              .join("") || '<p class="idea-reason">暂无参考内容。</p>'}
+          </div>
+          <div class="fixed-detail-actions">
+            <button class="btn btn-primary" id="adoptIdeaButton" onclick="adoptCurrentIdea()">采用</button>
+            <button class="btn btn-secondary" onclick="rejectCurrentIdea()">暂不采用</button>
+            <button class="btn btn-outline" onclick="exportCurrentIdea()">导出</button>
+          </div>
+        `;
+      }
+
+      function adoptCurrentIdea() {
+        if (!currentIdeaDetail) return;
+        const note = ideaToNotebookItem(currentIdeaDetail);
+        const existingIndex = notebookNotes.findIndex((item) => item.source_idea_id === String(currentIdeaDetail.id));
+        if (existingIndex >= 0) {
+          notebookNotes[existingIndex] = note;
+        } else {
+          notebookNotes.unshift(note);
+        }
+        saveNotebookItems();
+        renderNotebook();
+        const button = document.getElementById("adoptIdeaButton");
+        if (button) {
+          button.textContent = "已采用";
+          button.classList.add("btn-adopted");
+        }
+        showToast("已转存到 Notebook");
+      }
+
+      function ideaToNotebookItem(item) {
+        const references = (item.reference_items || []).map((content) => ({
+          id: content.id,
+          title: content.title,
+          source: content.source_name || content.platform || "",
+          url: content.url || "",
+        }));
+        return {
+          id: `note_${String(item.id).replaceAll("-", "_")}`,
+          type: "adopted_idea",
+          title: item.title,
+          summary: truncate(item.outline || "", 140),
+          content: item.outline || item.recommendation_reason || item.title,
+          reason: item.recommendation_reason || "",
+          outline: item.outline || "",
+          trend: item.trend ? item.trend.topic : item.trend_id || "",
+          references,
+          workspace: workspaceLabel(item.project),
+          priority: item.priority,
+          status: "adopted",
+          created_at: new Date().toISOString(),
+          source_idea_id: String(item.id),
+          time: "刚刚",
+          tags: ["Adopted", "Idea", workspaceLabel(item.project)],
+          source: "Idea Detail",
+          favorite: true,
+          marked_as_favorite: true,
+        };
+      }
+
+      function rejectCurrentIdea() {
+        if (!currentIdeaDetail) return;
+        const ids = getRejectedIdeaIds();
+        ids.push(String(currentIdeaDetail.id));
+        saveRejectedIdeaIds(ids);
+        ideaItems = ideaItems.filter((item) => String(item.id) !== String(currentIdeaDetail.id));
+        renderIdeaCards("ideasList", ideaItems, 50);
+        renderIdeaCards("homeIdeas", ideaItems, 4, "list");
+        showToast("已暂不采用");
+        const detail = document.getElementById("ideaDetailContent");
+        if (detail) detail.classList.add("slide-out");
+        window.setTimeout(() => navigate(previousView === "home" ? "home" : "ideas"), 220);
+      }
+
+      function exportCurrentIdea() {
+        if (!currentIdeaDetail) return;
+        currentExportText = buildIdeaExportText(currentIdeaDetail);
+        document.getElementById("exportText").textContent = currentExportText;
+        document.getElementById("exportSheet").classList.add("visible");
+        showToast("已生成导出文案");
+      }
+
+      function buildIdeaExportText(item) {
+        const title = item.title || "未命名选题";
+        const summary = truncate(item.outline || "围绕当前趋势与空间场景生成的内容选题。", 160);
+        const reason = item.recommendation_reason || "该选题具备趋势相关性、执行可行性和内容讨论价值。";
+        const outline = item.outline || "1. 切入当下热点\n2. 结合空间和用户场景\n3. 给出可执行拍摄/发布方向";
+        const trend = item.trend ? item.trend.topic : item.trend_id || "Current Trend";
+        const references = (item.reference_items || []).map((content) => `- ${content.title}`).join("\n") || "- 暂无参考内容";
+        const tags = ["#商业地产", "#城市生活", `#${String(trend).replaceAll(" ", "")}`, "#周末去哪儿"].join(" ");
+
+        return [
+          `1. 选题标题\n${title}`,
+          `2. 核心摘要\n${summary}`,
+          `3. 推荐理由\n${reason}`,
+          `4. 公众号方向\n标题建议：${title}\n开头：今天的内容线索，可以从「${trend}」开始。\n内容大纲：\n${outline}`,
+          `5. 小红书方向\n标题建议：${title}\n正文：把 ${trend} 转化成一条可感知、可收藏、可执行的城市生活方式内容。\n标签：${tags}`,
+          `6. 朋友圈文案\n今天的灵感来自 ${trend}。\n把一个内容趋势，变成一次真实可去的体验。\n${title}`,
+          `7. 拍摄建议\n- 拍摄空间入口、动线、细节和人物状态\n- 保留自然光、真实人流和可识别场景\n- 图片风格保持干净、克制、适合收藏`,
+          `8. 参考内容\n${references}`,
+        ].join("\n\n");
+      }
+
+      function closeExportSheet(event) {
+        if (event && event.target !== event.currentTarget) return;
+        document.getElementById("exportSheet").classList.remove("visible");
+      }
+
+      async function copyExportText() {
+        const text = currentExportText || document.getElementById("exportText").textContent || "";
+        try {
+          await navigator.clipboard.writeText(text);
+          showToast("已复制，可直接粘贴使用");
+        } catch {
+          const exportNode = document.getElementById("exportText");
+          const range = document.createRange();
+          range.selectNodeContents(exportNode);
+          const selection = window.getSelection();
+          selection.removeAllRanges();
+          selection.addRange(range);
+          showToast("已选中文案，请手动复制");
+        }
+      }
+
+      async function generateReport() {
+        navigate("reports");
+        setText("reportStatus", "Generating weekly report...");
+        const res = await fetch(`${API_BASE}/reports/generate`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({}),
+        });
+        const data = await res.json();
+        setText("reportStatus", JSON.stringify({
+          id: data.item.id,
+          status: data.item.status,
+          trends: (data.item.trend_ids || []).length,
+          ideas: (data.item.idea_ids || []).length,
+          contents: (data.item.content_ids || []).length,
+        }));
+        await loadReports();
+        await loadDashboard();
+        openReportDetail(data.item.id);
+      }
+
+      async function openReportDetail(id) {
+        previousView = currentView;
+        navigate("report-detail", { from: "reports" });
+        const res = await fetch(`${API_BASE}/reports/${id}`);
+        const report = await res.json();
+        document.getElementById("reportDetailContent").textContent = report.markdown_content || "";
+        document.getElementById("reportExportButton").onclick = () => downloadMarkdown(id);
+      }
+
+      async function downloadMarkdown(id) {
+        const res = await fetch(`${API_BASE}/reports/${id}`);
+        const report = await res.json();
+        const blob = new Blob([report.markdown_content || ""], { type: "text/markdown;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `${report.title || "weekly-report"}.md`;
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+
+      function truncate(text, length) {
+        if (!text) return "";
+        return text.length > length ? `${text.slice(0, length)}...` : text;
+      }
+
+      function escapeHtml(value) {
+        return String(value || "")
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+      }
+
+      function escapeAttribute(value) {
+        return escapeHtml(value).replaceAll("\n", " ");
+      }
+
+      function platformLabel(value) {
+        const labels = {
+          wechat: "公众号",
+          xiaohongshu: "小红书",
+          news: "新闻",
+          event: "活动",
+        };
+        return labels[value] || value || "内容";
+      }
+
+      function workspaceLabel() {
+        return "Current Workspace";
+      }
+
+      function formatGrowth(value) {
+        const number = Number(value || 0);
+        const prefix = number > 0 ? "+" : "";
+        return `${prefix}${Math.round(number * 100)}%`;
+      }
+
+      function formatDate(value) {
+        if (!value) return "";
+        return new Date(value).toLocaleString("zh-CN", { month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false });
+      }
+
+      function formatClock(value) {
+        if (!value) return "";
+        return new Date(value).toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit", hour12: false });
+      }
+
+      function formatTime(value) {
+        if (!value) return "";
+        return new Date(value).toLocaleString("zh-CN", { hour12: false });
+      }
+
+      function formatNotebookTime(value) {
+        if (!value) return "";
+        const date = new Date(value);
+        if (Number.isNaN(date.getTime())) return "";
+        return date.toLocaleString("zh-CN", { month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false });
+      }
+
+      loadDashboard().catch(() => {
+        setText("actionStatus", "Home API not available yet.");
+      });
+      loadContent().catch(() => {
+        showContentError();
+      });
+      loadTrends().catch(() => {});
+      loadIdeas().catch(() => {});
+      loadReports().catch(() => {});
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("/service-worker.js").catch(() => {});
+      }
+    </script>
+  </body>
+</html>
