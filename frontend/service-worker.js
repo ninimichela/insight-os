@@ -1,4 +1,4 @@
-const CACHE_NAME = "insight-os-v6";
+const CACHE_NAME = "insight-os-v7";
 
 self.addEventListener("install", (event) => {
   event.waitUntil(

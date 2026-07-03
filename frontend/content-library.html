@@ -628,41 +628,6 @@
         font-size: 22px;
       }
 
-      .collection-strip {
-        display: flex;
-        gap: 12px;
-        overflow-x: auto;
-        padding: 2px 0 4px;
-        scroll-snap-type: x mandatory;
-      }
-
-      .collection-card {
-        flex: 0 0 132px;
-        min-height: 104px;
-        padding: 16px;
-        border-radius: 20px;
-        border: 1px solid var(--line);
-        background: var(--page);
-        box-shadow: var(--shadow);
-        scroll-snap-align: start;
-      }
-
-      .collection-icon {
-        font-size: 22px;
-      }
-
-      .collection-name {
-        margin-top: 12px;
-        font-size: 15px;
-        font-weight: 700;
-      }
-
-      .collection-count {
-        margin-top: 4px;
-        color: var(--muted);
-        font-size: 12px;
-      }
-
       .note-list {
         display: grid;
         gap: 12px;
@@ -711,19 +676,6 @@
       .favorite-star {
         color: var(--brand);
         font-size: 18px;
-      }
-
-      .draft-row {
-        display: flex;
-        justify-content: space-between;
-        gap: 12px;
-        align-items: center;
-        padding: 14px 0;
-        border-bottom: 1px solid var(--line);
-      }
-
-      .draft-row:last-child {
-        border-bottom: 0;
       }
 
       .fab-menu {
@@ -948,6 +900,46 @@
         grid-template-columns: 1fr 1fr;
         gap: 10px;
         border-top: 1px solid var(--line);
+      }
+
+      .note-body {
+        margin: 10px 0 0;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.6;
+      }
+
+      .note-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 8px;
+        margin-top: 16px;
+      }
+
+      .danger-button {
+        color: var(--brand);
+        background: var(--page);
+        border: 1px solid rgba(230, 0, 126, 0.28);
+      }
+
+      .edit-form {
+        display: grid;
+        gap: 12px;
+      }
+
+      .confirm-dialog {
+        width: min(100%, 360px);
+        padding: 18px;
+        border-radius: 20px;
+        background: var(--page);
+        box-shadow: var(--shadow-hover);
+      }
+
+      .confirm-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-top: 18px;
       }
 
       .fab {
@@ -1337,22 +1329,8 @@
 
         <section class="panel">
           <div class="section-head">
-            <h2>Collections</h2>
-            <span class="meta">Inbox</span>
-          </div>
-          <div class="collection-strip">
-            <div class="collection-card"><div class="collection-icon">📚</div><div class="collection-name">Competitors</div><div class="collection-count">32 saved</div></div>
-            <div class="collection-card"><div class="collection-icon">🔥</div><div class="collection-name">Trends</div><div class="collection-count">18 signals</div></div>
-            <div class="collection-card"><div class="collection-icon">💡</div><div class="collection-name">Ideas</div><div class="collection-count">12 drafts</div></div>
-            <div class="collection-card"><div class="collection-icon">📌</div><div class="collection-name">References</div><div class="collection-count">89 clips</div></div>
-            <div class="collection-card"><div class="collection-icon">⭐</div><div class="collection-name">Favorites</div><div class="collection-count">36 items</div></div>
-          </div>
-        </section>
-
-        <section class="panel">
-          <div class="section-head">
             <h2>Recent Notes</h2>
-            <button class="text-link" onclick="setNotebookFilter('note')">查看全部</button>
+            <button class="text-link" onclick="openNotebookList('notes')">查看全部</button>
           </div>
           <div id="recentNotes" class="note-list"></div>
         </section>
@@ -1360,7 +1338,7 @@
         <section class="panel">
           <div class="section-head">
             <h2>Saved Inspirations</h2>
-            <button class="text-link" onclick="setNotebookFilter('favorite')">查看收藏</button>
+            <button class="text-link" onclick="openNotebookList('inspirations')">查看收藏</button>
           </div>
           <div id="savedInspirations"></div>
         </section>
@@ -1372,22 +1350,46 @@
           </div>
           <div id="myTags" class="tag-row"></div>
         </section>
+      </section>
 
-        <section class="panel">
-          <div class="section-head">
-            <h2>Draft Ideas</h2>
-            <span class="meta">Continue later</span>
+      <section class="view" id="view-recent-notes">
+        <div class="page-header">
+          <button class="back-button" onclick="navigate('notebook')" aria-label="Back">‹</button>
+          <div>
+            <h1 class="page-title">Recent Notes</h1>
+            <p class="page-kicker">All saved notes and adopted ideas.</p>
           </div>
-          <div id="draftIdeas"></div>
+          <button class="icon-button" onclick="focusQuickCapture('新建笔记')" aria-label="Add">+</button>
+        </div>
+        <section class="panel">
+          <div id="allNotesList" class="note-list"></div>
         </section>
+      </section>
 
-        <section class="panel">
-          <div class="section-head">
-            <h2>Statistics</h2>
-            <span class="meta">Notebook</span>
+      <section class="view" id="view-saved-inspirations">
+        <div class="page-header">
+          <button class="back-button" onclick="navigate('notebook')" aria-label="Back">‹</button>
+          <div>
+            <h1 class="page-title">Saved Inspirations</h1>
+            <p class="page-kicker">All saved references and inspirations.</p>
           </div>
-          <div class="stats-grid" id="notebookStats"></div>
+          <button class="icon-button" aria-label="More">⋯</button>
+        </div>
+        <section class="panel">
+          <div id="allInspirationsList"></div>
         </section>
+      </section>
+
+      <section class="view" id="view-note-detail">
+        <div class="page-header">
+          <button class="back-button" onclick="backToNotebookList()" aria-label="Back">‹</button>
+          <div>
+            <h1 class="page-title">Note Detail</h1>
+            <p class="page-kicker">Edit, tag and manage this note.</p>
+          </div>
+          <button class="icon-button" aria-label="More">⋯</button>
+        </div>
+        <section class="detail-card visible" id="noteDetailContent"></section>
       </section>
     </main>
 
@@ -1418,6 +1420,16 @@
         </div>
       </div>
     </div>
+    <div class="sheet-backdrop" id="deleteConfirmSheet" onclick="closeDeleteConfirm(event)">
+      <div class="confirm-dialog" onclick="event.stopPropagation()">
+        <h2>确定删除这条笔记吗？</h2>
+        <p class="idea-reason">删除后会从当前 Notebook 中移除。</p>
+        <div class="confirm-actions">
+          <button class="btn btn-secondary" onclick="closeDeleteConfirm()">取消</button>
+          <button class="btn danger-button" onclick="confirmDeleteNote()">删除</button>
+        </div>
+      </div>
+    </div>
 
     <nav class="bottom-nav" aria-label="Main navigation">
       <button class="nav-item active" data-nav="home" onclick="navigate('home')"><span class="nav-icon">⌂</span>首页</button>
@@ -1445,45 +1457,11 @@
       };
       const NOTEBOOK_STORAGE_KEY = "insight_notebook_items";
       const REJECTED_ID_STORAGE_KEY = "insight_rejected_idea_ids";
-      const seedNotebookNotes = [
-        {
-          id: "seed_skp_campaign",
-          title: "北京SKP夏日Campaign",
-          time: "2小时前",
-          tags: ["Campaign", "Summer"],
-          source: "公众号",
-          type: "favorite",
-          favorite: true,
-        },
-        {
-          id: "seed_wfj_walk",
-          title: "王府井夜间室内漫游路线",
-          time: "今天 11:20",
-          tags: ["王府井", "夜生活"],
-          source: "手动输入",
-          type: "note",
-          favorite: false,
-        },
-        {
-          id: "seed_citywalk_coffee",
-          title: "Citywalk + 咖啡座椅观察",
-          time: "昨天",
-          tags: ["Citywalk", "咖啡"],
-          source: "小红书",
-          type: "idea",
-          favorite: true,
-        },
-        {
-          id: "seed_summer_manga",
-          title: "夏日漫画系列",
-          time: "未完成",
-          tags: ["动漫", "夏天"],
-          source: "Draft",
-          type: "draft",
-          favorite: false,
-        },
-      ];
+      const seedNotebookNotes = [];
       let notebookNotes = loadNotebookItems();
+      let currentNoteDetailId = null;
+      let previousNotebookListView = "recent-notes";
+      let pendingDeleteNoteId = null;
 
       function navigate(view, options = {}) {
         const target = document.getElementById(`view-${view}`);
@@ -1494,7 +1472,7 @@
         document.querySelectorAll(".nav-item").forEach((item) => item.classList.toggle("active", item.dataset.nav === navKey(view)));
         const fab = document.getElementById("fab");
         const fabMenu = document.getElementById("notebookFabMenu");
-        if (fab) fab.style.display = ["home", "content", "notebook"].includes(view) ? "block" : "none";
+        if (fab) fab.style.display = ["home", "content", "notebook", "recent-notes"].includes(view) ? "block" : "none";
         if (fabMenu && view !== "notebook") fabMenu.classList.remove("visible");
         window.scrollTo({ top: 0, behavior: "auto" });
 
@@ -1504,13 +1482,15 @@
         if (view === "ideas") loadIdeas().catch(() => setText("ideaStatus", "Ideas API not available."));
         if (view === "reports") loadReports().catch(() => setText("reportStatus", "Reports API not available."));
         if (view === "notebook") renderNotebook();
+        if (view === "recent-notes") renderAllNotes();
+        if (view === "saved-inspirations") renderAllInspirations();
       }
 
       function navKey(view) {
         if (view.startsWith("trend")) return "trends";
         if (view.startsWith("idea")) return "ideas";
         if (view.startsWith("report")) return "notebook";
-        if (view === "notebook") return "notebook";
+        if (view === "notebook" || view === "recent-notes" || view === "saved-inspirations" || view === "note-detail") return "notebook";
         return view;
       }
 
@@ -1536,23 +1516,25 @@
         const input = document.getElementById("quickCaptureInput");
         const value = input.value.trim();
         if (!value) {
-          setText("notebookStatus", "先写下一条灵感或粘贴一个链接。");
+          showToast("请先输入内容");
           return;
         }
         const isLink = value.startsWith("http://") || value.startsWith("https://");
         notebookNotes.unshift({
           id: `note_${Date.now()}`,
-          title: value,
+          title: truncate(value, 42),
+          content: value,
           time: "刚刚",
           tags: [isLink ? "Reference" : "Idea"],
           source: isLink ? "Website" : "Quick Capture",
-          type: isLink ? "reference" : "note",
+          type: "quick_note",
           favorite: false,
+          marked_as_favorite: false,
           created_at: new Date().toISOString(),
         });
         saveNotebookItems();
         input.value = "";
-        setText("notebookStatus", "已保存到 Notebook。");
+        showToast("已保存到 Notebook");
         renderNotebook();
       }
 
@@ -1561,45 +1543,201 @@
         document.querySelectorAll(".pill[data-note-filter]").forEach((button) => {
           button.classList.toggle("active", button.dataset.noteFilter === filter);
         });
+        if (filter === "favorite") {
+          openNotebookList("inspirations");
+          return;
+        }
         renderNotebook();
+      }
+
+      function openNotebookList(kind) {
+        if (kind === "inspirations") {
+          previousNotebookListView = "saved-inspirations";
+          navigate("saved-inspirations", { from: "notebook" });
+          return;
+        }
+        previousNotebookListView = "recent-notes";
+        navigate("recent-notes", { from: "notebook" });
+      }
+
+      function filterNotebookItems(query = "", filter = "all") {
+        return notebookNotes.map(normalizeNote).filter((note) => {
+          const matchesFilter =
+            filter === "all" ||
+            (filter === "note" && isNoteLike(note)) ||
+            (filter === "idea" && (note.type === "idea" || note.type === "adopted_idea")) ||
+            (filter === "reference" && (note.type === "reference" || note.type === "saved_reference")) ||
+            (filter === "draft" && note.type === "draft") ||
+            (filter === "favorite" && isFavoriteNote(note));
+          const searchable = `${note.title} ${note.content} ${note.tags.join(" ")} ${note.source}`.toLowerCase();
+          return matchesFilter && (!query || searchable.includes(query));
+        });
+      }
+
+      function filterInspirations(items) {
+        return items.map(normalizeNote).filter(isFavoriteNote);
+      }
+
+      function isFavoriteNote(note) {
+        return note.type === "saved_reference" || note.type === "favorite" || note.favorite || note.marked_as_favorite || (note.type === "adopted_idea" && note.marked_as_favorite);
+      }
+
+      function isNoteLike(note) {
+        return ["quick_note", "note", "adopted_idea", "idea", "reference", "saved_reference", "favorite"].includes(note.type);
+      }
+
+      function sortNotes(items) {
+        return [...items].sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
+      }
+
+      function normalizeNote(note) {
+        return {
+          ...note,
+          id: note.id || `note_${Date.now()}`,
+          title: note.title || "Untitled Note",
+          content: note.content || note.summary || note.reason || note.outline || note.title || "",
+          tags: Array.isArray(note.tags) ? note.tags : [],
+          source: note.source || note.workspace || "Notebook",
+          created_at: note.created_at || new Date().toISOString(),
+          marked_as_favorite: Boolean(note.marked_as_favorite || note.favorite),
+        };
+      }
+
+      function openNoteDetail(id, from = "recent-notes") {
+        const note = notebookNotes.map(normalizeNote).find((item) => item.id === id);
+        if (!note) return;
+        currentNoteDetailId = id;
+        previousNotebookListView = from;
+        navigate("note-detail", { from });
+        renderNoteDetail(note);
+      }
+
+      function renderNoteDetail(note, mode = "view") {
+        const item = normalizeNote(note);
+        const container = document.getElementById("noteDetailContent");
+        if (!container) return;
+        if (mode === "edit") {
+          container.innerHTML = `
+            <div class="edit-form">
+              <label>
+                <span class="field-label">标题</span>
+                <input id="editNoteTitle" value="${escapeAttribute(item.title)}" />
+              </label>
+              <label>
+                <span class="field-label">正文</span>
+                <textarea id="editNoteContent">${escapeHtml(item.content)}</textarea>
+              </label>
+              <label>
+                <span class="field-label">标签，用逗号分隔</span>
+                <input id="editNoteTags" value="${escapeAttribute(item.tags.join(", "))}" />
+              </label>
+              <div class="note-actions">
+                <button class="btn btn-primary" onclick="saveNoteEdit()">保存</button>
+                <button class="btn btn-secondary" onclick="renderNoteDetail(getCurrentNote())">取消</button>
+                <button class="btn danger-button" onclick="requestDeleteNote('${item.id}')">删除</button>
+              </div>
+            </div>
+          `;
+          return;
+        }
+        container.innerHTML = `
+          <h3 class="detail-title">${escapeHtml(item.title)}</h3>
+          <p class="note-body">${escapeHtml(item.content) || "暂无正文。"}</p>
+          <div class="tag-row">${item.tags.map((tag) => `<span class="tag">#${escapeHtml(tag)}</span>`).join("") || '<span class="tag">No tags</span>'}</div>
+          <div class="outline-card">
+            <strong>Source</strong>
+            <p class="idea-reason">${escapeHtml(item.source || "Notebook")}</p>
+          </div>
+          <div class="outline-card">
+            <strong>Created At</strong>
+            <p class="idea-reason">${formatTime(item.created_at)}</p>
+          </div>
+          <div class="note-actions">
+            <button class="btn btn-primary" onclick="renderNoteDetail(getCurrentNote(), 'edit')">编辑</button>
+            <button class="btn btn-secondary" onclick="toggleFavoriteNote('${item.id}')">${isFavoriteNote(item) ? "取消收藏" : "收藏"}</button>
+            <button class="btn danger-button" onclick="requestDeleteNote('${item.id}')">删除</button>
+          </div>
+        `;
+      }
+
+      function getCurrentNote() {
+        return notebookNotes.map(normalizeNote).find((item) => item.id === currentNoteDetailId);
+      }
+
+      function saveNoteEdit() {
+        const note = getCurrentNote();
+        if (!note) return;
+        const title = document.getElementById("editNoteTitle").value.trim() || "Untitled Note";
+        const content = document.getElementById("editNoteContent").value.trim();
+        const tags = document.getElementById("editNoteTags").value.split(",").map((tag) => tag.trim()).filter(Boolean);
+        notebookNotes = notebookNotes.map((item) => item.id === note.id ? { ...item, title, content, summary: content, tags } : item);
+        saveNotebookItems();
+        renderNotebook();
+        renderAllNotes();
+        renderAllInspirations();
+        renderNoteDetail(getCurrentNote());
+        showToast("已保存");
+      }
+
+      function requestDeleteNote(id) {
+        pendingDeleteNoteId = id;
+        document.getElementById("deleteConfirmSheet").classList.add("visible");
+      }
+
+      function closeDeleteConfirm(event) {
+        if (event && event.target !== event.currentTarget) return;
+        document.getElementById("deleteConfirmSheet").classList.remove("visible");
+      }
+
+      function confirmDeleteNote() {
+        if (!pendingDeleteNoteId) return;
+        notebookNotes = notebookNotes.filter((item) => item.id !== pendingDeleteNoteId);
+        saveNotebookItems();
+        closeDeleteConfirm();
+        showToast("已删除");
+        pendingDeleteNoteId = null;
+        renderNotebook();
+        navigate(previousNotebookListView === "saved-inspirations" ? "saved-inspirations" : "recent-notes");
+      }
+
+      function toggleFavoriteNote(id) {
+        notebookNotes = notebookNotes.map((item) => {
+          if (item.id !== id) return item;
+          const nextFavorite = !isFavoriteNote(normalizeNote(item));
+          return { ...item, favorite: nextFavorite, marked_as_favorite: nextFavorite };
+        });
+        saveNotebookItems();
+        renderNotebook();
+        renderAllInspirations();
+        const note = getCurrentNote();
+        if (note) renderNoteDetail(note);
+        showToast(isFavoriteNote(note || {}) ? "已收藏" : "已取消收藏");
+        if (previousNotebookListView === "saved-inspirations" && note && !isFavoriteNote(note)) {
+          navigate("saved-inspirations");
+        }
+      }
+
+      function backToNotebookList() {
+        navigate(previousNotebookListView || "recent-notes");
       }
 
       function renderNotebook() {
         const query = (document.getElementById("notebookSearch")?.value || "").trim().toLowerCase();
-        const filtered = notebookNotes.filter((note) => {
-          const matchesFilter =
-            activeNotebookFilter === "all" ||
-            note.type === activeNotebookFilter ||
-            (activeNotebookFilter === "idea" && note.type === "adopted_idea") ||
-            (activeNotebookFilter === "favorite" && note.favorite);
-          const searchable = `${note.title} ${note.tags.join(" ")} ${note.source}`.toLowerCase();
-          return matchesFilter && (!query || searchable.includes(query));
-        });
-        renderRecentNotes(filtered);
-        renderSavedInspirations(filtered);
+        const filtered = filterNotebookItems(query, activeNotebookFilter);
+        renderRecentNotes(filtered.slice(0, 3));
+        const shouldShowInspirations = ["all", "favorite", "reference", "idea"].includes(activeNotebookFilter);
+        renderSavedInspirations(shouldShowInspirations ? filterInspirations(filtered).slice(0, 4) : []);
         renderMyTags();
-        renderDraftIdeas(filtered);
-        renderNotebookStats();
       }
 
       function renderRecentNotes(items) {
         const container = document.getElementById("recentNotes");
         if (!container) return;
-        const notes = items.filter((note) => note.type !== "draft").slice(0, 6);
+        const notes = sortNotes(items).filter(isNoteLike).slice(0, 3);
         container.innerHTML =
           notes
             .map(
-              (note) => `
-                <div class="note-card" onclick="setText('notebookStatus', 'Note Detail 将在后续 Pilot 接入。')">
-                  <div class="top-row">
-                    <h3 class="note-title">${note.title}</h3>
-                    <span class="note-source">${note.time}</span>
-                  </div>
-                  ${note.summary ? `<p class="idea-reason">${truncate(note.summary, 92)}</p>` : ""}
-                  <div class="tag-row">${note.tags.map((tag) => `<span class="tag">#${tag}</span>`).join("")}</div>
-                  <div class="note-source">${note.source}</div>
-                </div>
-              `
+              (note) => noteCard(note)
             )
             .join("") || '<div class="empty">暂无笔记。</div>';
       }
@@ -1607,22 +1745,55 @@
       function renderSavedInspirations(items) {
         const container = document.getElementById("savedInspirations");
         if (!container) return;
-        const inspirations = items.filter((note) => note.favorite || note.type === "reference" || note.type === "adopted_idea").slice(0, 5);
+        const inspirations = sortNotes(items).slice(0, 4);
         container.innerHTML =
           inspirations
-            .map(
-              (note) => `
-                <div class="inspiration-card" onclick="setText('notebookStatus', 'Saved Inspiration Detail 将在后续 Pilot 接入。')">
+            .map((note) => inspirationCard(note))
+            .join("") || '<div class="empty">暂无收藏案例。</div>';
+      }
+
+      function renderAllNotes() {
+        const container = document.getElementById("allNotesList");
+        if (!container) return;
+        const query = (document.getElementById("notebookSearch")?.value || "").trim().toLowerCase();
+        const notes = sortNotes(filterNotebookItems(query, "all")).filter(isNoteLike);
+        container.innerHTML = notes.map((note) => noteCard(note)).join("") || '<div class="empty">暂无笔记。</div>';
+      }
+
+      function renderAllInspirations() {
+        const container = document.getElementById("allInspirationsList");
+        if (!container) return;
+        const inspirations = sortNotes(filterInspirations(notebookNotes));
+        container.innerHTML = inspirations.map((note) => inspirationCard(note)).join("") || '<div class="empty">暂无收藏案例。</div>';
+      }
+
+      function noteCard(note) {
+        const item = normalizeNote(note);
+        return `
+                <div class="note-card" onclick="openNoteDetail('${item.id}', '${currentView === "saved-inspirations" ? "saved-inspirations" : currentView === "recent-notes" ? "recent-notes" : "notebook"}')">
+                  <div class="top-row">
+                    <h3 class="note-title">${escapeHtml(item.title)}</h3>
+                    <span class="note-source">${formatNotebookTime(item.created_at) || item.time || ""}</span>
+                  </div>
+                  <p class="note-body">${escapeHtml(truncate(item.content, 80))}</p>
+                  <div class="tag-row">${item.tags.map((tag) => `<span class="tag">#${escapeHtml(tag)}</span>`).join("")}</div>
+                  <div class="note-source">${escapeHtml(item.source || "Notebook")}</div>
+                </div>
+              `;
+      }
+
+      function inspirationCard(note) {
+        const item = normalizeNote(note);
+        return `
+                <div class="inspiration-card" onclick="openNoteDetail('${item.id}', '${currentView === "saved-inspirations" ? "saved-inspirations" : "notebook"}')">
                   <div class="cover"></div>
                   <div>
-                    <div class="content-title">${note.title}</div>
-                    <div class="content-meta">${note.source} · ${note.time}</div>
+                    <div class="content-title">${escapeHtml(item.title)}</div>
+                    <div class="content-meta">${escapeHtml(item.source || "Notebook")} · ${formatNotebookTime(item.created_at) || item.time || ""}</div>
                   </div>
                   <div class="favorite-star">★</div>
                 </div>
-              `
-            )
-            .join("") || '<div class="empty">暂无收藏案例。</div>';
+              `;
       }
 
       function renderMyTags() {
@@ -1638,48 +1809,6 @@
         setNotebookFilter("all");
       }
 
-      function renderDraftIdeas(items) {
-        const container = document.getElementById("draftIdeas");
-        if (!container) return;
-        const drafts = items.filter((note) => note.type === "draft").slice(0, 3);
-        container.innerHTML =
-          drafts
-            .map(
-              (note) => `
-                <div class="draft-row">
-                  <div>
-                    <div class="trend-topic">${note.title}</div>
-                    <div class="meta">${note.time}</div>
-                  </div>
-                  <button class="text-link" onclick="setText('notebookStatus', 'Draft 编辑将在后续 Pilot 接入。')">继续编辑</button>
-                </div>
-              `
-            )
-            .join("") || '<div class="empty">暂无草稿。</div>';
-      }
-
-      function renderNotebookStats() {
-        const container = document.getElementById("notebookStats");
-        if (!container) return;
-        const stats = [
-          ["Notes", notebookNotes.length],
-          ["Favorites", notebookNotes.filter((note) => note.favorite).length],
-          ["Ideas", notebookNotes.filter((note) => note.type === "idea" || note.type === "adopted_idea").length],
-          ["References", notebookNotes.filter((note) => note.type === "reference" || note.favorite).length],
-        ];
-        container.innerHTML = stats
-          .map(
-            ([label, value]) => `
-              <div class="stat-card">
-                <div class="stat-label">${label}</div>
-                <div class="stat-value">${value}</div>
-                <div class="stat-delta">Notebook</div>
-              </div>
-            `
-          )
-          .join("");
-      }
-
       function goBack() {
         navigate(previousView && previousView !== currentView ? previousView : "home");
       }
@@ -1692,14 +1821,14 @@
       function loadNotebookItems() {
         try {
           const saved = JSON.parse(localStorage.getItem(NOTEBOOK_STORAGE_KEY) || "[]");
-          return [...saved, ...seedNotebookNotes.filter((seed) => !saved.some((item) => item.id === seed.id))];
+          return [...saved, ...seedNotebookNotes].map(normalizeNote);
         } catch {
-          return [...seedNotebookNotes];
+          return [...seedNotebookNotes].map(normalizeNote);
         }
       }
 
       function saveNotebookItems() {
-        localStorage.setItem(NOTEBOOK_STORAGE_KEY, JSON.stringify(notebookNotes.filter((note) => !String(note.id || "").startsWith("seed_"))));
+        localStorage.setItem(NOTEBOOK_STORAGE_KEY, JSON.stringify(notebookNotes.map(normalizeNote)));
       }
 
       function getRejectedIdeaIds() {
@@ -2149,6 +2278,7 @@
           type: "adopted_idea",
           title: item.title,
           summary: truncate(item.outline || "", 140),
+          content: item.outline || item.recommendation_reason || item.title,
           reason: item.recommendation_reason || "",
           outline: item.outline || "",
           trend: item.trend ? item.trend.topic : item.trend_id || "",
@@ -2162,6 +2292,7 @@
           tags: ["Adopted", "Idea", workspaceLabel(item.project)],
           source: "Idea Detail",
           favorite: true,
+          marked_as_favorite: true,
         };
       }
 
@@ -2276,6 +2407,19 @@
         return text.length > length ? `${text.slice(0, length)}...` : text;
       }
 
+      function escapeHtml(value) {
+        return String(value || "")
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+      }
+
+      function escapeAttribute(value) {
+        return escapeHtml(value).replaceAll("\n", " ");
+      }
+
       function platformLabel(value) {
         const labels = {
           wechat: "公众号",
@@ -2309,6 +2453,13 @@
       function formatTime(value) {
         if (!value) return "";
         return new Date(value).toLocaleString("zh-CN", { hour12: false });
+      }
+
+      function formatNotebookTime(value) {
+        if (!value) return "";
+        const date = new Date(value);
+        if (Number.isNaN(date.getTime())) return "";
+        return date.toLocaleString("zh-CN", { month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false });
       }
 
       loadDashboard().catch(() => {
