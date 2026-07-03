@@ -1573,6 +1573,9 @@
       let currentNoteDetailId = null;
       let previousNotebookListView = "recent-notes";
       let pendingDeleteNoteId = null;
+      let lastApiError = "";
+
+      API_BASE = normalizeApiBase(API_BASE);
 
       function hasConfiguredApiBase() {
         return Boolean(localStorage.getItem(API_BASE_STORAGE_KEY) || window.INSIGHT_API_BASE);
@@ -1580,6 +1583,10 @@
 
       function getApiBase() {
         return localStorage.getItem(API_BASE_STORAGE_KEY) || window.INSIGHT_API_BASE || DEFAULT_API_BASE;
+      }
+
+      function normalizeApiBase(url) {
+        return (url || "").replace(/\/+$/, "");
       }
 
       function getDataMode() {
@@ -1612,7 +1619,7 @@
           localStorage.removeItem(API_BASE_STORAGE_KEY);
           setDataMode("local");
         }
-        API_BASE = getApiBase();
+        API_BASE = normalizeApiBase(getApiBase());
       }
 
       function openApiSettings() {
@@ -1634,7 +1641,9 @@
         setApiBase(input ? input.value : "");
         closeApiSettings();
         showToast("API Base URL saved");
-        refreshAll().catch(() => {});
+        refreshAll().catch(() => {
+          loadLocalDashboard();
+        });
       }
 
       function clearApiSettings() {
@@ -1650,11 +1659,24 @@
 
       async function apiRequest(path, options = {}) {
         if (!isApiMode()) throw new Error("Local Mode");
+        const normalizedBase = normalizeApiBase(API_BASE);
+        const normalizedPath = path.startsWith("/") ? path : `/${path}`;
+        const requestUrl = `${normalizedBase}${normalizedPath}`;
         try {
-          const res = await fetch(`${API_BASE}${path}`, options);
-          if (!res.ok) throw new Error(`API ${res.status}`);
+          const res = await fetch(requestUrl, options);
+          if (!res.ok) {
+            const errorText = await res.text().catch(() => "");
+            throw new Error(`status ${res.status}${errorText ? `: ${errorText.slice(0, 160)}` : ""}`);
+          }
           return await res.json();
         } catch (error) {
+          console.error("INSight OS API request failed", {
+            url: requestUrl,
+            message: error.message,
+            error,
+          });
+          lastApiError = `${requestUrl} · ${error.message}`;
+          setText("actionStatus", `API request failed: ${lastApiError}`);
           setDataMode("local");
           showToast("已切换到 Local Mode");
           throw error;
@@ -2308,7 +2330,11 @@
 
       async function refreshAll() {
         await Promise.allSettled([loadDashboard(), loadContent(), loadTrends(), loadIdeas(), loadReports()]);
-        setText("actionStatus", "Home refreshed.");
+        if (dataMode === "local") {
+          setText("actionStatus", lastApiError ? `当前为 Local Mode，数据仅保存在本机浏览器。最近 API 错误：${lastApiError}` : "当前为 Local Mode，数据仅保存在本机浏览器。");
+        } else {
+          setText("actionStatus", "Home refreshed.");
+        }
       }
 
       async function loadDashboard() {
@@ -2356,7 +2382,7 @@
           { time: new Date().toISOString(), label: "Contents available", count: contentItems.length },
           { time: new Date().toISOString(), label: "Ideas available", count: visibleIdeas.length },
         ]);
-        setText("actionStatus", "当前为 Local Mode，数据仅保存在本机浏览器。");
+        setText("actionStatus", lastApiError ? `当前为 Local Mode，数据仅保存在本机浏览器。最近 API 错误：${lastApiError}` : "当前为 Local Mode，数据仅保存在本机浏览器。");
       }
 
       function renderStats(stats) {
