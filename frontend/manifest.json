@@ -2,7 +2,9 @@
   "name": "INSight OS",
   "short_name": "INSight",
   "start_url": "/content-library.html",
-  "display": "standalone",
+  "display": "fullscreen",
+  "orientation": "portrait",
+  "scope": "/",
   "background_color": "#ffffff",
   "theme_color": "#111111",
   "icons": [
