@@ -851,6 +851,105 @@
         backdrop-filter: blur(16px);
       }
 
+      .btn-outline {
+        color: var(--text);
+        background: var(--page);
+        border: 1px solid var(--text);
+      }
+
+      .btn-adopted {
+        color: #ffffff;
+        background: var(--brand);
+      }
+
+      .slide-out {
+        animation: slide-out 220ms ease forwards;
+      }
+
+      @keyframes slide-out {
+        to {
+          opacity: 0;
+          transform: translateY(24px);
+        }
+      }
+
+      .toast {
+        position: fixed;
+        left: 50%;
+        bottom: 154px;
+        z-index: 30;
+        display: none;
+        min-height: 38px;
+        align-items: center;
+        padding: 0 18px;
+        transform: translateX(-50%);
+        border-radius: 999px;
+        color: #ffffff;
+        background: var(--text);
+        box-shadow: var(--shadow-hover);
+        font-size: 13px;
+      }
+
+      .toast.visible {
+        display: inline-flex;
+      }
+
+      .sheet-backdrop {
+        position: fixed;
+        inset: 0;
+        z-index: 24;
+        display: none;
+        align-items: flex-end;
+        justify-content: center;
+        padding: 20px;
+        background: rgba(0, 0, 0, 0.22);
+      }
+
+      .sheet-backdrop.visible {
+        display: flex;
+      }
+
+      .bottom-sheet {
+        width: min(100%, 520px);
+        max-height: 78vh;
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+        border-radius: 20px;
+        background: var(--page);
+        box-shadow: var(--shadow-hover);
+        overflow: hidden;
+      }
+
+      .sheet-head,
+      .sheet-actions {
+        padding: 16px;
+      }
+
+      .sheet-head {
+        border-bottom: 1px solid var(--line);
+      }
+
+      .sheet-body {
+        padding: 16px;
+        overflow: auto;
+      }
+
+      .export-text {
+        margin: 0;
+        white-space: pre-wrap;
+        word-break: break-word;
+        color: var(--text);
+        font-size: 13px;
+        line-height: 1.7;
+      }
+
+      .sheet-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        border-top: 1px solid var(--line);
+      }
+
       .fab {
         position: fixed;
         right: max(20px, calc((100vw - 480px) / 2 + 20px));
@@ -1301,6 +1400,24 @@
       <button onclick="focusQuickCapture('上传图片')">＋ 上传图片</button>
       <button onclick="focusQuickCapture('上传PDF')">＋ 上传PDF</button>
     </div>
+    <div class="toast" id="toast"></div>
+    <div class="sheet-backdrop" id="exportSheet" onclick="closeExportSheet(event)">
+      <div class="bottom-sheet" onclick="event.stopPropagation()">
+        <div class="sheet-head">
+          <div class="section-head" style="margin-bottom: 0;">
+            <h2>导出文案集合</h2>
+            <button class="icon-button" onclick="closeExportSheet()" aria-label="Close">×</button>
+          </div>
+        </div>
+        <div class="sheet-body">
+          <pre class="export-text" id="exportText"></pre>
+        </div>
+        <div class="sheet-actions">
+          <button class="btn btn-primary" onclick="copyExportText()">复制全部</button>
+          <button class="btn btn-secondary" onclick="closeExportSheet()">关闭</button>
+        </div>
+      </div>
+    </div>
 
     <nav class="bottom-nav" aria-label="Main navigation">
       <button class="nav-item active" data-nav="home" onclick="navigate('home')"><span class="nav-icon">⌂</span>首页</button>
@@ -1320,12 +1437,17 @@
       let currentView = "home";
       let previousView = "home";
       let activeNotebookFilter = "all";
+      let currentIdeaDetail = null;
+      let currentExportText = "";
       const currentWorkspace = {
         id: "in77",
         name: "Beijing in77",
       };
-      let notebookNotes = [
+      const NOTEBOOK_STORAGE_KEY = "insight_notebook_items";
+      const REJECTED_ID_STORAGE_KEY = "insight_rejected_idea_ids";
+      const seedNotebookNotes = [
         {
+          id: "seed_skp_campaign",
           title: "北京SKP夏日Campaign",
           time: "2小时前",
           tags: ["Campaign", "Summer"],
@@ -1334,6 +1456,7 @@
           favorite: true,
         },
         {
+          id: "seed_wfj_walk",
           title: "王府井夜间室内漫游路线",
           time: "今天 11:20",
           tags: ["王府井", "夜生活"],
@@ -1342,6 +1465,7 @@
           favorite: false,
         },
         {
+          id: "seed_citywalk_coffee",
           title: "Citywalk + 咖啡座椅观察",
           time: "昨天",
           tags: ["Citywalk", "咖啡"],
@@ -1350,6 +1474,7 @@
           favorite: true,
         },
         {
+          id: "seed_summer_manga",
           title: "夏日漫画系列",
           time: "未完成",
           tags: ["动漫", "夏天"],
@@ -1358,6 +1483,7 @@
           favorite: false,
         },
       ];
+      let notebookNotes = loadNotebookItems();
 
       function navigate(view, options = {}) {
         const target = document.getElementById(`view-${view}`);
@@ -1415,13 +1541,16 @@
         }
         const isLink = value.startsWith("http://") || value.startsWith("https://");
         notebookNotes.unshift({
+          id: `note_${Date.now()}`,
           title: value,
           time: "刚刚",
           tags: [isLink ? "Reference" : "Idea"],
           source: isLink ? "Website" : "Quick Capture",
           type: isLink ? "reference" : "note",
           favorite: false,
+          created_at: new Date().toISOString(),
         });
+        saveNotebookItems();
         input.value = "";
         setText("notebookStatus", "已保存到 Notebook。");
         renderNotebook();
@@ -1441,6 +1570,7 @@
           const matchesFilter =
             activeNotebookFilter === "all" ||
             note.type === activeNotebookFilter ||
+            (activeNotebookFilter === "idea" && note.type === "adopted_idea") ||
             (activeNotebookFilter === "favorite" && note.favorite);
           const searchable = `${note.title} ${note.tags.join(" ")} ${note.source}`.toLowerCase();
           return matchesFilter && (!query || searchable.includes(query));
@@ -1455,7 +1585,7 @@
       function renderRecentNotes(items) {
         const container = document.getElementById("recentNotes");
         if (!container) return;
-        const notes = items.filter((note) => note.type !== "draft").slice(0, 4);
+        const notes = items.filter((note) => note.type !== "draft").slice(0, 6);
         container.innerHTML =
           notes
             .map(
@@ -1465,6 +1595,7 @@
                     <h3 class="note-title">${note.title}</h3>
                     <span class="note-source">${note.time}</span>
                   </div>
+                  ${note.summary ? `<p class="idea-reason">${truncate(note.summary, 92)}</p>` : ""}
                   <div class="tag-row">${note.tags.map((tag) => `<span class="tag">#${tag}</span>`).join("")}</div>
                   <div class="note-source">${note.source}</div>
                 </div>
@@ -1476,7 +1607,7 @@
       function renderSavedInspirations(items) {
         const container = document.getElementById("savedInspirations");
         if (!container) return;
-        const inspirations = items.filter((note) => note.favorite || note.type === "reference").slice(0, 4);
+        const inspirations = items.filter((note) => note.favorite || note.type === "reference" || note.type === "adopted_idea").slice(0, 5);
         container.innerHTML =
           inspirations
             .map(
@@ -1533,7 +1664,7 @@
         const stats = [
           ["Notes", notebookNotes.length],
           ["Favorites", notebookNotes.filter((note) => note.favorite).length],
-          ["Ideas", notebookNotes.filter((note) => note.type === "idea").length],
+          ["Ideas", notebookNotes.filter((note) => note.type === "idea" || note.type === "adopted_idea").length],
           ["References", notebookNotes.filter((note) => note.type === "reference" || note.favorite).length],
         ];
         container.innerHTML = stats
@@ -1556,6 +1687,40 @@
       function setText(id, value) {
         const node = document.getElementById(id);
         if (node) node.textContent = value || "";
+      }
+
+      function loadNotebookItems() {
+        try {
+          const saved = JSON.parse(localStorage.getItem(NOTEBOOK_STORAGE_KEY) || "[]");
+          return [...saved, ...seedNotebookNotes.filter((seed) => !saved.some((item) => item.id === seed.id))];
+        } catch {
+          return [...seedNotebookNotes];
+        }
+      }
+
+      function saveNotebookItems() {
+        localStorage.setItem(NOTEBOOK_STORAGE_KEY, JSON.stringify(notebookNotes.filter((note) => !String(note.id || "").startsWith("seed_"))));
+      }
+
+      function getRejectedIdeaIds() {
+        try {
+          return JSON.parse(localStorage.getItem(REJECTED_ID_STORAGE_KEY) || "[]");
+        } catch {
+          return [];
+        }
+      }
+
+      function saveRejectedIdeaIds(ids) {
+        localStorage.setItem(REJECTED_ID_STORAGE_KEY, JSON.stringify([...new Set(ids)]));
+      }
+
+      function showToast(message) {
+        const toast = document.getElementById("toast");
+        if (!toast) return;
+        toast.textContent = message;
+        toast.classList.add("visible");
+        window.clearTimeout(showToast.timer);
+        showToast.timer = window.setTimeout(() => toast.classList.remove("visible"), 1500);
       }
 
       function showDashboardError() {
@@ -1640,11 +1805,12 @@
 
       function renderIdeaCards(containerId, items, limit = 50, mode = "detail") {
         const container = document.getElementById(containerId);
-        if (!items.length) {
+        const visibleItems = items.filter((item) => !getRejectedIdeaIds().includes(String(item.id)));
+        if (!visibleItems.length) {
           container.innerHTML = '<div class="empty">暂无选题。请先生成趋势，再生成选题。</div>';
           return;
         }
-        container.innerHTML = items
+        container.innerHTML = visibleItems
           .slice(0, limit)
           .map(
             (item) => `
@@ -1913,7 +2079,9 @@
         navigate("idea-detail", { from: "ideas" });
         const res = await fetch(`${API}/ideas/${id}`);
         const item = await res.json();
+        currentIdeaDetail = item;
         const detail = document.getElementById("ideaDetailContent");
+        detail.classList.remove("slide-out");
         detail.innerHTML = `
           <h3 class="detail-title">${item.title}</h3>
           <div class="tag-row">
@@ -1943,11 +2111,122 @@
               .join("") || '<p class="idea-reason">暂无参考内容。</p>'}
           </div>
           <div class="fixed-detail-actions">
-            <button class="btn btn-primary">采用</button>
-            <button class="btn btn-secondary">暂不采用</button>
-            <button class="btn btn-secondary">导出</button>
+            <button class="btn btn-primary" id="adoptIdeaButton" onclick="adoptCurrentIdea()">采用</button>
+            <button class="btn btn-secondary" onclick="rejectCurrentIdea()">暂不采用</button>
+            <button class="btn btn-outline" onclick="exportCurrentIdea()">导出</button>
           </div>
         `;
+      }
+
+      function adoptCurrentIdea() {
+        if (!currentIdeaDetail) return;
+        const note = ideaToNotebookItem(currentIdeaDetail);
+        const existingIndex = notebookNotes.findIndex((item) => item.source_idea_id === String(currentIdeaDetail.id));
+        if (existingIndex >= 0) {
+          notebookNotes[existingIndex] = note;
+        } else {
+          notebookNotes.unshift(note);
+        }
+        saveNotebookItems();
+        renderNotebook();
+        const button = document.getElementById("adoptIdeaButton");
+        if (button) {
+          button.textContent = "已采用";
+          button.classList.add("btn-adopted");
+        }
+        showToast("已转存到 Notebook");
+      }
+
+      function ideaToNotebookItem(item) {
+        const references = (item.reference_items || []).map((content) => ({
+          id: content.id,
+          title: content.title,
+          source: content.source_name || content.platform || "",
+          url: content.url || "",
+        }));
+        return {
+          id: `note_${String(item.id).replaceAll("-", "_")}`,
+          type: "adopted_idea",
+          title: item.title,
+          summary: truncate(item.outline || "", 140),
+          reason: item.recommendation_reason || "",
+          outline: item.outline || "",
+          trend: item.trend ? item.trend.topic : item.trend_id || "",
+          references,
+          workspace: workspaceLabel(item.project),
+          priority: item.priority,
+          status: "adopted",
+          created_at: new Date().toISOString(),
+          source_idea_id: String(item.id),
+          time: "刚刚",
+          tags: ["Adopted", "Idea", workspaceLabel(item.project)],
+          source: "Idea Detail",
+          favorite: true,
+        };
+      }
+
+      function rejectCurrentIdea() {
+        if (!currentIdeaDetail) return;
+        const ids = getRejectedIdeaIds();
+        ids.push(String(currentIdeaDetail.id));
+        saveRejectedIdeaIds(ids);
+        ideaItems = ideaItems.filter((item) => String(item.id) !== String(currentIdeaDetail.id));
+        renderIdeaCards("ideasList", ideaItems, 50);
+        renderIdeaCards("homeIdeas", ideaItems, 4, "list");
+        showToast("已暂不采用");
+        const detail = document.getElementById("ideaDetailContent");
+        if (detail) detail.classList.add("slide-out");
+        window.setTimeout(() => navigate(previousView === "home" ? "home" : "ideas"), 220);
+      }
+
+      function exportCurrentIdea() {
+        if (!currentIdeaDetail) return;
+        currentExportText = buildIdeaExportText(currentIdeaDetail);
+        document.getElementById("exportText").textContent = currentExportText;
+        document.getElementById("exportSheet").classList.add("visible");
+        showToast("已生成导出文案");
+      }
+
+      function buildIdeaExportText(item) {
+        const title = item.title || "未命名选题";
+        const summary = truncate(item.outline || "围绕当前趋势与空间场景生成的内容选题。", 160);
+        const reason = item.recommendation_reason || "该选题具备趋势相关性、执行可行性和内容讨论价值。";
+        const outline = item.outline || "1. 切入当下热点\n2. 结合空间和用户场景\n3. 给出可执行拍摄/发布方向";
+        const trend = item.trend ? item.trend.topic : item.trend_id || "Current Trend";
+        const references = (item.reference_items || []).map((content) => `- ${content.title}`).join("\n") || "- 暂无参考内容";
+        const tags = ["#商业地产", "#城市生活", `#${String(trend).replaceAll(" ", "")}`, "#周末去哪儿"].join(" ");
+
+        return [
+          `1. 选题标题\n${title}`,
+          `2. 核心摘要\n${summary}`,
+          `3. 推荐理由\n${reason}`,
+          `4. 公众号方向\n标题建议：${title}\n开头：今天的内容线索，可以从「${trend}」开始。\n内容大纲：\n${outline}`,
+          `5. 小红书方向\n标题建议：${title}\n正文：把 ${trend} 转化成一条可感知、可收藏、可执行的城市生活方式内容。\n标签：${tags}`,
+          `6. 朋友圈文案\n今天的灵感来自 ${trend}。\n把一个内容趋势，变成一次真实可去的体验。\n${title}`,
+          `7. 拍摄建议\n- 拍摄空间入口、动线、细节和人物状态\n- 保留自然光、真实人流和可识别场景\n- 图片风格保持干净、克制、适合收藏`,
+          `8. 参考内容\n${references}`,
+        ].join("\n\n");
+      }
+
+      function closeExportSheet(event) {
+        if (event && event.target !== event.currentTarget) return;
+        document.getElementById("exportSheet").classList.remove("visible");
+      }
+
+      async function copyExportText() {
+        const text = currentExportText || document.getElementById("exportText").textContent || "";
+        try {
+          await navigator.clipboard.writeText(text);
+          showToast("已复制，可直接粘贴使用");
+        } catch {
+          const exportNode = document.getElementById("exportText");
+          const range = document.createRange();
+          range.selectNodeContents(exportNode);
+          const selection = window.getSelection();
+          selection.removeAllRanges();
+          selection.addRange(range);
+          showToast("已选中文案，请手动复制");
+        }
       }
 
       async function generateReport() {
