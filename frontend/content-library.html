@@ -1595,7 +1595,7 @@
           ...note,
           id: note.id || `note_${Date.now()}`,
           title: note.title || "Untitled Note",
-          content: note.content || note.summary || note.reason || note.outline || note.title || "",
+          content: note.content || note.summary || note.body || note.reason || note.outline || note.title || "",
           tags: Array.isArray(note.tags) ? note.tags : [],
           source: note.source || note.workspace || "Notebook",
           created_at: note.created_at || new Date().toISOString(),
@@ -1633,7 +1633,7 @@
               </label>
               <div class="note-actions">
                 <button class="btn btn-primary" onclick="saveNoteEdit()">保存</button>
-                <button class="btn btn-secondary" onclick="renderNoteDetail(getCurrentNote())">取消</button>
+                <button class="btn btn-secondary" onclick="cancelNoteEdit()">取消</button>
                 <button class="btn danger-button" onclick="requestDeleteNote('${item.id}')">删除</button>
               </div>
             </div>
@@ -1652,6 +1652,14 @@
             <strong>Created At</strong>
             <p class="idea-reason">${formatTime(item.created_at)}</p>
           </div>
+          ${
+            item.updated_at
+              ? `<div class="outline-card">
+                  <strong>Updated At</strong>
+                  <p class="idea-reason">${formatTime(item.updated_at)}</p>
+                </div>`
+              : ""
+          }
           <div class="note-actions">
             <button class="btn btn-primary" onclick="renderNoteDetail(getCurrentNote(), 'edit')">编辑</button>
             <button class="btn btn-secondary" onclick="toggleFavoriteNote('${item.id}')">${isFavoriteNote(item) ? "取消收藏" : "收藏"}</button>
@@ -1664,18 +1672,54 @@
         return notebookNotes.map(normalizeNote).find((item) => item.id === currentNoteDetailId);
       }
 
+      function cancelNoteEdit() {
+        const note = getCurrentNote();
+        if (note) renderNoteDetail(note);
+      }
+
       function saveNoteEdit() {
         const note = getCurrentNote();
         if (!note) return;
-        const title = document.getElementById("editNoteTitle").value.trim() || "Untitled Note";
+        const title = document.getElementById("editNoteTitle").value.trim();
+        if (!title) {
+          showToast("标题不能为空");
+          return;
+        }
         const content = document.getElementById("editNoteContent").value.trim();
         const tags = document.getElementById("editNoteTags").value.split(",").map((tag) => tag.trim()).filter(Boolean);
-        notebookNotes = notebookNotes.map((item) => item.id === note.id ? { ...item, title, content, summary: content, tags } : item);
-        saveNotebookItems();
+        const storedItems = JSON.parse(localStorage.getItem(NOTEBOOK_STORAGE_KEY) || "[]").map(normalizeNote);
+        const baseItems = storedItems.length ? storedItems : notebookNotes.map(normalizeNote);
+        let updatedNote = null;
+        const updatedItems = baseItems.map((item) => {
+          if (item.id !== note.id) return item;
+          updatedNote = {
+            ...item,
+            title,
+            content,
+            summary: content,
+            tags,
+            updated_at: new Date().toISOString(),
+          };
+          return updatedNote;
+        });
+        if (!updatedNote) {
+          updatedNote = {
+            ...note,
+            title,
+            content,
+            summary: content,
+            tags,
+            updated_at: new Date().toISOString(),
+          };
+          updatedItems.unshift(updatedNote);
+        }
+        localStorage.setItem(NOTEBOOK_STORAGE_KEY, JSON.stringify(updatedItems));
+        notebookNotes = updatedItems.map(normalizeNote);
+        currentNoteDetailId = updatedNote.id;
         renderNotebook();
         renderAllNotes();
         renderAllInspirations();
-        renderNoteDetail(getCurrentNote());
+        renderNoteDetail(updatedNote);
         showToast("已保存");
       }
 
