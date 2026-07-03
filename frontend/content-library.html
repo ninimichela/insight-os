@@ -756,6 +756,33 @@
         cursor: pointer;
       }
 
+      .workspace-selector {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 16px;
+        padding: 8px 10px 8px 12px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: var(--page);
+      }
+
+      .workspace-label {
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .workspace-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--text);
+        background: transparent;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
       .detail-card {
         display: none;
         padding: 16px;
@@ -944,6 +971,12 @@
         </header>
 
         <section class="hero-card">
+          <div class="workspace-selector">
+            <span class="workspace-label">Workspace</span>
+            <button class="workspace-button" onclick="setText('actionStatus', 'Workspace selector is a UI placeholder for the next platform iteration.')">
+              Beijing in77 <span>⌄</span>
+            </button>
+          </div>
           <h1 class="hero-title">Home</h1>
           <p class="hero-subtitle">今天最应该关注的内容信号</p>
           <div class="stats-grid" id="homeStats">
@@ -1108,11 +1141,17 @@
           <button class="back-button" onclick="goBack()" aria-label="Back">‹</button>
           <div>
             <h1 class="page-title">Ideas</h1>
-            <p class="page-kicker">为 in77 / in88 生成可讨论选题</p>
+            <p class="page-kicker">为 Current Workspace 生成可讨论选题</p>
           </div>
           <button class="icon-button" aria-label="More">⋯</button>
         </div>
         <section class="panel">
+          <div class="workspace-selector">
+            <span class="workspace-label">Workspace</span>
+            <button class="workspace-button" onclick="setText('ideaStatus', 'Workspace selector is a UI placeholder for the next platform iteration.')">
+              Beijing in77 <span>⌄</span>
+            </button>
+          </div>
           <div class="section-head">
             <h2>Idea Engine</h2>
             <button class="text-link" onclick="generateIdeas()">Generate</button>
@@ -1281,6 +1320,10 @@
       let currentView = "home";
       let previousView = "home";
       let activeNotebookFilter = "all";
+      const currentWorkspace = {
+        id: "in77",
+        name: "Beijing in77",
+      };
       let notebookNotes = [
         {
           title: "北京SKP夏日Campaign",
@@ -1612,7 +1655,7 @@
                 </div>
                 <p class="idea-reason">${truncate(item.recommendation_reason || item.outline || "进入内容会讨论。", 72)}</p>
                 <div class="tag-row">
-                  <span class="tag">${item.project}</span>
+                  <span class="tag">${workspaceLabel(item.project)}</span>
                   <span class="tag">${item.execution_cost}</span>
                 </div>
               </div>
@@ -1856,7 +1899,7 @@
         const res = await fetch(`${API}/ideas/generate`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ projects: ["in77", "in88"], ideas_per_project: 5 }),
+          body: JSON.stringify({ projects: [currentWorkspace.id], ideas_per_project: 5 }),
         });
         const data = await res.json();
         ideaItems = data.items || [];
@@ -1874,7 +1917,7 @@
         detail.innerHTML = `
           <h3 class="detail-title">${item.title}</h3>
           <div class="tag-row">
-            <span class="tag">${item.project}</span>
+            <span class="tag">${workspaceLabel(item.project)}</span>
             <span class="priority-pill">优先级 ${item.priority}</span>
           </div>
           <div class="outline-card">
@@ -1962,6 +2005,10 @@
           event: "活动",
         };
         return labels[value] || value || "内容";
+      }
+
+      function workspaceLabel() {
+        return "Current Workspace";
       }
 
       function formatGrowth(value) {
