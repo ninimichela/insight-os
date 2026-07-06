@@ -1914,6 +1914,786 @@
           grid-column: auto;
         }
       }
+
+      /* INSight OS Refresh v2 from Figma */
+      :root {
+        --refresh-bg: #f6f7f8;
+        --refresh-card: #ffffff;
+        --refresh-ink: #0a0d0f;
+        --refresh-muted: #9499a3;
+        --refresh-subtle: #474f59;
+        --refresh-chip: #f0f2f5;
+        --refresh-pink: #e80066;
+        --refresh-blue: #1461d1;
+        --refresh-green: #058763;
+        --refresh-orange: #e89421;
+        --refresh-purple: #6b3dd1;
+        --refresh-shadow-sm: 0 3px 12px rgba(0, 0, 0, 0.04);
+        --refresh-shadow-md: 0 4px 20px rgba(0, 0, 0, 0.06);
+        --refresh-shadow-fab: 0 8px 22px rgba(0, 0, 0, 0.18);
+      }
+
+      body {
+        color: var(--refresh-ink);
+        background: var(--refresh-bg);
+      }
+
+      .app-shell {
+        max-width: 393px;
+        padding: 0 20px calc(104px + var(--safe-bottom));
+        background: var(--refresh-bg);
+      }
+
+      .app-header,
+      .page-header {
+        min-height: 112px;
+        padding: max(58px, calc(var(--safe-top) + 28px)) 54px 16px 4px;
+        background: var(--refresh-bg);
+        text-align: left;
+      }
+
+      .app-logo {
+        display: block;
+      }
+
+      .app-logo-circle {
+        display: none;
+      }
+
+      .app-title,
+      .page-title {
+        margin: 0;
+        color: var(--refresh-ink);
+        font-size: 22px;
+        line-height: 1.38;
+        font-weight: 700;
+      }
+
+      .app-subtitle,
+      .page-kicker {
+        margin: 0;
+        color: var(--refresh-muted);
+        font-size: 12px;
+        line-height: 1.38;
+        font-weight: 500;
+      }
+
+      .header-more-button,
+      .page-header > .icon-button {
+        top: max(58px, calc(var(--safe-top) + 28px));
+        right: 0;
+      }
+
+      .page-header .back-button {
+        display: none;
+      }
+
+      .icon-button {
+        width: 34px;
+        height: 34px;
+        border: 0;
+        border-radius: 17px;
+        color: var(--refresh-ink);
+        background: var(--refresh-card);
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+        font-size: 16px;
+        font-weight: 700;
+      }
+
+      .hero-card {
+        margin: 0 0 20px;
+        padding: 0;
+      }
+
+      .workspace-selector {
+        min-height: 76px;
+        grid-template-columns: 1fr auto;
+        align-items: center;
+        margin: 0 0 22px;
+        padding: 16px 26px 14px 20px;
+        border: 0;
+        border-radius: 22px;
+        background: var(--refresh-card);
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+      }
+
+      .workspace-icon {
+        display: none;
+      }
+
+      .workspace-label {
+        color: var(--refresh-muted);
+        font-size: 11px;
+        line-height: 1.38;
+      }
+
+      .workspace-button {
+        color: var(--refresh-ink);
+        font-size: 18px;
+        line-height: 1.38;
+        font-weight: 700;
+      }
+
+      .workspace-button span {
+        display: none;
+      }
+
+      .mode-badge {
+        min-width: 96px;
+        min-height: 28px;
+        justify-content: center;
+        border: 0;
+        border-radius: 14px;
+        color: var(--refresh-subtle);
+        background: var(--refresh-chip);
+        font-size: 12px;
+      }
+
+      .overview-title {
+        margin: 0 4px 12px;
+        color: var(--refresh-ink);
+        font-size: 17px;
+        line-height: 1.38;
+        font-weight: 700;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+        margin: 0 4px 26px;
+      }
+
+      .stat-card {
+        min-height: 82px;
+        padding: 10px 12px;
+        border: 0;
+        border-radius: 18px;
+        background: var(--refresh-card);
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+      }
+
+      .stat-label {
+        color: var(--refresh-muted);
+        font-size: 11px;
+        line-height: 1.38;
+      }
+
+      .stat-value {
+        margin-top: 2px;
+        color: var(--refresh-ink);
+        font-size: 24px;
+        line-height: 1.38;
+      }
+
+      .stat-delta {
+        margin-top: -4px;
+        font-size: 11px;
+        line-height: 1.38;
+        font-weight: 700;
+      }
+
+      .stat-card:nth-child(1) .stat-delta,
+      .stat-card:nth-child(1) {
+        --metric-color: var(--refresh-pink);
+      }
+
+      .stat-card:nth-child(2) {
+        --metric-color: var(--refresh-blue);
+      }
+
+      .stat-card:nth-child(3) {
+        --metric-color: var(--refresh-green);
+      }
+
+      .stat-card:nth-child(4) {
+        --metric-color: var(--refresh-orange);
+      }
+
+      .stat-card .stat-delta {
+        color: var(--metric-color, var(--refresh-pink));
+      }
+
+      .panel {
+        margin: 0 0 20px;
+        padding: 20px;
+        border: 0;
+        border-radius: 24px;
+        background: var(--refresh-card);
+        box-shadow: var(--refresh-shadow-md);
+      }
+
+      #view-home .panel .text-link {
+        display: none;
+      }
+
+      .section-head {
+        margin-bottom: 20px;
+      }
+
+      .section-head h2,
+      h2 {
+        color: var(--refresh-ink);
+        font-size: 17px;
+        line-height: 1.38;
+        font-weight: 700;
+      }
+
+      .list {
+        border: 0;
+        border-radius: 0;
+      }
+
+      .trend-row {
+        min-height: 38px;
+        grid-template-columns: 6px 1fr auto;
+        gap: 10px;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        box-shadow: none;
+      }
+
+      .trend-row + .trend-row {
+        margin-top: 0;
+      }
+
+      .trend-indicator {
+        width: 6px;
+        height: 6px;
+        background: var(--signal, var(--refresh-pink));
+      }
+
+      .trend-topic {
+        color: var(--refresh-ink);
+        font-size: 14px;
+        line-height: 1.2;
+        font-weight: 600;
+      }
+
+      .lifecycle {
+        margin-top: 0;
+        color: var(--refresh-muted);
+        font-size: 10px;
+        line-height: 1.2;
+      }
+
+      .trend-score {
+        color: var(--signal, var(--refresh-pink));
+        font-size: 15px;
+        line-height: 1.38;
+      }
+
+      .trend-arrow {
+        display: none;
+      }
+
+      .home-recommendation-panel {
+        min-height: 86px;
+        padding: 18px 20px;
+      }
+
+      .home-recommendation-panel .section-head {
+        display: none;
+      }
+
+      .home-report-panel {
+        display: none;
+      }
+
+      .idea-card {
+        min-height: 48px;
+        grid-template-columns: 48px 1fr auto;
+        gap: 14px;
+        padding: 0;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        box-shadow: none;
+      }
+
+      .idea-thumb {
+        width: 48px;
+        height: 48px;
+        border-radius: 14px;
+        background: #38594f;
+      }
+
+      .idea-card .trend-indicator {
+        display: none;
+      }
+
+      .idea-title {
+        color: var(--refresh-ink);
+        font-size: 14px;
+        line-height: 1.38;
+        font-weight: 700;
+      }
+
+      .idea-card .tag-row {
+        display: none;
+      }
+
+      .idea-reason,
+      .meta,
+      .content-meta,
+      .page-kicker {
+        color: var(--refresh-muted);
+        font-size: 11px;
+        line-height: 1.38;
+        font-weight: 400;
+      }
+
+      .priority-pill {
+        color: var(--refresh-pink);
+        background: transparent;
+        border: 0;
+        font-size: 18px;
+        line-height: 1.38;
+        font-weight: 700;
+      }
+
+      .fab {
+        right: max(20px, calc((100vw - 393px) / 2 + 20px));
+        bottom: calc(92px + var(--safe-bottom));
+        width: 56px;
+        height: 56px;
+        color: #ffffff;
+        background: var(--refresh-pink);
+        box-shadow: var(--refresh-shadow-fab);
+        font-size: 30px;
+        font-weight: 400;
+      }
+
+      .bottom-nav {
+        width: min(357px, calc(100% - 36px));
+        max-width: 357px;
+        height: 58px;
+        padding: 8px 10px;
+        border: 0;
+        border-radius: 22px;
+        background: var(--refresh-card);
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.08);
+      }
+
+      .nav-icon {
+        display: none;
+      }
+
+      .nav-item {
+        min-height: 40px;
+        color: var(--refresh-muted);
+        font-size: 12px;
+        font-weight: 500;
+      }
+
+      .nav-item.active {
+        color: var(--refresh-pink);
+        font-weight: 700;
+      }
+
+      .nav-item.active::after {
+        top: 0;
+        bottom: auto;
+        width: 20px;
+        height: 3px;
+        border-radius: 2px;
+        background: var(--refresh-pink);
+      }
+
+      .content-search-row {
+        display: grid;
+        grid-template-columns: 1fr 54px;
+        gap: 14px;
+        margin: 0 0 24px;
+      }
+
+      .content-search-row .search-input {
+        min-height: 44px;
+        border: 0;
+        border-radius: 18px;
+        background: var(--refresh-card);
+        box-shadow: var(--refresh-shadow-sm);
+        font-size: 13px;
+      }
+
+      .filter-button {
+        width: 54px;
+        height: 44px;
+        border-radius: 18px;
+        color: #ffffff;
+        background: var(--refresh-ink);
+        box-shadow: none;
+        font-size: 12px;
+      }
+
+      .filters.content-tabs {
+        gap: 10px;
+        margin: 0 0 24px;
+        padding: 0;
+        border: 0;
+      }
+
+      .filters.content-tabs .pill {
+        min-height: 28px;
+        padding: 0 18px;
+        border: 0;
+        border-radius: 14px;
+        color: var(--refresh-subtle);
+        background: var(--refresh-card);
+        font-size: 12px;
+      }
+
+      .filters.content-tabs .pill.active {
+        color: var(--refresh-pink);
+        background: #ffe8f2;
+      }
+
+      .filters.content-tabs .pill.active::after {
+        display: none;
+      }
+
+      .content-list {
+        gap: 20px;
+      }
+
+      .content-item {
+        min-height: 84px;
+        grid-template-columns: 58px 1fr 18px;
+        gap: 14px;
+        padding: 14px 12px 14px 16px;
+        border: 0;
+        border-radius: 22px;
+        background: var(--refresh-card);
+        box-shadow: 0 3px 14px rgba(0, 0, 0, 0.05);
+      }
+
+      .cover {
+        width: 58px;
+        height: 56px;
+        border-radius: 14px;
+      }
+
+      .content-item:nth-child(5n + 1) .cover {
+        background: var(--refresh-orange);
+      }
+
+      .content-item:nth-child(5n + 2) .cover {
+        background: var(--refresh-ink);
+      }
+
+      .content-item:nth-child(5n + 3) .cover {
+        background: var(--refresh-purple);
+      }
+
+      .content-item:nth-child(5n + 4) .cover {
+        background: var(--refresh-green);
+      }
+
+      .content-item:nth-child(5n + 5) .cover {
+        background: var(--refresh-blue);
+      }
+
+      .content-title {
+        margin: 0;
+        color: var(--refresh-ink);
+        font-size: 13px;
+        line-height: 1.38;
+        font-weight: 700;
+      }
+
+      .content-item .tag-row {
+        margin: 1px 0 0;
+      }
+
+      .content-item .tag {
+        min-height: auto;
+        padding: 0;
+        border: 0;
+        color: var(--tag-color, var(--refresh-pink));
+        background: transparent;
+        font-size: 11px;
+        line-height: 1.38;
+        font-weight: 700;
+      }
+
+      .content-meta {
+        margin-top: 1px;
+      }
+
+      .analyze-btn {
+        width: 18px;
+        height: 32px;
+        color: var(--refresh-subtle);
+        background: transparent;
+        box-shadow: none;
+        font-size: 14px;
+      }
+
+      #view-idea-detail .page-header {
+        margin-bottom: 10px;
+      }
+
+      .idea-detail-title {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        align-items: start;
+        gap: 12px;
+        color: var(--refresh-ink);
+        font-size: 23px;
+        line-height: 1.38;
+      }
+
+      .idea-detail-title::after {
+        content: "Idea";
+        min-width: 54px;
+        min-height: 28px;
+        display: inline-grid;
+        place-items: center;
+        border-radius: 14px;
+        color: var(--refresh-pink);
+        background: #ffe8f2;
+        font-size: 12px;
+        font-weight: 500;
+      }
+
+      .idea-detail-meta {
+        margin-top: 8px;
+      }
+
+      .idea-detail-meta .tag {
+        display: none;
+      }
+
+      .trend-mini-card {
+        min-height: 76px;
+        grid-template-columns: 1fr auto;
+        margin-top: 24px;
+        padding: 18px 26px 16px 20px;
+        border: 0;
+        border-radius: 22px;
+        background: var(--refresh-card);
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+      }
+
+      .trend-mini-card .trend-indicator,
+      .trend-mini-card .trend-arrow {
+        display: none;
+      }
+
+      .trend-mini-card strong::before {
+        content: "关联 Trend";
+        display: block;
+        margin-bottom: 2px;
+        color: var(--refresh-muted);
+        font-size: 12px;
+        font-weight: 500;
+      }
+
+      .trend-mini-card strong {
+        font-size: 15px;
+      }
+
+      .trend-mini-card .priority-pill {
+        font-size: 20px;
+      }
+
+      .content-section {
+        margin-top: 28px;
+      }
+
+      .content-section h3 {
+        margin-bottom: 8px;
+        font-size: 15px;
+        line-height: 1.38;
+        font-weight: 700;
+      }
+
+      .content-section p,
+      .reference-card p {
+        color: var(--refresh-subtle);
+        font-size: 13px;
+        line-height: 1.45;
+      }
+
+      .reference-card {
+        margin-top: 0;
+        padding: 0;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+      }
+
+      .reference-card + .reference-card {
+        margin-top: 4px;
+      }
+
+      .reference-card strong {
+        display: none;
+      }
+
+      .reference-card p::before {
+        content: "· ";
+      }
+
+      .fixed-detail-actions {
+        position: fixed;
+        left: 50%;
+        bottom: calc(40px + var(--safe-bottom));
+        width: min(345px, calc(100% - 48px));
+        display: grid;
+        grid-template-columns: 160px 1fr;
+        gap: 14px;
+        transform: translateX(-50%);
+        margin: 0;
+        padding: 0;
+        border-radius: 0;
+        background: transparent;
+        box-shadow: none;
+        backdrop-filter: none;
+      }
+
+      .fixed-detail-actions .btn {
+        min-height: 52px;
+        border-radius: 26px;
+        font-size: 16px;
+      }
+
+      .fixed-detail-actions .btn-primary {
+        color: #ffffff;
+        background: var(--refresh-ink);
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.14);
+      }
+
+      .more-action-button {
+        width: auto;
+        min-width: 0;
+        color: var(--refresh-ink);
+        background: var(--refresh-card);
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+      }
+
+      .more-action-button::before {
+        content: "更多操作";
+      }
+
+      .more-action-button {
+        font-size: 0;
+      }
+
+      .more-action-button::before {
+        font-size: 16px;
+      }
+
+      .import-panel {
+        margin: 0;
+      }
+
+      .import-primary-card {
+        padding: 0;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        box-shadow: none;
+      }
+
+      .import-primary-card .field-label {
+        margin: 0 4px 12px;
+        color: var(--refresh-ink);
+        font-size: 14px;
+        font-weight: 700;
+      }
+
+      .import-textarea {
+        min-height: 170px;
+        padding: 24px 20px 40px;
+        border: 0;
+        border-radius: 20px;
+        background: var(--refresh-card);
+        box-shadow: 0 3px 16px rgba(0, 0, 0, 0.05);
+        resize: none;
+      }
+
+      .char-count {
+        margin: -32px 20px 18px 0;
+        font-size: 11px;
+      }
+
+      .import-source-card {
+        margin-top: 28px;
+        padding: 20px;
+        border: 0;
+        border-radius: 24px;
+        background: var(--refresh-card);
+        box-shadow: var(--refresh-shadow-md);
+      }
+
+      .source-name-field {
+        display: none;
+      }
+
+      .source-type-label {
+        display: block;
+        margin-top: 16px;
+        color: var(--refresh-muted);
+        font-size: 12px;
+        line-height: 1.38;
+        font-weight: 500;
+      }
+
+      .import-inline-field {
+        display: block;
+        margin-top: 16px;
+      }
+
+      .import-title-field .field-label,
+      .import-url-field .field-label {
+        margin-bottom: 8px;
+        color: var(--refresh-muted);
+        font-size: 12px;
+        font-weight: 500;
+      }
+
+      .import-title-field input,
+      .import-url-field input {
+        min-height: 44px;
+        border: 0;
+        border-radius: 16px;
+        background: #fbfbfc;
+        font-size: 12px;
+      }
+
+      .source-options {
+        flex-wrap: nowrap;
+        gap: 8px;
+        margin: 8px 0 16px;
+      }
+
+      .source-option span {
+        min-height: 28px;
+        padding: 0 14px;
+        border: 0;
+        color: var(--refresh-subtle);
+        background: var(--refresh-chip);
+        font-size: 12px;
+      }
+
+      .source-option input:checked + span {
+        color: #ffffff;
+        background: var(--refresh-ink);
+      }
+
+      .import-submit {
+        min-height: 54px;
+        margin-top: 24px;
+        border-radius: 20px;
+        background: var(--refresh-pink);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16);
+      }
+
+      #view-import .bottom-nav,
+      #view-content .bottom-nav {
+        display: grid;
+      }
     </style>
   </head>
   <body>
@@ -1926,7 +2706,7 @@
             </div>
             <div class="app-brand-copy">
               <h1 class="app-title">INSight OS</h1>
-              <p class="app-subtitle">内容洞察 · 趋势前瞻 · 商业智能</p>
+              <p class="app-subtitle">北京 in77 · 今日内容工作台</p>
             </div>
           </div>
           <button class="icon-button header-more-button" aria-label="More" onclick="navigate('notebook')">⋯</button>
@@ -1945,6 +2725,7 @@
             </div>
             <span class="mode-badge" id="dataModeBadge">Local Mode</span>
           </div>
+          <h2 class="overview-title">今日概览</h2>
           <div class="stats-grid" id="homeStats">
             <div class="skeleton"></div>
             <div class="skeleton"></div>
@@ -1955,21 +2736,21 @@
 
         <section class="panel">
           <div class="section-head">
-            <h2>Today's Trends</h2>
+            <h2>今日趋势 Top 5</h2>
             <button class="text-link" onclick="navigate('trends')">查看全部</button>
           </div>
           <div id="homeTrends" class="list"></div>
         </section>
 
-        <section class="panel">
+        <section class="panel home-recommendation-panel">
           <div class="section-head">
-            <h2>Today's Ideas</h2>
+            <h2>今日推荐</h2>
             <button class="text-link" onclick="navigate('ideas')">查看全部</button>
           </div>
           <div id="homeIdeas" class="idea-list"></div>
         </section>
 
-        <section class="panel">
+        <section class="panel home-report-panel">
           <div class="section-head">
             <h2>Latest Weekly Report</h2>
             <button class="text-link" onclick="navigate('reports')">查看全部</button>
@@ -1986,7 +2767,7 @@
           <button class="back-button" onclick="goBack()" aria-label="Back">‹</button>
           <div>
             <h1 class="page-title">Import Content</h1>
-            <p class="page-kicker">导入一条内容后返回 Home</p>
+            <p class="page-kicker">导入后自动回到 Home</p>
           </div>
           <button class="icon-button" onclick="openApiSettings()" aria-label="More">⋯</button>
         </div>
@@ -1995,12 +2776,13 @@
             <div class="import-primary-card">
               <label>
                 <span class="field-label">正文（必填）</span>
-                <textarea class="import-textarea" id="importRawText" maxlength="5000" placeholder="粘贴正文、笔记内容或要分析的内容摘要..." oninput="updateImportCharCount()"></textarea>
+                <textarea class="import-textarea" id="importRawText" maxlength="6000" placeholder="粘贴正文、笔记内容或外部链接摘要..." oninput="updateImportCharCount()"></textarea>
               </label>
-              <div class="char-count" id="importCharCount">0 / 5000</div>
+              <div class="char-count" id="importCharCount">0 / 6000</div>
             </div>
             <div class="import-source-card">
               <span class="field-label">来源（可选）</span>
+              <span class="source-type-label">来源类型</span>
               <div class="source-options">
                 <label class="source-option"><input type="radio" name="sourceType" value="wechat" checked /><span>微信公众号</span></label>
                 <label class="source-option"><input type="radio" name="sourceType" value="xiaohongshu" /><span>小红书</span></label>
@@ -2008,19 +2790,16 @@
                 <label class="source-option"><input type="radio" name="sourceType" value="webpage" /><span>网页</span></label>
                 <label class="source-option"><input type="radio" name="sourceType" value="manual" /><span>其他</span></label>
               </div>
+              <label class="import-inline-field import-title-field">
+                <span class="field-label">标题（选填）</span>
+                <input id="importTitle" placeholder="例如：北京夏日室内漫游指南" />
+              </label>
+              <label class="import-inline-field import-url-field">
+                <span class="field-label">URL（选填）</span>
+                <input id="importUrl" placeholder="https://example.com/article" />
+              </label>
             </div>
-            <label class="import-source-card">
-              <span class="field-label">标题</span>
-              <input id="importTitle" placeholder="例如：北京夏日室内漫游指南" />
-            </label>
-            <label class="import-source-card">
-              <span class="field-label">来源名称</span>
-              <input id="importSourceName" placeholder="例如：北京LOOK" />
-            </label>
-            <label class="import-source-card">
-              <span class="field-label">URL</span>
-              <input id="importUrl" placeholder="https://example.com/article" />
-            </label>
+            <input id="importSourceName" class="source-name-field" placeholder="例如：北京LOOK" />
             <button class="btn btn-primary import-submit" onclick="importContent()">Submit</button>
             <div id="importStatus" class="status"></div>
           </div>
@@ -2032,7 +2811,7 @@
           <button class="back-button" onclick="goBack()" aria-label="Back">‹</button>
           <div>
             <h1 class="page-title">Content Library</h1>
-            <p class="page-kicker">导入、分析和筛选内容</p>
+            <p class="page-kicker">搜索、筛选、归档状态更清楚</p>
           </div>
           <button class="icon-button" onclick="openApiSettings()" aria-label="More">⋯</button>
         </div>
@@ -2045,9 +2824,9 @@
             </div>
           </div>
           <div class="search-row content-search-row">
-            <input class="search-input" id="contentSearch" placeholder="Search content" oninput="renderContentList()" />
+            <input class="search-input" id="contentSearch" placeholder="搜索内容、趋势或地点..." oninput="renderContentList()" />
             <button class="icon-button filter-button" aria-label="Filter">
-              <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M5 7h14M8 12h8M10 17h4" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" /></svg>
+              筛选
             </button>
           </div>
           <div class="filters content-tabs">
@@ -2120,7 +2899,7 @@
           <button class="back-button" onclick="navigate('ideas')" aria-label="Back">‹</button>
           <div>
             <h1 class="page-title">Idea Detail</h1>
-            <p class="page-kicker">选题依据、趋势和参考内容</p>
+            <p class="page-kicker">从趋势到执行动作的闭环</p>
           </div>
           <button class="icon-button" aria-label="More">⋯</button>
         </div>
@@ -3188,10 +3967,10 @@
 
       function renderStats(stats) {
         const cards = [
-          ["Contents", stats.contents, "+12%"],
-          ["Trends", stats.trends, "+5%"],
-          ["Ideas", stats.ideas, "+18%"],
-          ["Reports", stats.reports, "+2%"],
+          ["内容", stats.contents, "+12%"],
+          ["趋势", stats.trends, "+5%"],
+          ["选题", stats.ideas, "+18%"],
+          ["报告", stats.reports, "+2%"],
         ]
           .map(
             ([label, value, delta]) => `
@@ -3219,8 +3998,8 @@
         container.innerHTML = items
           .slice(0, limit)
           .map(
-            (item) => `
-              <div class="trend-row" onclick="${mode === "list" ? "navigate('trends')" : `openTrendDetail('${item.id}')`}">
+            (item, index) => `
+              <div class="trend-row" style="--signal: ${signalColor(index)}" onclick="${mode === "list" ? "navigate('trends')" : `openTrendDetail('${item.id}')`}">
                 <span class="trend-indicator" aria-hidden="true"></span>
                 <div>
                   <div class="trend-topic">${item.topic}</div>
@@ -3235,7 +4014,7 @@
       }
 
       function renderDashboardIdeas(items) {
-        renderIdeaCards("homeIdeas", items, 4, "list");
+        renderIdeaCards("homeIdeas", items, 1, "list");
       }
 
       function renderIdeaCards(containerId, items, limit = 50, mode = "detail") {
@@ -3363,7 +4142,7 @@
 
       function updateImportCharCount() {
         const rawText = document.getElementById("importRawText")?.value || "";
-        setText("importCharCount", `${rawText.length} / 5000`);
+        setText("importCharCount", `${rawText.length} / 6000`);
       }
 
       async function analyzeContent(id) {
@@ -3447,10 +4226,9 @@
                 <div onclick="openContentUrl('${item.id}')">
                   <div class="content-title">${item.title}</div>
                   <div class="tag-row">
-                    <span class="tag">${contentTypeTag(item)}</span>
-                    <span class="tag">${platformLabel(item.platform || item.content_source)}</span>
+                    <span class="tag" style="--tag-color: ${contentTypeTag(item) === "Trend" ? "var(--refresh-green)" : "var(--refresh-pink)"}">${contentTypeTag(item)}</span>
                   </div>
-                  <div class="content-meta">${workspaceLabel(item.project)} · ${formatDate(item.published_at || item.created_at)} ${item.analysis_status === "completed" ? '<span class="status-dot"></span>' : ""}</div>
+                  <div class="content-meta">Beijing in77 · ${relativeTime(item.published_at || item.created_at)} ${item.analysis_status === "completed" ? '<span class="status-dot"></span>' : ""}</div>
                 </div>
                 <button class="analyze-btn" onclick="analyzeContent('${item.id}')" aria-label="More">⋯</button>
               </div>
@@ -3946,6 +4724,11 @@
         if (source.includes("trend") || (item.tags || []).some((tag) => String(tag).toLowerCase().includes("trend"))) return "Trend";
         if (source.includes("event")) return "Event";
         return "Article";
+      }
+
+      function signalColor(index) {
+        const colors = ["var(--refresh-pink)", "var(--refresh-blue)", "var(--refresh-green)", "var(--refresh-orange)", "var(--refresh-purple)"];
+        return colors[index % colors.length];
       }
 
       function normalizeTopic(value) {
