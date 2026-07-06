@@ -1953,11 +1953,20 @@
       }
 
       .app-logo {
-        display: block;
+        display: grid;
+        grid-template-columns: 48px 1fr;
+        align-items: center;
+        gap: 12px;
       }
 
       .app-logo-circle {
-        display: none;
+        display: block;
+        width: 48px;
+        height: 48px;
+        border: 0;
+        border-radius: 50%;
+        background: transparent;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
       }
 
       .app-title,
@@ -1976,6 +1985,11 @@
         font-size: 12px;
         line-height: 1.38;
         font-weight: 500;
+      }
+
+      .app-logo-circle img {
+        object-fit: cover;
+        object-position: center;
       }
 
       .header-more-button,
@@ -2702,11 +2716,11 @@
         <header class="app-header">
           <div class="app-logo">
             <div class="app-logo-circle" aria-hidden="true">
-              <img src="assets/insight-logo-horizontal.png" alt="" />
+              <img src="assets/insight-logo.png" alt="" />
             </div>
             <div class="app-brand-copy">
-              <h1 class="app-title">INSight OS</h1>
-              <p class="app-subtitle">北京 in77 · 今日内容工作台</p>
+              <h1 class="app-title">INSight</h1>
+              <p class="app-subtitle">HELLO!TODAY.</p>
             </div>
           </div>
           <button class="icon-button header-more-button" aria-label="More" onclick="navigate('notebook')">⋯</button>
@@ -2800,7 +2814,7 @@
               </label>
             </div>
             <input id="importSourceName" class="source-name-field" placeholder="例如：北京LOOK" />
-            <button class="btn btn-primary import-submit" onclick="importContent()">Submit</button>
+            <button class="btn btn-primary import-submit" onclick="importContent()">加入</button>
             <div id="importStatus" class="status"></div>
           </div>
         </section>

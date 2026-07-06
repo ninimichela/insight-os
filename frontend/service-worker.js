@@ -1,4 +1,4 @@
-const CACHE_NAME = "insight-os-v18";
+const CACHE_NAME = "insight-os-v19";
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
@@ -8,6 +8,7 @@ self.addEventListener("install", (event) => {
         "/index.html",
         "/content-library.html",
         "/manifest.json",
+        "/assets/insight-logo.png",
         "/assets/insight-logo-horizontal.png",
         "/icons/icon-192.png",
         "/icons/icon-512.png"
