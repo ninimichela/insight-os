@@ -2587,7 +2587,7 @@
       }
 
       .more-action-button::before {
-        content: "更多操作";
+        content: "其他";
       }
 
       .more-action-button {
@@ -2708,6 +2708,229 @@
       #view-content .bottom-nav {
         display: grid;
       }
+
+      /* Figma refinements 2026-07-07 */
+      .bottom-nav {
+        width: min(345px, calc(100% - 48px));
+        max-width: 345px;
+        height: 70px;
+        bottom: calc(40px + var(--safe-bottom));
+        padding: 24px 16px 10px;
+        border-radius: 22px;
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.06);
+      }
+
+      .nav-item {
+        min-height: 24px;
+        font-family: Inter, "PingFang SC", sans-serif;
+        font-size: 12px;
+        line-height: 1.28;
+        font-weight: 700;
+      }
+
+      .nav-item.active::after {
+        top: -16px;
+        width: 24px;
+        height: 4px;
+      }
+
+      #view-idea-detail {
+        padding-bottom: calc(230px + var(--safe-bottom));
+      }
+
+      #view-idea-detail .idea-detail-body {
+        padding-bottom: calc(230px + var(--safe-bottom));
+      }
+
+      .fixed-detail-actions {
+        bottom: calc(146px + var(--safe-bottom));
+        width: min(316px, calc(100% - 56px));
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        z-index: 995;
+      }
+
+      .fixed-detail-actions::before {
+        content: "";
+        position: fixed;
+        left: 50%;
+        bottom: calc(110px + var(--safe-bottom));
+        width: min(393px, 100vw);
+        height: 104px;
+        transform: translateX(-50%);
+        pointer-events: none;
+        background: rgba(246, 247, 248, 0.94);
+        box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.04);
+        z-index: -1;
+      }
+
+      .fixed-detail-actions .btn {
+        min-height: 44px;
+        border-radius: 22px;
+        font-family: Inter, "PingFang SC", sans-serif;
+        font-size: 14px;
+      }
+
+      .fixed-detail-actions .btn-primary {
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      }
+
+      .more-action-button {
+        border: 1px solid #e5e8ed;
+      }
+
+      .more-action-button::before {
+        content: "其他";
+      }
+
+      #ideaActionsSheet {
+        background: rgba(0, 0, 0, 0.24);
+      }
+
+      #ideaActionsSheet .bottom-sheet {
+        width: min(357px, calc(100% - 36px));
+        max-height: none;
+        margin: 0 auto calc(110px + var(--safe-bottom));
+        padding: 20px 16px 10px;
+        border: 0;
+        border-radius: 26px;
+        box-shadow: 0 -10px 24px rgba(0, 0, 0, 0.08);
+      }
+
+      #ideaActionsSheet .sheet-head {
+        padding: 0 8px 16px;
+      }
+
+      #ideaActionsSheet .sheet-head h2 {
+        font-family: Inter, "PingFang SC", sans-serif;
+        font-size: 20px;
+        font-weight: 700;
+      }
+
+      #ideaActionsSheet .sheet-head .icon-button {
+        width: 36px;
+        height: 36px;
+        border-radius: 18px;
+        background: #fbfbfc;
+      }
+
+      #ideaActionsSheet .sheet-body {
+        padding: 0;
+      }
+
+      #ideaActionsSheet .sheet-action-list {
+        gap: 10px;
+      }
+
+      #ideaActionsSheet .sheet-action-row {
+        min-height: 34px;
+        padding: 0 18px;
+        border-color: #e5e8ed;
+        border-radius: 14px;
+        font-family: Inter, "PingFang SC", sans-serif;
+        font-size: 14px;
+      }
+
+      #ideaActionsSheet .sheet-action-row span {
+        font-size: 18px;
+      }
+
+      #view-import .page-header {
+        min-height: 100px;
+        padding-top: max(58px, calc(var(--safe-top) + 28px));
+        padding-bottom: 14px;
+      }
+
+      #view-import .page-title {
+        font-family: Inter, "PingFang SC", sans-serif;
+        font-size: 26px;
+        line-height: 1.2;
+      }
+
+      #view-import .page-header > .icon-button {
+        width: 42px;
+        height: 42px;
+        top: max(52px, calc(var(--safe-top) + 22px));
+        right: 4px;
+      }
+
+      #view-import .import-primary-card .field-label {
+        margin: 0 4px 10px;
+        font-family: Inter, "PingFang SC", sans-serif;
+        font-size: 18px;
+      }
+
+      #view-import .import-textarea {
+        min-height: 148px;
+        padding: 28px 20px 38px;
+        border-radius: 24px;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.05);
+        font-family: Inter, "PingFang SC", sans-serif;
+        font-size: 16px;
+      }
+
+      #view-import .char-count {
+        margin: -34px 28px 30px 0;
+        font-family: Inter, "PingFang SC", sans-serif;
+        font-size: 13px;
+        line-height: 1;
+      }
+
+      #view-import .import-source-card {
+        margin-top: 28px;
+        padding: 20px;
+        min-height: 286px;
+        border-radius: 24px;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.05);
+      }
+
+      #view-import .import-source-card > .field-label {
+        font-family: Inter, "PingFang SC", sans-serif;
+        font-size: 16px;
+        font-weight: 700;
+      }
+
+      #view-import .source-type-label,
+      #view-import .import-inline-field .field-label {
+        font-family: Inter, "PingFang SC", sans-serif;
+        font-size: 13px;
+        font-weight: 600;
+      }
+
+      #view-import .source-options {
+        gap: 8px;
+        margin: 10px 0 20px;
+      }
+
+      #view-import .source-option span {
+        min-height: 26px;
+        padding: 0 14px;
+        font-family: Inter, "PingFang SC", sans-serif;
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      #view-import .source-option:first-child span {
+        min-width: 64px;
+      }
+
+      #view-import .import-inline-field {
+        margin-top: 16px;
+      }
+
+      #view-import .import-inline-field input {
+        min-height: 44px;
+        font-size: 13px;
+      }
+
+      #view-import .import-submit {
+        min-height: 50px;
+        margin-top: 26px;
+        border-radius: 18px;
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+        font-family: Inter, "PingFang SC", sans-serif;
+        font-size: 16px;
+      }
     </style>
   </head>
   <body>
@@ -2780,8 +3003,7 @@
         <div class="page-header">
           <button class="back-button" onclick="goBack()" aria-label="Back">‹</button>
           <div>
-            <h1 class="page-title">Import Content</h1>
-            <p class="page-kicker">导入后自动回到 Home</p>
+            <h1 class="page-title">导入内容</h1>
           </div>
           <button class="icon-button" onclick="openApiSettings()" aria-label="More">⋯</button>
         </div>
@@ -3090,7 +3312,6 @@
             <button class="sheet-action-row danger" onclick="rejectCurrentIdea(); closeIdeaActions()">放弃 <span>›</span></button>
             <button class="sheet-action-row" onclick="exportCurrentIdea(); closeIdeaActions()">导出 <span>›</span></button>
             <button class="sheet-action-row" onclick="adoptCurrentIdea(); closeIdeaActions()">收藏到 Notebook <span>›</span></button>
-            <button class="sheet-action-row" onclick="closeIdeaActions()">关闭</button>
           </div>
         </div>
       </div>
