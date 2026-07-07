@@ -60,6 +60,11 @@ def test_dashboard_returns_overview_sections(client):
     assert data["stats"]["reports"] == 1
     assert len(data["top_trends"]) <= 5
     assert len(data["top_ideas"]) == 10
+    assert len(data["daily_intelligence"]["todays_trends"]) <= 3
+    assert len(data["daily_intelligence"]["todays_signals"]) <= 3
+    assert len(data["daily_intelligence"]["todays_ideas"]) <= 3
+    assert data["daily_intelligence"]["todays_signals"][0]["why_it_matters"]
+    assert data["daily_intelligence"]["todays_signals"][0]["how_to_use"]
     assert data["latest_report"]["markdown_content"]
     assert data["recent_activity"]
 
@@ -72,5 +77,6 @@ def test_dashboard_empty_state(client):
     assert data["stats"] == {"contents": 0, "trends": 0, "ideas": 0, "reports": 0}
     assert data["top_trends"] == []
     assert data["top_ideas"] == []
+    assert data["daily_intelligence"] == {"todays_trends": [], "todays_signals": [], "todays_ideas": []}
     assert data["latest_report"] is None
     assert data["recent_activity"] == []

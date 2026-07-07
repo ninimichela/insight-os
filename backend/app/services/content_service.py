@@ -141,6 +141,7 @@ class ContentService:
                             "novelty_score": intelligence_scores["novelty_score"],
                             "trend_score": intelligence_scores["trend_score"],
                             "duplicate_status": content.duplicate_status,
+                            "reference_cases": intelligence_scores["reference_cases"],
                         },
                     },
                     "analysis_version": request.analysis_version,

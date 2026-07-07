@@ -7,7 +7,15 @@ from app.models.content import Content
 from app.models.idea import Idea
 from app.models.report import Report
 from app.models.trend import Trend
-from app.schemas.dashboard import DashboardActivity, DashboardResponse, DashboardStats
+from app.schemas.dashboard import (
+    DailyContentSignal,
+    DailyIdeaSignal,
+    DailyIntelligence,
+    DailyTrendSignal,
+    DashboardActivity,
+    DashboardResponse,
+    DashboardStats,
+)
 
 
 class DashboardService:
@@ -48,6 +56,7 @@ class DashboardService:
         )
         return DashboardResponse(
             stats=stats,
+            daily_intelligence=self._daily_intelligence(top_trends, todays_opportunities, top_ideas),
             todays_signals=todays_signals,
             todays_opportunities=todays_opportunities,
             top_trends=top_trends,
@@ -108,3 +117,37 @@ class DashboardService:
             )
         activities.sort(key=lambda item: item.time or "", reverse=True)
         return activities[:8]
+
+    def _daily_intelligence(self, trends: list[Trend], contents: list[Content], ideas: list[Idea]) -> DailyIntelligence:
+        return DailyIntelligence(
+            todays_trends=[
+                DailyTrendSignal(
+                    name=trend.topic,
+                    explanation=trend.recommendation_reason or f"{trend.topic} 正在成为值得观察的内容信号。",
+                    related_case_count=int((trend.analysis_trace or {}).get("reference_case_count", 0) or 0),
+                )
+                for trend in trends[:3]
+            ],
+            todays_signals=[
+                DailyContentSignal(
+                    title=content.title,
+                    why_it_matters=content.insight or content.summary or "这条内容正在释放新的商业内容信号。",
+                    how_to_use=content.business_opportunity or "可作为今日内容灵感观察。",
+                    score=content.trend_score or content.relevance_score or 0,
+                )
+                for content in contents[:3]
+            ],
+            todays_ideas=[
+                DailyIdeaSignal(
+                    title=idea.title,
+                    inspiration=idea.recommendation_reason or "来自今日趋势和内容信号。",
+                    execution=self._first_line(idea.outline) or "执行：做成当天可发布的轻内容。",
+                )
+                for idea in ideas[:3]
+            ],
+        )
+
+    def _first_line(self, value: str | None) -> str:
+        if not value:
+            return ""
+        return next((line.strip() for line in value.splitlines() if line.strip()), "")

@@ -8,6 +8,7 @@ from typing import Any, Iterable, Optional
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
 from app.models.content import Content
+from app.services.reference_data import ReferenceCase, get_reference_data
 
 
 TRACKING_PARAMS = {
@@ -61,6 +62,9 @@ class ContentIntelligenceEngine:
     """Deterministic content intelligence helpers for the v1 pipeline."""
 
     similarity_threshold = 0.88
+
+    def __init__(self):
+        self.reference_data = get_reference_data()
 
     def normalize_import_payload(self, payload: dict[str, Any]) -> dict[str, Any]:
         normalized = dict(payload)
@@ -119,8 +123,9 @@ class ContentIntelligenceEngine:
 
     def score_content(self, content: Content, summary: str, tags: list[str], keywords: list[str], category: Optional[str]) -> dict[str, Any]:
         text = self._text_blob(content, tags, keywords, category)
+        reference_matches = self.reference_data.find_matches(text, tags=tags, limit=3)
         freshness_score = self._freshness_score(content.published_at or content.collected_at)
-        relevance_score = self._relevance_score(text, category, content.suitable_for or [])
+        relevance_score = self._relevance_score(text, category, content.suitable_for or [], reference_matches)
         novelty_score = self._novelty_score(text, content.duplicate_status)
         content_trend_score = round(
             0.35 * freshness_score
@@ -133,8 +138,9 @@ class ContentIntelligenceEngine:
             "relevance_score": relevance_score,
             "novelty_score": novelty_score,
             "trend_score": max(0, min(content_trend_score, 100)),
-            "insight": self._insight(content, summary, tags, category),
-            "business_opportunity": self._business_opportunity(relevance_score, novelty_score, tags, keywords),
+            "insight": self._why_it_matters(content, summary, tags, category, reference_matches),
+            "business_opportunity": self._how_to_use(relevance_score, novelty_score, tags, keywords, reference_matches),
+            "reference_cases": [case.title for case in reference_matches],
         }
 
     def is_idea_eligible(self, content: Content) -> bool:
@@ -178,7 +184,7 @@ class ContentIntelligenceEngine:
             return 42
         return 25
 
-    def _relevance_score(self, text: str, category: Optional[str], suitable_for: list[str]) -> int:
+    def _relevance_score(self, text: str, category: Optional[str], suitable_for: list[str], reference_matches: list[ReferenceCase]) -> int:
         score = 42
         matches = sum(1 for term in COMMERCIAL_TERMS if term.lower() in text)
         score += min(matches * 7, 42)
@@ -186,6 +192,8 @@ class ContentIntelligenceEngine:
             score += 10
         if suitable_for:
             score += 6
+        if reference_matches:
+            score += min(len(reference_matches) * 4, 12)
         return max(0, min(score, 100))
 
     def _novelty_score(self, text: str, duplicate_status: Optional[str]) -> int:
@@ -196,15 +204,36 @@ class ContentIntelligenceEngine:
         score += min(matches * 8, 34)
         return max(0, min(score, 100))
 
-    def _insight(self, content: Content, summary: str, tags: list[str], category: Optional[str]) -> str:
+    def _why_it_matters(
+        self,
+        content: Content,
+        summary: str,
+        tags: list[str],
+        category: Optional[str],
+        reference_matches: list[ReferenceCase],
+    ) -> str:
+        if reference_matches and reference_matches[0].why_it_matters:
+            return self._short_sentence(reference_matches[0].why_it_matters)
         primary_tag = tags[0] if tags else category or "商业内容"
-        source = content.source_name or content.platform or "未知来源"
-        return f"{source} 的「{primary_tag}」信号值得关注：{summary[:80]}"
+        return self._short_sentence(f"{primary_tag} 正在从单点内容变成可持续的城市生活信号。")
 
-    def _business_opportunity(self, relevance_score: int, novelty_score: int, tags: list[str], keywords: list[str]) -> str:
+    def _how_to_use(
+        self,
+        relevance_score: int,
+        novelty_score: int,
+        tags: list[str],
+        keywords: list[str],
+        reference_matches: list[ReferenceCase],
+    ) -> str:
+        if reference_matches and reference_matches[0].reference:
+            return self._short_sentence(reference_matches[0].reference)
         signals = " / ".join([*(tags or [])[:2], *(keywords or [])[:2]]) or "内容信号"
         if relevance_score >= 78 and novelty_score >= 72:
-            return f"可作为优先选题机会，围绕 {signals} 做成今日内容提案。"
+            return self._short_sentence(f"围绕 {signals} 做成今日轻量内容提案。")
         if relevance_score >= 70:
-            return f"适合进入观察池，结合 {signals} 做低成本内容延展。"
-        return f"更适合作为背景素材，暂不建议直接转为选题。"
+            return self._short_sentence(f"结合 {signals} 做低成本内容延展。")
+        return "作为背景素材观察，暂不直接转为选题。"
+
+    def _short_sentence(self, text: str, limit: int = 48) -> str:
+        clean = re.sub(r"\s+", " ", text or "").strip()
+        return clean if len(clean) <= limit else f"{clean[:limit]}..."

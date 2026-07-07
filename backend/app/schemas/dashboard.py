@@ -4,7 +4,7 @@ from datetime import datetime
 from typing import Any, List, Optional
 from uuid import UUID
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from app.schemas.content import ContentResponse
 from app.schemas.idea import IdeaResponse
@@ -28,10 +28,36 @@ class DashboardActivity(BaseModel):
     meta: dict[str, Any] = {}
 
 
+class DailyTrendSignal(BaseModel):
+    name: str
+    explanation: str
+    related_case_count: int
+
+
+class DailyContentSignal(BaseModel):
+    title: str
+    why_it_matters: str
+    how_to_use: str
+    score: int
+
+
+class DailyIdeaSignal(BaseModel):
+    title: str
+    inspiration: str
+    execution: str
+
+
+class DailyIntelligence(BaseModel):
+    todays_trends: List[DailyTrendSignal] = Field(default_factory=list)
+    todays_signals: List[DailyContentSignal] = Field(default_factory=list)
+    todays_ideas: List[DailyIdeaSignal] = Field(default_factory=list)
+
+
 class DashboardResponse(BaseModel):
     stats: DashboardStats
-    todays_signals: List[ContentResponse] = []
-    todays_opportunities: List[ContentResponse] = []
+    daily_intelligence: DailyIntelligence = Field(default_factory=DailyIntelligence)
+    todays_signals: List[ContentResponse] = Field(default_factory=list)
+    todays_opportunities: List[ContentResponse] = Field(default_factory=list)
     top_trends: List[TrendResponse]
     top_ideas: List[IdeaResponse]
     latest_report: Optional[ReportResponse]

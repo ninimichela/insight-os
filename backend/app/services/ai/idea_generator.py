@@ -50,20 +50,13 @@ def generate_idea_copy(project: str, trend, related_contents, priority: int) -> 
 
 def _fallback_title(project: str, trend) -> str:
     if project == "in77":
-        return f"{trend.topic} 今天可以怎么逛"
-    return f"{trend.topic} 室内漫游计划"
+        return f"{trend.topic} 20分钟城市逃离计划"
+    return f"{trend.topic} 今日轻量漫游"
 
 
 def _fallback_reason(project: str, trend) -> str:
-    return f"{trend.topic} 当前 Trend Score 为 {trend.trend_score}，适合作为 {project} 的内容会选题候选。"
+    return f"灵感来自近期 {trend.topic} 相关内容和空间案例的集中出现。"
 
 
 def _fallback_outline(project: str, trend) -> str:
-    return "\n".join(
-        [
-            f"1. 用一个日常场景切入 {trend.topic}",
-            "2. 引入相关案例和用户情绪",
-            f"3. 结合 {project} 的空间、品牌或活动给出可执行路线",
-            "4. 收束为可拍摄、可发布、可讨论的内容方向",
-        ]
-    )
+    return f"执行：用一个日常场景切入 {trend.topic}，组合空间、品牌和可拍摄动线，做成当天可发布的轻内容。"

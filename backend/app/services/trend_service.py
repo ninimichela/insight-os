@@ -17,6 +17,7 @@ from app.repositories.content_repository import ContentRepository
 from app.repositories.trend_repository import TrendRepository
 from app.schemas.trend import TrendDetailResponse, TrendGenerateRequest, TrendGenerateResponse, TrendInsight
 from app.services.ai.trend_analyzer import generate_trend_insight
+from app.services.reference_data import get_reference_data
 
 
 @dataclass
@@ -42,6 +43,7 @@ class TrendService:
         self.trend_repository = TrendRepository(db)
         self.content_repository = ContentRepository(db)
         self.aliases = self._load_aliases()
+        self.reference_data = get_reference_data()
 
     def generate_trends(self, request: TrendGenerateRequest) -> TrendGenerateResponse:
         telemetry.increment("api.trends_generate.calls")
@@ -140,6 +142,11 @@ class TrendService:
         )
         lifecycle = self._lifecycle(content_count, growth_rate)
         recommended_projects, recommendation_reason = self._recommend_projects(cluster)
+        reference_count = self.reference_data.count_matches(
+            " ".join([cluster.topic, *cluster.tags.keys(), *cluster.keywords.keys()]),
+            tags=list(cluster.tags.keys()),
+        )
+        trend_explanation = self._trend_explanation(cluster, reference_count)
         return {
             "topic": cluster.topic,
             "category": self._most_common(cluster.categories),
@@ -151,7 +158,7 @@ class TrendService:
             "lifecycle": lifecycle,
             "related_contents": [str(content.id) for content in cluster.contents[:20]],
             "recommended_projects": recommended_projects,
-            "recommendation_reason": recommendation_reason,
+            "recommendation_reason": trend_explanation,
             "analysis_trace": {
                 "algorithm_version": self.algorithm_version,
                 "no_gpt_statistics": True,
@@ -163,6 +170,8 @@ class TrendService:
                 "source_diversity": source_diversity,
                 "recency_score": round(recency, 4),
                 "generated_from": content_count,
+                "reference_case_count": reference_count,
+                "recommendation_reason": recommendation_reason,
             },
         }
 
@@ -233,6 +242,12 @@ class TrendService:
         if not projects:
             projects = ["in77", "in88"]
         return projects, f"{cluster.topic} 与 {', '.join(projects)} 的内容语境匹配，可进入 Idea Engine 继续生成选题。"
+
+    def _trend_explanation(self, cluster: TrendCluster, reference_count: int) -> str:
+        topic = cluster.topic
+        if reference_count:
+            return f"{topic} 正在形成可复用的内容信号，已有 {reference_count} 个历史案例可参考。"
+        return f"{topic} 正在成为今天值得观察的商业内容信号。"
 
     def _anchor_datetime(self, contents: list[Content]) -> datetime:
         dates = [self._strip_timezone(content.published_at) for content in contents if content.published_at]

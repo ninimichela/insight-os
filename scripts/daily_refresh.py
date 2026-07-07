@@ -18,6 +18,7 @@ from app.schemas.content import ContentAnalyzeRequest, ContentImportRequest  # n
 from app.schemas.idea import IdeaGenerateRequest  # noqa: E402
 from app.schemas.trend import TrendGenerateRequest  # noqa: E402
 from app.services.content_service import ContentService  # noqa: E402
+from app.services.dashboard_service import DashboardService  # noqa: E402
 from app.services.idea_service import IdeaService  # noqa: E402
 from app.services.trend_service import TrendService  # noqa: E402
 
@@ -86,6 +87,7 @@ def run_daily_refresh(args: argparse.Namespace) -> dict:
                 IdeaGenerateRequest(projects=args.projects, ideas_per_project=args.ideas_per_project)
             )
             idea_count = idea_result.generated
+        daily_intelligence = DashboardService(db).get_dashboard().daily_intelligence
 
         return {
             "imported": imported,
@@ -94,6 +96,7 @@ def run_daily_refresh(args: argparse.Namespace) -> dict:
             "failed": failed,
             "trends": trend_result.generated,
             "ideas": idea_count,
+            "daily_intelligence": daily_intelligence.model_dump(mode="json"),
         }
     finally:
         db.close()
