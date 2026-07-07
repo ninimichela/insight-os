@@ -62,7 +62,14 @@ class ContentResponse(BaseModel):
     brand_fit_in88: int
     innovation_score: int
     execution_score: int
+    freshness_score: int
+    relevance_score: int
+    novelty_score: int
+    trend_score: int
+    duplicate_status: str
     ai_reason: Optional[str]
+    insight: Optional[str]
+    business_opportunity: Optional[str]
     analysis_version: Optional[str]
     prompt_version: Optional[str]
     brand_brain_version: Optional[str]
@@ -98,6 +105,13 @@ class ContentAnalyzeResultItem(BaseModel):
     brand_fit_in88: int
     innovation_score: int
     execution_score: int
+    freshness_score: int
+    relevance_score: int
+    novelty_score: int
+    trend_score: int
+    duplicate_status: str
+    insight: Optional[str]
+    business_opportunity: Optional[str]
     analysis_version: str
     analysis_trace: dict[str, Any]
 

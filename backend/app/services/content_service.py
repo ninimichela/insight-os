@@ -19,12 +19,14 @@ from app.services.ai.openai_client import get_provider_trace
 from app.services.ai.scorer import score_content
 from app.services.ai.summarizer import summarize_content
 from app.services.ai.tagger import tag_content
+from app.services.content_intelligence import ContentIntelligenceEngine
 from app.core.telemetry import telemetry
 
 
 class ContentService:
     def __init__(self, db: Session):
         self.repository = ContentRepository(db)
+        self.intelligence = ContentIntelligenceEngine()
 
     def import_contents(self, request: ContentImportRequest) -> ContentImportResponse:
         telemetry.increment("api.content_import.calls")
@@ -33,20 +35,23 @@ class ContentService:
         results: list[ContentImportResultItem] = []
 
         for item in request.items:
-            if item.url and self.repository.get_content_by_url(item.url):
+            payload = self.intelligence.normalize_import_payload(item.model_dump())
+            duplicate = self.intelligence.check_duplicate(payload, self.repository.list_all_contents())
+            if duplicate.status == "exact_url":
                 telemetry.increment("api.content_import.skipped_duplicate")
                 skipped += 1
                 results.append(
                     ContentImportResultItem(
-                        title=item.title,
-                        url=item.url,
+                        title=payload["title"],
+                        url=payload.get("url"),
                         result="skipped",
                         reason="duplicate_url",
                     )
                 )
                 continue
 
-            content = self.repository.create_content(item.model_dump())
+            payload["duplicate_status"] = duplicate.status
+            content = self.repository.create_content(payload)
             telemetry.increment("api.content_import.imported")
             imported += 1
             results.append(
@@ -56,6 +61,7 @@ class ContentService:
                     url=content.url,
                     content_status=content.content_status,
                     result="imported",
+                    reason=duplicate.status if duplicate.status != "unique" else None,
                 )
             )
 
@@ -86,6 +92,15 @@ class ContentService:
                 tags = tag_content(content)
                 scores = score_content(content)
                 classification = classify_content(content)
+                content.heat_score = scores["heat_score"]
+                content.suitable_for = classification["suitable_for"]
+                intelligence_scores = self.intelligence.score_content(
+                    content=content,
+                    summary=summary["summary"],
+                    tags=tags["tags"],
+                    keywords=tags["keywords"],
+                    category=classification["category"],
+                )
                 analysis_time_ms = int((time.perf_counter() - start) * 1000)
                 telemetry.record_timing("api.content_analyze.analysis_time_ms", analysis_time_ms)
 
@@ -108,12 +123,25 @@ class ContentService:
                     "brand_fit_in88": scores["brand_fit_in88"],
                     "innovation_score": scores["innovation_score"],
                     "execution_score": scores["execution_score"],
+                    "freshness_score": intelligence_scores["freshness_score"],
+                    "relevance_score": intelligence_scores["relevance_score"],
+                    "novelty_score": intelligence_scores["novelty_score"],
+                    "trend_score": intelligence_scores["trend_score"],
+                    "insight": intelligence_scores["insight"],
+                    "business_opportunity": intelligence_scores["business_opportunity"],
                     "ai_reason": scores["reason"],
                     "evidence": {
                         "summary": summary["evidence"],
                         "tags": tags["evidence"],
                         "scores": scores["evidence"],
                         "classification": classification["evidence"],
+                        "intelligence": {
+                            "freshness_score": intelligence_scores["freshness_score"],
+                            "relevance_score": intelligence_scores["relevance_score"],
+                            "novelty_score": intelligence_scores["novelty_score"],
+                            "trend_score": intelligence_scores["trend_score"],
+                            "duplicate_status": content.duplicate_status,
+                        },
                     },
                     "analysis_version": request.analysis_version,
                     "prompt_version": "v1",
@@ -140,6 +168,13 @@ class ContentService:
                         brand_fit_in88=updated.brand_fit_in88,
                         innovation_score=updated.innovation_score,
                         execution_score=updated.execution_score,
+                        freshness_score=updated.freshness_score,
+                        relevance_score=updated.relevance_score,
+                        novelty_score=updated.novelty_score,
+                        trend_score=updated.trend_score,
+                        duplicate_status=updated.duplicate_status,
+                        insight=updated.insight,
+                        business_opportunity=updated.business_opportunity,
                         analysis_version=updated.analysis_version or request.analysis_version,
                         analysis_trace=updated.analysis_trace or analysis_trace,
                     )

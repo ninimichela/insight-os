@@ -31,3 +31,46 @@ def test_content_import_skips_duplicate_url(client):
     assert data["items"][0]["content_status"] == "new"
     assert data["items"][1]["result"] == "skipped"
 
+
+def test_content_import_normalizes_url_and_marks_near_duplicate(client):
+    first = client.post(
+        "/content/import",
+        json={
+            "items": [
+                {
+                    "title": "＃北京夏日室内漫游指南 ｜ 公众号",
+                    "platform": "wechat",
+                    "source_name": "北京LOOK",
+                    "content_source": "article",
+                    "url": "HTTPS://Example.com/a/?utm_source=x&b=1",
+                    "raw_text": "王府井 科技 动漫 高达 室内路线 商场 周末",
+                }
+            ]
+        },
+    ).json()
+    assert first["imported"] == 1
+    assert first["items"][0]["title"] == "北京夏日室内漫游指南"
+    assert first["items"][0]["url"] == "https://example.com/a?b=1"
+
+    second = client.post(
+        "/content/import",
+        json={
+            "items": [
+                {
+                    "title": "北京夏日室内漫游指南",
+                    "platform": "wechat",
+                    "source_name": "北京LOOK",
+                    "content_source": "article",
+                    "url": "https://example.com/b",
+                    "raw_text": "王府井 科技 动漫 高达 室内路线 商场 周末",
+                }
+            ]
+        },
+    ).json()
+    assert second["imported"] == 1
+    assert second["items"][0]["reason"] == "near_duplicate"
+
+    listed = client.get("/content", params={"q": "室内漫游"}).json()
+    statuses = {item["url"]: item["duplicate_status"] for item in listed["items"]}
+    assert statuses["https://example.com/a?b=1"] == "unique"
+    assert statuses["https://example.com/b"] == "near_duplicate"

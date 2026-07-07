@@ -88,3 +88,31 @@ def test_idea_list_and_detail(client):
     assert data["trend"]
     assert data["reference_items"]
     assert data["outline"]
+
+
+def test_idea_generation_excludes_duplicate_content(client):
+    unique_id = _import_and_analyze(
+        client,
+        "王府井乐高快闪",
+        "THE BOX",
+        "https://example.com/idea-dedup-a",
+        "王府井 乐高 LEGO 积木 科技 动漫 高达 商场 首店 快闪",
+    )
+    duplicate_id = _import_and_analyze(
+        client,
+        "王府井乐高快闪",
+        "THE BOX",
+        "https://example.com/idea-dedup-b",
+        "王府井 乐高 LEGO 积木 科技 动漫 高达 商场 首店 快闪",
+    )
+    client.post("/trends/generate", json={"lookback_days": 7, "min_content_count": 1})
+
+    generated = client.post(
+        "/ideas/generate",
+        json={"projects": ["in88"], "ideas_per_project": 3},
+    ).json()
+
+    assert generated["generated"] == 3
+    for item in generated["items"]:
+        assert unique_id in item["source_contents"]
+        assert duplicate_id not in item["source_contents"]

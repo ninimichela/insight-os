@@ -6,6 +6,7 @@ from uuid import UUID
 
 from pydantic import BaseModel
 
+from app.schemas.content import ContentResponse
 from app.schemas.idea import IdeaResponse
 from app.schemas.report import ReportResponse
 from app.schemas.trend import TrendResponse
@@ -29,6 +30,8 @@ class DashboardActivity(BaseModel):
 
 class DashboardResponse(BaseModel):
     stats: DashboardStats
+    todays_signals: List[ContentResponse] = []
+    todays_opportunities: List[ContentResponse] = []
     top_trends: List[TrendResponse]
     top_ideas: List[IdeaResponse]
     latest_report: Optional[ReportResponse]

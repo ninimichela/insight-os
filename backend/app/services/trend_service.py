@@ -50,6 +50,7 @@ class TrendService:
             self.db.query(Content)
             .filter(Content.content_status == "analyzed")
             .filter(Content.analysis_status == "completed")
+            .filter(Content.duplicate_status == "unique")
             .all()
         )
         if not contents:

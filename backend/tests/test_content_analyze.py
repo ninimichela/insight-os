@@ -30,10 +30,17 @@ def test_content_analyze_writes_analysis_fields(client):
     assert item["keywords"]
     assert item["category"]
     assert item["suitable_for"]
+    assert item["freshness_score"] > 60
+    assert item["relevance_score"] > 70
+    assert item["novelty_score"] > 0
+    assert item["trend_score"] > 0
+    assert item["duplicate_status"] == "unique"
+    assert item["insight"]
+    assert item["business_opportunity"]
     assert item["analysis_trace"]["provider"] == "mock"
     assert item["analysis_trace"]["fallback"] is True
 
     listed = client.get("/content", params={"content_status": "analyzed"}).json()
     assert listed["total"] == 1
     assert listed["items"][0]["analysis_status"] == "completed"
-
+    assert listed["items"][0]["business_opportunity"]

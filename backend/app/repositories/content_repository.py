@@ -18,6 +18,7 @@ class ContentRepository(BaseRepository):
     def create_content(self, data: dict[str, Any]) -> Content:
         data.setdefault("content_status", "new")
         data.setdefault("analysis_status", "pending")
+        data.setdefault("duplicate_status", "unique")
         return self.create(data)
 
     def bulk_create_contents(self, items: list[dict[str, Any]]) -> list[Content]:
@@ -25,6 +26,7 @@ class ContentRepository(BaseRepository):
         for item in items:
             item.setdefault("content_status", "new")
             item.setdefault("analysis_status", "pending")
+            item.setdefault("duplicate_status", "unique")
             contents.append(Content(**item))
         self.session.add_all(contents)
         self.session.commit()
@@ -72,6 +74,18 @@ class ContentRepository(BaseRepository):
 
     def get_content_by_url(self, url: str) -> Optional[Content]:
         return self.session.query(Content).filter(Content.url == url).first()
+
+    def list_all_contents(self) -> list[Content]:
+        return self.session.query(Content).all()
+
+    def list_idea_eligible_contents(self) -> list[Content]:
+        return (
+            self.session.query(Content)
+            .filter(Content.freshness_score > 60)
+            .filter(Content.relevance_score > 70)
+            .filter(Content.duplicate_status == "unique")
+            .all()
+        )
 
     def update_analysis_result(self, content_id: UUID, result: dict[str, Any]) -> Optional[Content]:
         return self.update(content_id, result)

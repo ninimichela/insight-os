@@ -60,7 +60,16 @@ CREATE TABLE IF NOT EXISTS contents (
   brand_fit_in88 INTEGER DEFAULT 0,
   innovation_score INTEGER DEFAULT 0,
   execution_score INTEGER DEFAULT 0,
+  freshness_score INTEGER DEFAULT 0,
+  relevance_score INTEGER DEFAULT 0,
+  novelty_score INTEGER DEFAULT 0,
+  trend_score INTEGER DEFAULT 0,
+  duplicate_status TEXT DEFAULT 'unique' CHECK (
+    duplicate_status IN ('unique', 'exact_url', 'near_duplicate')
+  ),
   ai_reason TEXT,
+  insight TEXT,
+  business_opportunity TEXT,
   evidence JSONB,
   analysis_version TEXT,
   prompt_version TEXT,
@@ -208,6 +217,10 @@ CREATE INDEX IF NOT EXISTS idx_contents_competitor_id ON contents(competitor_id)
 CREATE INDEX IF NOT EXISTS idx_contents_analysis_version ON contents(analysis_version);
 CREATE INDEX IF NOT EXISTS idx_contents_prompt_version ON contents(prompt_version);
 CREATE INDEX IF NOT EXISTS idx_contents_brand_brain_version ON contents(brand_brain_version);
+CREATE INDEX IF NOT EXISTS idx_contents_duplicate_status ON contents(duplicate_status);
+CREATE INDEX IF NOT EXISTS idx_contents_freshness_score ON contents(freshness_score);
+CREATE INDEX IF NOT EXISTS idx_contents_relevance_score ON contents(relevance_score);
+CREATE INDEX IF NOT EXISTS idx_contents_trend_score ON contents(trend_score);
 
 CREATE INDEX IF NOT EXISTS idx_competitors_name ON competitors(name);
 CREATE INDEX IF NOT EXISTS idx_competitors_city ON competitors(city);

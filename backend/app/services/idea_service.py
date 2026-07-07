@@ -16,6 +16,7 @@ from app.repositories.idea_repository import IdeaRepository
 from app.repositories.trend_repository import TrendRepository
 from app.schemas.idea import IdeaDetailResponse, IdeaGenerateRequest, IdeaGenerateResponse
 from app.services.ai.idea_generator import generate_idea_copy
+from app.services.content_intelligence import ContentIntelligenceEngine
 
 
 class IdeaService:
@@ -33,6 +34,7 @@ class IdeaService:
         self.trend_repository = TrendRepository(db)
         self.content_repository = ContentRepository(db)
         self.project_rules = self._load_project_rules()
+        self.intelligence = ContentIntelligenceEngine()
 
     def generate_ideas(self, request: IdeaGenerateRequest) -> IdeaGenerateResponse:
         telemetry.increment("api.ideas_generate.calls")
@@ -115,12 +117,14 @@ class IdeaService:
     def _rank_project_trends(self, project: str, trends: list[Trend]) -> list[tuple[Trend, int]]:
         scored = []
         for trend in trends:
+            if not self._related_contents(trend):
+                continue
             project_fit = self._project_fit(project, trend)
             if project_fit <= 0 and project not in (trend.recommended_projects or []):
                 continue
             scored.append((trend, project_fit))
         if not scored:
-            scored = [(trend, 0) for trend in trends]
+            scored = [(trend, 0) for trend in trends if self._related_contents(trend)]
         scored.sort(key=lambda item: (self._priority(item[0], project, item[1], self._related_contents(item[0])), item[0].trend_score), reverse=True)
         return scored
 
@@ -163,7 +167,7 @@ class IdeaService:
         items = []
         for content_id in trend.related_contents or []:
             content = self.content_repository.get_content_by_id(UUID(str(content_id)))
-            if content:
+            if content and self.intelligence.is_idea_eligible(content):
                 items.append(content)
         return items
 

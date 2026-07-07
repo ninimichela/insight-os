@@ -29,8 +29,27 @@ class DashboardService:
         )
         top_ideas = self.db.query(Idea).order_by(Idea.priority.desc(), Idea.created_at.desc()).limit(10).all()
         latest_report = self.db.query(Report).order_by(Report.created_at.desc()).first()
+        todays_signals = (
+            self.db.query(Content)
+            .filter(Content.content_status == "analyzed")
+            .filter(Content.duplicate_status == "unique")
+            .order_by(Content.trend_score.desc(), Content.freshness_score.desc(), Content.collected_at.desc())
+            .limit(10)
+            .all()
+        )
+        todays_opportunities = (
+            self.db.query(Content)
+            .filter(Content.freshness_score > 60)
+            .filter(Content.relevance_score > 70)
+            .filter(Content.duplicate_status == "unique")
+            .order_by(Content.relevance_score.desc(), Content.novelty_score.desc(), Content.collected_at.desc())
+            .limit(10)
+            .all()
+        )
         return DashboardResponse(
             stats=stats,
+            todays_signals=todays_signals,
+            todays_opportunities=todays_opportunities,
             top_trends=top_trends,
             top_ideas=top_ideas,
             latest_report=latest_report,
