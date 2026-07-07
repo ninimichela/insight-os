@@ -2931,6 +2931,133 @@
         font-family: Inter, "PingFang SC", sans-serif;
         font-size: 16px;
       }
+
+      /* iPhone high-screen safe-area refinement from Figma */
+      .app-shell {
+        min-height: 100dvh;
+        padding-bottom: calc(178px + var(--safe-bottom));
+      }
+
+      .view {
+        padding-bottom: calc(154px + var(--safe-bottom));
+      }
+
+      .bottom-nav {
+        position: fixed;
+        left: 50%;
+        bottom: max(18px, calc(var(--safe-bottom) + 18px));
+        z-index: 1000;
+        width: min(345px, calc(100% - 48px));
+        max-width: 345px;
+        height: 70px;
+        transform: translateX(-50%);
+      }
+
+      .fab {
+        right: max(20px, calc((100vw - 393px) / 2 + 20px));
+        bottom: max(108px, calc(var(--safe-bottom) + 108px));
+        z-index: 940;
+      }
+
+      #view-home {
+        padding-bottom: calc(198px + var(--safe-bottom));
+      }
+
+      #view-home .home-recommendation-panel:last-of-type,
+      #view-home .panel:last-of-type {
+        margin-bottom: 22px;
+      }
+
+      #view-idea-detail {
+        padding-bottom: calc(252px + var(--safe-bottom));
+      }
+
+      #view-idea-detail .idea-detail-body {
+        padding-bottom: calc(252px + var(--safe-bottom));
+      }
+
+      .fixed-detail-actions {
+        bottom: max(112px, calc(var(--safe-bottom) + 112px));
+        z-index: 970;
+      }
+
+      .fixed-detail-actions::before {
+        bottom: max(82px, calc(var(--safe-bottom) + 82px));
+        height: 110px;
+      }
+
+      #ideaActionsSheet {
+        align-items: flex-end;
+        padding: 0;
+        z-index: 1200;
+      }
+
+      #ideaActionsSheet.visible {
+        display: flex;
+      }
+
+      #ideaActionsSheet .bottom-sheet {
+        width: min(357px, calc(100% - 36px));
+        max-height: min(52vh, 320px);
+        margin: 0 auto max(110px, calc(var(--safe-bottom) + 110px));
+        overflow: auto;
+      }
+
+      #view-import {
+        padding-bottom: calc(170px + var(--safe-bottom));
+      }
+
+      #view-import .page-header {
+        min-height: 94px;
+        padding-top: max(50px, calc(var(--safe-top) + 20px));
+        padding-bottom: 12px;
+      }
+
+      #view-import .page-header > .icon-button {
+        top: max(48px, calc(var(--safe-top) + 18px));
+      }
+
+      #view-import .form-grid {
+        gap: 0;
+      }
+
+      #view-import .import-source-card {
+        margin-top: 24px;
+      }
+
+      #view-import .import-submit {
+        margin-top: 22px;
+        margin-bottom: 0;
+      }
+
+      @media (min-height: 820px) {
+        .bottom-nav {
+          bottom: max(22px, calc(var(--safe-bottom) + 22px));
+        }
+
+        .fab {
+          bottom: max(116px, calc(var(--safe-bottom) + 116px));
+        }
+
+        .fixed-detail-actions {
+          bottom: max(120px, calc(var(--safe-bottom) + 120px));
+        }
+
+        #ideaActionsSheet .bottom-sheet {
+          margin-bottom: max(118px, calc(var(--safe-bottom) + 118px));
+        }
+      }
+
+      @media (max-width: 380px) {
+        .bottom-nav {
+          width: calc(100% - 36px);
+        }
+
+        .fixed-detail-actions {
+          width: calc(100% - 44px);
+          gap: 12px;
+        }
+      }
     </style>
   </head>
   <body>
@@ -3501,6 +3628,7 @@
       function navigate(view, options = {}) {
         const target = document.getElementById(`view-${view}`);
         if (!target) return;
+        closeTransientSurfaces();
         previousView = options.from || currentView;
         currentView = view;
         document.querySelectorAll(".view").forEach((item) => item.classList.toggle("active", item.id === `view-${view}`));
@@ -3519,6 +3647,11 @@
         if (view === "notebook") renderNotebook();
         if (view === "recent-notes") renderAllNotes();
         if (view === "saved-inspirations") renderAllInspirations();
+      }
+
+      function closeTransientSurfaces() {
+        document.getElementById("ideaActionsSheet")?.classList.remove("visible");
+        document.getElementById("notebookFabMenu")?.classList.remove("visible");
       }
 
       function navKey(view) {
