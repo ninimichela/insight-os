@@ -8,10 +8,13 @@ from app.models.idea import Idea
 from app.models.report import Report
 from app.models.trend import Trend
 from app.schemas.dashboard import (
-    DailyContentSignal,
+    DailyFeedbackRequest,
+    DailyFeedbackResponse,
     DailyIdeaSignal,
     DailyIntelligence,
-    DailyTrendSignal,
+    DailyOpportunity,
+    DailySignal,
+    TrendChange,
     DashboardActivity,
     DashboardResponse,
     DashboardStats,
@@ -119,35 +122,91 @@ class DashboardService:
         return activities[:8]
 
     def _daily_intelligence(self, trends: list[Trend], contents: list[Content], ideas: list[Idea]) -> DailyIntelligence:
+        ranked_trends = sorted(trends, key=self._change_priority, reverse=True)
         return DailyIntelligence(
-            todays_trends=[
-                DailyTrendSignal(
-                    name=trend.topic,
-                    explanation=trend.recommendation_reason or f"{trend.topic} 正在成为值得观察的内容信号。",
+            todays_signals=[
+                DailySignal(
+                    item_id=trend.id,
+                    title=self._clip(trend.topic, 20),
+                    what=self._clip(f"{trend.topic} 出现内容变化。", 50),
+                    why_now=self._clip(self._trend_change(trend).reason, 50),
+                    opportunity=self._clip(trend.recommendation_reason or f"围绕 {trend.topic} 做成今日观察。", 50),
+                    trend_change=self._trend_change(trend),
+                    score=trend.trend_score,
                     related_case_count=int((trend.analysis_trace or {}).get("reference_case_count", 0) or 0),
                 )
-                for trend in trends[:3]
+                for trend in ranked_trends[:3]
             ],
-            todays_signals=[
-                DailyContentSignal(
-                    title=content.title,
-                    why_it_matters=content.insight or content.summary or "这条内容正在释放新的商业内容信号。",
-                    how_to_use=content.business_opportunity or "可作为今日内容灵感观察。",
+            todays_opportunities=[
+                DailyOpportunity(
+                    item_id=content.id,
+                    title=self._clip(content.title, 20),
+                    what=self._clip(content.summary or content.title, 50),
+                    why_now=self._clip(content.insight or "新鲜且相关度较高，值得进入今日观察。", 50),
+                    opportunity=self._clip(content.business_opportunity or "转化为一条轻量内容方向。", 50),
                     score=content.trend_score or content.relevance_score or 0,
                 )
                 for content in contents[:3]
             ],
             todays_ideas=[
                 DailyIdeaSignal(
-                    title=idea.title,
-                    inspiration=idea.recommendation_reason or "来自今日趋势和内容信号。",
-                    execution=self._first_line(idea.outline) or "执行：做成当天可发布的轻内容。",
+                    item_id=idea.id,
+                    title=self._clip(idea.title, 20),
+                    what=self._clip("生成一个今天可讨论的内容方向。", 50),
+                    why_now=self._clip(idea.recommendation_reason or "来自今日趋势和内容信号。", 50),
+                    opportunity=self._clip(self._first_line(idea.outline) or "执行：做成当天可发布的轻内容。", 50),
                 )
                 for idea in ideas[:3]
             ],
+        )
+
+    def record_feedback(self, request: DailyFeedbackRequest) -> DailyFeedbackResponse:
+        adjustment = 5 if request.useful else -8
+        model = {"content": Content, "trend": Trend, "idea": Idea}[request.item_type]
+        item = self.db.get(model, str(request.item_id))
+        if item:
+            if request.item_type == "content":
+                item.relevance_score = self._bounded_score((item.relevance_score or 0) + adjustment)
+            elif request.item_type == "trend":
+                item.trend_score = self._bounded_score((item.trend_score or 0) + adjustment)
+            elif request.item_type == "idea":
+                item.priority = self._bounded_score((item.priority or 0) + adjustment)
+            self.db.commit()
+        return DailyFeedbackResponse(
+            item_type=request.item_type,
+            item_id=request.item_id,
+            useful=request.useful,
+            adjustment=adjustment,
         )
 
     def _first_line(self, value: str | None) -> str:
         if not value:
             return ""
         return next((line.strip() for line in value.splitlines() if line.strip()), "")
+
+    def _trend_change(self, trend: Trend) -> TrendChange:
+        trace = trend.analysis_trace or {}
+        previous_count = int(trace.get("previous_count", 0) or 0)
+        recent_count = int(trace.get("recent_count", 0) or 0)
+        growth_rate = float(trend.growth_rate or 0)
+        if previous_count == 0 and recent_count > 0:
+            return TrendChange(status="new", reason=f"过去7天突然出现 {recent_count} 条相关内容。", growth_rate=growth_rate)
+        if growth_rate >= 0.3:
+            return TrendChange(status="rising", reason=f"过去7天相关内容增长 {growth_rate:.0%}。", growth_rate=growth_rate)
+        if growth_rate <= -0.2:
+            return TrendChange(status="declining", reason=f"过去7天相关内容减少 {abs(growth_rate):.0%}。", growth_rate=growth_rate)
+        if recent_count <= 2 and (trace.get("source_diversity", 0) or 0) >= 2:
+            return TrendChange(status="unusual", reason="少量内容同时来自多个来源，属于异常信号。", growth_rate=growth_rate)
+        return TrendChange(status="stable", reason="主题仍在出现，但变化不明显。", growth_rate=growth_rate)
+
+    def _change_priority(self, trend: Trend) -> int:
+        change = self._trend_change(trend)
+        weights = {"new": 120, "rising": 100, "unusual": 85, "declining": 70, "stable": 30}
+        return weights.get(change.status, 0) + min(trend.trend_score or 0, 100)
+
+    def _bounded_score(self, value: int) -> int:
+        return max(0, min(value, 100))
+
+    def _clip(self, value: str, limit: int) -> str:
+        clean = " ".join((value or "").split())
+        return clean if len(clean) <= limit else f"{clean[:limit]}..."

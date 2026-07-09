@@ -60,11 +60,21 @@ def test_dashboard_returns_overview_sections(client):
     assert data["stats"]["reports"] == 1
     assert len(data["top_trends"]) <= 5
     assert len(data["top_ideas"]) == 10
-    assert len(data["daily_intelligence"]["todays_trends"]) <= 3
     assert len(data["daily_intelligence"]["todays_signals"]) <= 3
+    assert len(data["daily_intelligence"]["todays_opportunities"]) <= 3
     assert len(data["daily_intelligence"]["todays_ideas"]) <= 3
-    assert data["daily_intelligence"]["todays_signals"][0]["why_it_matters"]
-    assert data["daily_intelligence"]["todays_signals"][0]["how_to_use"]
+    assert data["daily_intelligence"]["todays_signals"][0]["what"]
+    assert data["daily_intelligence"]["todays_signals"][0]["why_now"]
+    assert data["daily_intelligence"]["todays_signals"][0]["opportunity"]
+    assert data["daily_intelligence"]["todays_signals"][0]["trend_change"]["status"] in [
+        "new",
+        "rising",
+        "declining",
+        "unusual",
+        "stable",
+    ]
+    assert data["daily_intelligence"]["todays_opportunities"][0]["why_now"]
+    assert data["daily_intelligence"]["todays_ideas"][0]["opportunity"]
     assert data["latest_report"]["markdown_content"]
     assert data["recent_activity"]
 
@@ -77,6 +87,24 @@ def test_dashboard_empty_state(client):
     assert data["stats"] == {"contents": 0, "trends": 0, "ideas": 0, "reports": 0}
     assert data["top_trends"] == []
     assert data["top_ideas"] == []
-    assert data["daily_intelligence"] == {"todays_trends": [], "todays_signals": [], "todays_ideas": []}
+    assert data["daily_intelligence"] == {"todays_signals": [], "todays_opportunities": [], "todays_ideas": []}
     assert data["latest_report"] is None
     assert data["recent_activity"] == []
+
+
+def test_daily_intelligence_feedback_adjusts_scores(client):
+    _prepare_dashboard_data(client)
+    dashboard = client.get("/dashboard").json()
+    item = dashboard["daily_intelligence"]["todays_opportunities"][0]
+    before = item["score"]
+
+    response = client.post(
+        "/daily-intelligence/feedback",
+        json={"item_type": "content", "item_id": item["item_id"], "useful": True},
+    )
+
+    assert response.status_code == 200
+    assert response.json()["adjustment"] == 5
+    next_opportunities = client.get("/dashboard").json()["daily_intelligence"]["todays_opportunities"]
+    after = next(row for row in next_opportunities if row["item_id"] == item["item_id"])["score"]
+    assert after >= before

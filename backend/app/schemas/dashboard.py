@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Any, List, Optional
+from typing import Any, List, Literal, Optional
 from uuid import UUID
 
 from pydantic import BaseModel, Field
@@ -28,29 +28,57 @@ class DashboardActivity(BaseModel):
     meta: dict[str, Any] = {}
 
 
-class DailyTrendSignal(BaseModel):
-    name: str
-    explanation: str
+class TrendChange(BaseModel):
+    status: str
+    reason: str
+    growth_rate: float
+
+
+class DailySignal(BaseModel):
+    item_id: Optional[UUID] = None
+    title: str
+    what: str
+    why_now: str
+    opportunity: str
+    trend_change: Optional[TrendChange] = None
+    score: int
     related_case_count: int
 
 
-class DailyContentSignal(BaseModel):
+class DailyOpportunity(BaseModel):
+    item_id: Optional[UUID] = None
     title: str
-    why_it_matters: str
-    how_to_use: str
+    what: str
+    why_now: str
+    opportunity: str
     score: int
 
 
 class DailyIdeaSignal(BaseModel):
+    item_id: Optional[UUID] = None
     title: str
-    inspiration: str
-    execution: str
+    what: str
+    why_now: str
+    opportunity: str
 
 
 class DailyIntelligence(BaseModel):
-    todays_trends: List[DailyTrendSignal] = Field(default_factory=list)
-    todays_signals: List[DailyContentSignal] = Field(default_factory=list)
+    todays_signals: List[DailySignal] = Field(default_factory=list)
+    todays_opportunities: List[DailyOpportunity] = Field(default_factory=list)
     todays_ideas: List[DailyIdeaSignal] = Field(default_factory=list)
+
+
+class DailyFeedbackRequest(BaseModel):
+    item_type: Literal["content", "trend", "idea"]
+    item_id: UUID
+    useful: bool
+
+
+class DailyFeedbackResponse(BaseModel):
+    item_type: str
+    item_id: UUID
+    useful: bool
+    adjustment: int
 
 
 class DashboardResponse(BaseModel):
