@@ -3058,6 +3058,194 @@
           gap: 12px;
         }
       }
+
+      /* Figma alignment pass: right-side back, pink interaction dots, safe sheets */
+      * {
+        -webkit-tap-highlight-color: rgba(232, 0, 102, 0.12);
+      }
+
+      button,
+      .content-item,
+      .idea-card,
+      .trend-row {
+        cursor: pointer;
+      }
+
+      button {
+        position: relative;
+      }
+
+      button:focus,
+      button:focus-visible,
+      input:focus,
+      textarea:focus {
+        outline: none;
+      }
+
+      button:not(.nav-item):not(.filter-button):active::after,
+      button:not(.nav-item):not(.filter-button):focus-visible::after {
+        content: "";
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        width: 6px;
+        height: 6px;
+        border-radius: 999px;
+        background: var(--refresh-pink);
+        box-shadow: 0 0 0 3px rgba(232, 0, 102, 0.12);
+        pointer-events: none;
+      }
+
+      input:focus,
+      textarea:focus {
+        box-shadow: 0 0 0 2px rgba(232, 0, 102, 0.12), 0 12px 30px rgba(0, 0, 0, 0.05);
+      }
+
+      .page-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: flex-start;
+        position: relative;
+        padding-right: 58px;
+        text-align: left;
+      }
+
+      .page-header > div {
+        width: 100%;
+        min-width: 0;
+        text-align: left;
+      }
+
+      .page-header .back-button {
+        display: none;
+      }
+
+      #view-import .page-header .back-button,
+      #view-trend-detail .page-header .back-button,
+      #view-idea-detail .page-header .back-button,
+      #view-report-detail .page-header .back-button,
+      #view-recent-notes .page-header .back-button,
+      #view-saved-inspirations .page-header .back-button,
+      #view-note-detail .page-header .back-button {
+        display: grid;
+        place-items: center;
+        position: absolute;
+        top: max(48px, calc(var(--safe-top) + 18px));
+        right: 4px;
+        left: auto;
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        color: var(--refresh-ink);
+        background: var(--refresh-card);
+        box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+        font-size: 24px;
+        z-index: 5;
+      }
+
+      #view-import .page-header > .icon-button,
+      #view-trend-detail .page-header > .icon-button,
+      #view-idea-detail .page-header > .icon-button,
+      #view-report-detail .page-header > .icon-button,
+      #view-recent-notes .page-header > .icon-button,
+      #view-saved-inspirations .page-header > .icon-button,
+      #view-note-detail .page-header > .icon-button {
+        display: none;
+      }
+
+      #view-content .page-header > .icon-button,
+      #view-trends .page-header > .icon-button,
+      #view-ideas .page-header > .icon-button,
+      #view-reports .page-header > .icon-button,
+      #view-notebook .page-header > .icon-button {
+        display: grid;
+        place-items: center;
+      }
+
+      #view-home .workspace-selector {
+        min-height: 60px;
+        padding: 16px 18px;
+      }
+
+      #view-home .workspace-stack {
+        min-height: 28px;
+        justify-content: center;
+      }
+
+      #view-home .workspace-button {
+        display: none;
+      }
+
+      #view-home .hero-card {
+        margin-bottom: 22px;
+      }
+
+      #view-home .fab,
+      .fab {
+        bottom: max(116px, calc(var(--safe-bottom) + 116px));
+      }
+
+      #view-import {
+        padding-bottom: calc(210px + var(--safe-bottom));
+      }
+
+      #view-import .import-panel {
+        margin-bottom: calc(24px + var(--safe-bottom));
+      }
+
+      #view-import .import-textarea {
+        min-height: clamp(132px, 18dvh, 168px);
+      }
+
+      #view-import .import-source-card {
+        min-height: auto;
+        padding-bottom: 20px;
+      }
+
+      #view-import .import-submit {
+        width: 100%;
+        min-height: 52px;
+      }
+
+      #apiSettingsSheet {
+        align-items: flex-end;
+        padding: 0;
+        z-index: 1200;
+      }
+
+      #apiSettingsSheet.visible {
+        display: flex;
+      }
+
+      #apiSettingsSheet .bottom-sheet {
+        width: min(357px, calc(100% - 36px));
+        max-height: min(62vh, 460px);
+        margin: 0 auto max(112px, calc(var(--safe-bottom) + 112px));
+        padding-bottom: 14px;
+        overflow: auto;
+      }
+
+      #apiSettingsSheet .sheet-actions {
+        position: sticky;
+        bottom: 0;
+        padding-top: 14px;
+        background: var(--refresh-card);
+      }
+
+      #exportSheet,
+      #deleteConfirmSheet {
+        z-index: 1200;
+      }
+
+      @media (min-height: 820px) {
+        #apiSettingsSheet .bottom-sheet {
+          margin-bottom: max(120px, calc(var(--safe-bottom) + 120px));
+        }
+
+        #view-import {
+          padding-bottom: calc(220px + var(--safe-bottom));
+        }
+      }
     </style>
   </head>
   <body>
@@ -3073,7 +3261,7 @@
               <p class="app-subtitle">HELLO!TODAY.</p>
             </div>
           </div>
-          <button class="icon-button header-more-button" aria-label="More" onclick="navigate('notebook')">⋯</button>
+          <button class="icon-button header-more-button" aria-label="More" onclick="openApiSettings()">⋯</button>
         </header>
 
         <section class="hero-card">
@@ -3083,9 +3271,6 @@
             </span>
             <div class="workspace-stack">
               <span class="workspace-label">Workspace</span>
-              <button class="workspace-button" onclick="setText('actionStatus', 'Workspace selector is a UI placeholder for the next platform iteration.')">
-                Beijing in77 <span>⌄</span>
-              </button>
             </div>
             <span class="mode-badge" id="dataModeBadge">Local Mode</span>
           </div>
@@ -3132,7 +3317,7 @@
           <div>
             <h1 class="page-title">导入内容</h1>
           </div>
-          <button class="icon-button" onclick="openApiSettings()" aria-label="More">⋯</button>
+          <button class="icon-button" onclick="goBack()" aria-label="Back">‹</button>
         </div>
         <section class="panel import-panel">
           <div class="form-grid">
@@ -3183,7 +3368,7 @@
             <h2>Content Library</h2>
             <div class="toolbar-actions">
               <button class="icon-button" aria-label="Search">⌕</button>
-              <button class="icon-button" aria-label="More">⋯</button>
+              <button class="icon-button" onclick="openApiSettings()" aria-label="More">⋯</button>
             </div>
           </div>
           <div class="search-row content-search-row">
@@ -3208,7 +3393,7 @@
             <h1 class="page-title">Trends</h1>
             <p class="page-kicker">从已分析内容生成热点</p>
           </div>
-          <button class="icon-button" aria-label="More">⋯</button>
+          <button class="icon-button" onclick="openApiSettings()" aria-label="More">⋯</button>
         </div>
         <section class="panel">
           <div class="section-head">
@@ -3227,7 +3412,7 @@
             <h1 class="page-title">Trend Detail</h1>
             <p class="page-kicker">热点来源与解释</p>
           </div>
-          <button class="icon-button" aria-label="More">⋯</button>
+          <button class="icon-button" onclick="navigate('trends')" aria-label="Back">‹</button>
         </div>
         <section class="detail-card visible" id="trendDetailContent"></section>
       </section>
@@ -3239,13 +3424,13 @@
             <h1 class="page-title">Ideas</h1>
             <p class="page-kicker">为 Current Workspace 生成可讨论选题</p>
           </div>
-          <button class="icon-button" aria-label="More">⋯</button>
+          <button class="icon-button" onclick="openApiSettings()" aria-label="More">⋯</button>
         </div>
         <section class="panel">
           <div class="workspace-selector">
             <span class="workspace-label">Workspace</span>
             <button class="workspace-button" onclick="setText('ideaStatus', 'Workspace selector is a UI placeholder for the next platform iteration.')">
-              Beijing in77 <span>⌄</span>
+              Current Workspace <span>⌄</span>
             </button>
           </div>
           <div class="section-head">
@@ -3264,7 +3449,7 @@
             <h1 class="page-title">Idea Detail</h1>
             <p class="page-kicker">从趋势到执行动作的闭环</p>
           </div>
-          <button class="icon-button" aria-label="More">⋯</button>
+          <button class="icon-button" onclick="navigate('ideas')" aria-label="Back">‹</button>
         </div>
         <section class="detail-card visible" id="ideaDetailContent"></section>
       </section>
@@ -3276,7 +3461,7 @@
             <h1 class="page-title">Weekly Report</h1>
             <p class="page-kicker">生成并查看 Markdown 周报</p>
           </div>
-          <button class="icon-button" aria-label="More">⋯</button>
+          <button class="icon-button" onclick="openApiSettings()" aria-label="More">⋯</button>
         </div>
         <section class="panel">
           <div class="section-head">
@@ -3295,7 +3480,7 @@
             <h1 class="page-title">Report Detail</h1>
             <p class="page-kicker">Markdown 周报</p>
           </div>
-          <button class="icon-button" id="reportExportButton" aria-label="Export">↓</button>
+          <button class="icon-button" onclick="navigate('reports')" aria-label="Back">‹</button>
         </div>
         <section class="report-card">
           <pre id="reportDetailContent" class="report-preview"></pre>
@@ -3378,7 +3563,7 @@
             <h1 class="page-title">Saved Inspirations</h1>
             <p class="page-kicker">All saved references and inspirations.</p>
           </div>
-          <button class="icon-button" aria-label="More">⋯</button>
+          <button class="icon-button" onclick="navigate('notebook')" aria-label="Back">‹</button>
         </div>
         <section class="panel">
           <div id="allInspirationsList"></div>
@@ -3392,7 +3577,7 @@
             <h1 class="page-title">Note Detail</h1>
             <p class="page-kicker">Edit, tag and manage this note.</p>
           </div>
-          <button class="icon-button" aria-label="More">⋯</button>
+          <button class="icon-button" onclick="backToNotebookList()" aria-label="Back">‹</button>
         </div>
         <section class="detail-card visible" id="noteDetailContent"></section>
       </section>
@@ -3501,7 +3686,7 @@
       let currentExportText = "";
       const currentWorkspace = {
         id: "in77",
-        name: "Beijing in77",
+        name: "Current Workspace",
       };
       const NOTEBOOK_STORAGE_KEY = "insight_notebook_items";
       const SAVED_INSPIRATIONS_STORAGE_KEY = "insight_saved_inspirations";
@@ -3652,6 +3837,9 @@
       function closeTransientSurfaces() {
         document.getElementById("ideaActionsSheet")?.classList.remove("visible");
         document.getElementById("notebookFabMenu")?.classList.remove("visible");
+        document.getElementById("apiSettingsSheet")?.classList.remove("visible");
+        document.getElementById("exportSheet")?.classList.remove("visible");
+        document.getElementById("deleteConfirmSheet")?.classList.remove("visible");
       }
 
       function navKey(view) {
@@ -4596,7 +4784,7 @@
                   <div class="tag-row">
                     <span class="tag" style="--tag-color: ${contentTypeTag(item) === "Trend" ? "var(--refresh-green)" : "var(--refresh-pink)"}">${contentTypeTag(item)}</span>
                   </div>
-                  <div class="content-meta">Beijing in77 · ${relativeTime(item.published_at || item.created_at)} ${item.analysis_status === "completed" ? '<span class="status-dot"></span>' : ""}</div>
+                  <div class="content-meta">Current Workspace · ${relativeTime(item.published_at || item.created_at)} ${item.analysis_status === "completed" ? '<span class="status-dot"></span>' : ""}</div>
                 </div>
                 <button class="analyze-btn" onclick="analyzeContent('${item.id}')" aria-label="More">⋯</button>
               </div>
@@ -5035,7 +5223,6 @@
         }
         if (!report) return;
         document.getElementById("reportDetailContent").textContent = report.markdown_content || "";
-        document.getElementById("reportExportButton").onclick = () => downloadMarkdown(id);
       }
 
       async function downloadMarkdown(id) {
